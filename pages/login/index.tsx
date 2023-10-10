@@ -7,11 +7,21 @@ import SelectLoginImage from "../../public/Login/selectLogin.png";
 import SelectNoImage from "../../public/Login/selectNo.png";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
+import { useSession, signIn } from "next-auth/react";
 
 const LoginPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);
   const [loginButtonRect, setLoginButtonRect] = useState(null);
   const loginButtonRef = useRef(null);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      console.log(session);
+      router.push("http://localhost:3000/");
+    }
+  });
 
   useEffect(() => {
     if (loginButtonRef.current) {
@@ -81,19 +91,11 @@ const OverlayWindow = ({ loginButtonRect, handleLoginView }) => {
   }px`;
   const overlayTop = `${loginButtonRect.top - loginButtonRect.height * 0.3}px`;
 
-  useEffect(() => {
-    console.log(loginButtonRect);
-  }, []);
-
-  const handleLogin = async () => {
-    void router.push("http://localhost:3000/");
-  };
-
   return (
     <Overlay style={{ top: overlayTop, left: overlayRight }}>
       <OverlayBackImage src={OverlayImage} alt="Overlay" />
       <OverlayButtonFrame>
-        <OverlayButton onClick={handleLogin}>
+        <OverlayButton onClick={() => signIn("42-school")}>
           <OverlayButtonImg src={SelectLoginImage} alt="SelectLogin" />
         </OverlayButton>
         <OverlayButton onClick={handleLoginView}>
