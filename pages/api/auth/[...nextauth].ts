@@ -11,11 +11,14 @@ const invalidPrimaryCampus = (profile: any) => {
 };
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.SECRET,
+  secret: process.env.JWT_ACCESS_SECRET,
   providers: [
     FortyTwoProvider({
       clientId: process.env.FT_UID,
       clientSecret: process.env.FT_SECRET,
+      httpOptions: {
+        timeout: 40000,
+      },
     }),
   ],
 

@@ -1,18 +1,18 @@
 import styled from "styled-components";
 import Image from "next/image";
-import Logo from "../../public/logo.png";
+import Logo from "../../public/Login/logo.png";
 import ButtonImage from "../../public/Login/loginplz.png";
 import OverlayImage from "../../public/Login/overlay.png";
 import SelectLoginImage from "../../public/Login/selectLogin.png";
 import SelectNoImage from "../../public/Login/selectNo.png";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const LoginPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);
-  const [loginButtonRect, setLoginButtonRect] = useState(null);
-  const loginButtonRef = useRef(null);
+  const [loginButtonRect, setLoginButtonRect] = useState<DOMRect | null>(null);
+  const loginButtonRef = useRef<HTMLDivElement | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
           <LoginButtonImg src={ButtonImage} alt="Login Plz" />
         </LoginButton>
       </Container>
-      {clickState && (
+      {clickState && loginButtonRect && (
         <OverlayWindow
           loginButtonRect={loginButtonRect}
           handleLoginView={handleLoginView}
@@ -84,18 +84,28 @@ const LoginButtonImg = styled(Image)`
   height: auto;
 `;
 
-const OverlayWindow = ({ loginButtonRect, handleLoginView }) => {
+const OverlayWindow = ({
+  loginButtonRect,
+  handleLoginView,
+}: {
+  loginButtonRect: DOMRect;
+  handleLoginView: () => void;
+}) => {
   const router = useRouter();
   const overlayRight = `${
     loginButtonRect.right - loginButtonRect.width * 0.2
   }px`;
   const overlayTop = `${loginButtonRect.top - loginButtonRect.height * 0.3}px`;
 
+  const handleLoginChoice = async () => {
+    router.push("http://localhost:3000/login/choice");
+  };
+
   return (
     <Overlay style={{ top: overlayTop, left: overlayRight }}>
       <OverlayBackImage src={OverlayImage} alt="Overlay" />
       <OverlayButtonFrame>
-        <OverlayButton onClick={() => signIn("42-school")}>
+        <OverlayButton onClick={handleLoginChoice}>
           <OverlayButtonImg src={SelectLoginImage} alt="SelectLogin" />
         </OverlayButton>
         <OverlayButton onClick={handleLoginView}>

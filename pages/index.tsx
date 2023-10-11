@@ -8,7 +8,7 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>Crossing PingPong</title>
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="/Login/logo.png" />
       </Head>
       <p> index.tsx </p> <br />
       {/* 테스트용 */}
