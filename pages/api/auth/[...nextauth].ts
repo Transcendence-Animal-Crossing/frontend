@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import type { NextAuthOptions } from "next-auth";
 import FortyTwoProvider from "next-auth/providers/42-school";
+import axios from "axios";
 
 const invalidPrimaryCampus = (profile: any) => {
   const campusId = profile.campus_users.find(
@@ -26,7 +27,6 @@ export const authOptions: NextAuthOptions = {
     async signIn({ profile, user }) {
       if (!profile || !user) return false;
       if (invalidPrimaryCampus(profile)) return false;
-      // 서버 요청 예정
       return user;
     },
     async jwt({ token, profile, account }) {
@@ -34,6 +34,23 @@ export const authOptions: NextAuthOptions = {
         token.user_id = profile.id;
         token.login = profile.login;
         token.accessToken = account.access_token;
+
+        try {
+          const apiUrl = "http://localhost:8080/auth/loginCallBack";
+          const response = await axios.post(apiUrl, {
+            accessToken: account.access_token,
+          });
+
+          token.accessToken = response.headers.Authorization;
+          // token.refreshToken = response.data.refreshToken;
+
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${token.accessToken}`;
+        } catch (error) {
+          console.error("jwt error:", error);
+          token.accessToken = "fail";
+        }
       }
       return token;
     },
@@ -41,6 +58,7 @@ export const authOptions: NextAuthOptions = {
       session.user.login = token.login;
       session.user.user_id = token.user_id;
       session.accessToken = token.accessToken;
+      // session.refreshToken = token.refreshToken;
       return session;
     },
   },

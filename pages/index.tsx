@@ -15,6 +15,7 @@ const Home: NextPage = () => {
       {session ? (
         <>
           Sign in as {session.user.email} <br />
+          jwtAccessToken : {session.accessToken} <br />
           <button onClick={() => signOut()}>Sign out</button>
         </>
       ) : null}

@@ -6,6 +6,7 @@ import CommonLoginButton from "../../public/Login/LoginButton.png";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSession, signIn } from "next-auth/react";
+import Container from "../../components/Layout";
 
 const ChoicePage: React.FC = () => {
   const { data: session } = useSession();
@@ -14,7 +15,7 @@ const ChoicePage: React.FC = () => {
   useEffect(() => {
     if (session) {
       console.log(session);
-      router.push("http://localhost:3000/");
+      // router.push("http://localhost:3000/");
     }
   });
 
@@ -39,16 +40,6 @@ const ChoicePage: React.FC = () => {
 };
 
 export default ChoicePage;
-
-const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  background-color: #e9e2c7;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
 
 const LogoImage = styled(Image)`
   width: 6%;

@@ -8,6 +8,7 @@ import SelectNoImage from "../../public/Login/selectNo.png";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import Container from "../../components/Layout";
 
 const LoginPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);
@@ -54,16 +55,6 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
-
-const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  background-color: #e9e2c7;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
 
 const LogoImage = styled(Image)`
   width: 6%;
