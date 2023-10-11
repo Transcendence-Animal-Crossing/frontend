@@ -1,12 +1,11 @@
 import styled from "styled-components";
 import Head from "next/head";
-import { ReactNode } from "react"; // ReactNode를 가져옵니다.
+import { ReactNode } from "react";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
-// Container 컴포넌트를 정의합니다.
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -24,7 +23,6 @@ const Layout = ({ children }: LayoutProps) => {
         <title>Crossing PingPong</title>
         <link rel="icon" href="/Login/logo.png" />
       </Head>
-      {/* 이제 Container 컴포넌트를 렌더링할 수 있습니다. */}
       <Container>{children}</Container>
     </>
   );
