@@ -6,17 +6,7 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  background-color: #e9e2c7;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Layout = ({ children }: LayoutProps) => {
+const ColumnLayout = ({ children }: LayoutProps) => {
   return (
     <>
       <Head>
@@ -28,4 +18,14 @@ const Layout = ({ children }: LayoutProps) => {
   );
 };
 
-export default Layout;
+export default ColumnLayout;
+
+const Container = styled.div`
+  width: 100vw;
+  height: 100vh;
+  background-color: #e9e2c7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
