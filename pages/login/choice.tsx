@@ -6,7 +6,7 @@ import CommonLoginButton from "../../public/Login/LoginButton.png";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSession, signIn } from "next-auth/react";
-import Container from "../../components/Layout";
+import Container from "../../components/columnLayout";
 
 const ChoicePage: React.FC = () => {
   const { data: session } = useSession();
