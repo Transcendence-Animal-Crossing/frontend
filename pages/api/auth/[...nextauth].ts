@@ -12,7 +12,6 @@ const invalidPrimaryCampus = (profile: any) => {
 };
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.JWT_ACCESS_SECRET,
   providers: [
     FortyTwoProvider({
       clientId: process.env.FT_UID,
@@ -33,16 +32,15 @@ export const authOptions: NextAuthOptions = {
       if (profile && account) {
         token.user_id = profile.id;
         token.login = profile.login;
-        token.accessToken = account.access_token;
-
         try {
-          const apiUrl = "http://localhost:8080/auth/loginCallBack";
+          const apiUrl = "http://localhost:8080/auth/login";
           const response = await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
-
-          token.accessToken = response.headers.Authorization;
-          // token.refreshToken = response.data.refreshToken;
+          // token.accessToken = response.headers.Authorization;
+          token.accessToken = response.data.accessToken;
+          token.refreshToken = response.data.refreshToken;
+          console.log(response);
 
           axios.defaults.headers.common[
             "Authorization"
@@ -58,7 +56,7 @@ export const authOptions: NextAuthOptions = {
       session.user.login = token.login;
       session.user.user_id = token.user_id;
       session.accessToken = token.accessToken;
-      // session.refreshToken = token.refreshToken;
+      session.refreshToken = token.refreshToken;
       return session;
     },
   },
