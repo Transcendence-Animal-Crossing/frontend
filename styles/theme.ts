@@ -6,6 +6,8 @@ declare module "styled-components" {
       ivory: string;
       brown: string;
       brown05: string;
+      pink: string;
+      white: string;
     };
   }
 }
@@ -15,5 +17,7 @@ export const theme: DefaultTheme = {
     ivory: "#f8f4e8",
     brown: "#8a7b66",
     brown05: "rgba(138, 123, 102, 0.5)",
+    pink: "#E2826A",
+    white: "#FFFFF7",
   },
 };
