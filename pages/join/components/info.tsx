@@ -13,6 +13,14 @@ const InfoContainer: React.FC<{
   const [profileFrameWidth, setProfileFrameWidth] = useState(0);
   const imagePaths = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12];
 
+  useEffect(() => {
+    handleProfileFrameWidth();
+    window.addEventListener("resize", handleProfileFrameWidth);
+    return () => {
+      window.removeEventListener("resize", handleProfileFrameWidth);
+    };
+  }, []);
+
   const handleProfileFrameWidth = () => {
     const profileFrame = document.getElementById("profile-frame");
     if (profileFrame) {
