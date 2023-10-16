@@ -37,9 +37,7 @@ export const authOptions: NextAuthOptions = {
           const response = await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
-          // token.accessToken = response.headers.Authorization;
-          token.accessToken = response.data.accessToken;
-          token.refreshToken = response.data.refreshToken;
+          token.accessToken = response.headers.Authorization;
           console.log(response);
 
           axios.defaults.headers.common[
