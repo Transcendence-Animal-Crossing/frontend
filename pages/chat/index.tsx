@@ -1,9 +1,11 @@
 import styled from "styled-components";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSocket } from "../../components/SocketProvider";
 import Container from "../../components/columnNevLayout";
 import Header from "./components/lobbyHeader";
+import Lock from "../../public/Chat/lock_gold.png";
 
 const Chat = () => {
   const { socket } = useSocket();
@@ -50,7 +52,15 @@ const Chat = () => {
       <RoomListFrame>
         {roomlist.map((room, index) => (
           <Room key={index} onClick={() => handleRoomJoin(room.id)}>
-            <RoomTitle> {room.title} </RoomTitle>
+            <RoomTitle>
+              {room.title}
+              <>
+                {room.mode === "PROTECTED" && (
+                  <LockImage src={Lock} alt="Lock" />
+                )}
+              </>
+            </RoomTitle>
+
             <RoomInfo>
               <RoomInfoText>
                 <ColoredText color="brown">방장:</ColoredText>
@@ -101,6 +111,9 @@ const RoomTitle = styled.div`
   color: ${(props) => props.theme.colors.brown};
   font-family: "BMHANNAPro";
   font-size: 2vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const RoomInfo = styled.div`
@@ -120,4 +133,11 @@ const RoomInfoText = styled.div`
 const ColoredText = styled.p`
   color: ${(props) => props.theme.colors[props.color]};
   font-family: "BMHANNAPro";
+`;
+
+const LockImage = styled(Image)`
+  height: 3vh;
+  width: auto;
+  cursor: pointer;
+  margin-left: 1vh;
 `;
