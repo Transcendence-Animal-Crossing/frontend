@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSocket } from "../../components/SocketProvider";
 import Container from "../../components/columnNevLayout";
+import Header from "./components/lobbyHeader";
 
 const Chat = () => {
   const { socket } = useSocket();
@@ -22,22 +23,6 @@ const Chat = () => {
       });
     }
   }, [socket]);
-
-  const handleCreateRoom = async () => {
-    if (socket) {
-      await socket
-        .emitWithAck("room-create", {
-          title: "제목제목제목제목",
-          mode: "PUBLIC",
-          password: "0",
-        })
-        .then((response) => {
-          console.log("room-create : ", response);
-          const responseRoomId = response.body.id;
-          router.push(`chat/${responseRoomId}`);
-        });
-    }
-  };
 
   const handleRoomJoin = async (roomId: string) => {
     if (socket) {
@@ -61,9 +46,7 @@ const Chat = () => {
 
   return (
     <Container>
-      <h1> chat/index.tsx </h1>
-      <button onClick={handleCreateRoom}> 방 생성 </button>
-
+      <Header />
       <RoomListFrame>
         {roomlist.map((room, index) => (
           <Room key={index} onClick={() => handleRoomJoin(room.id)}>
@@ -89,16 +72,17 @@ const Chat = () => {
 export default Chat;
 
 const RoomListFrame = styled.div`
-  width: 80%;
-  height: 80%;
+  width: 70%;
+  height: 70%;
   overflow: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-x: hidden;
 `;
 
 const Room = styled.div`
-  width: 80%;
+  width: 100%;
   height: auto;
   background-color: ${(props) => props.theme.colors.ivory};
   border-radius: 10px;
@@ -110,6 +94,7 @@ const Room = styled.div`
   justify-content: space-between;
   cursor: pointer;
   border: none;
+  box-sizing: border-box;
 `;
 
 const RoomTitle = styled.div`
