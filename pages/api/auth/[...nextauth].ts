@@ -37,7 +37,10 @@ export const authOptions: NextAuthOptions = {
           const response = await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
-          token.accessToken = response.headers.Authorization;
+          token.accessToken = response.headers.authorization.replace(
+            "Bearer ",
+            ""
+          );
           console.log(response);
 
           axios.defaults.headers.common[
