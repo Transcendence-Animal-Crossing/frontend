@@ -1,15 +1,17 @@
-import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from "./profile";
-import buttonImage from "../../../public/completeButton.png";
+import styled from 'styled-components';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from './profile';
+import buttonImage from '../../../public/completeButton.png';
 
-const PreviewContainer: React.FC<{ nickname: string; profile: number }> = ({
-  nickname,
-  profile,
-}) => {
+const PreviewContainer: React.FC<{
+  nickname: string;
+  profile: number;
+  checknick: boolean;
+  handleCheckNick: (newNickname: string) => void;
+}> = ({ nickname, profile, checknick, handleCheckNick }) => {
   const imagePaths = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12];
   const { data: session } = useSession();
 
@@ -29,9 +31,10 @@ const PreviewContainer: React.FC<{ nickname: string; profile: number }> = ({
           {session ? <IntraText> {session.user.login} </IntraText> : null}
         </NameFrame>
         <DivisionBar />
-        <CompleteButton>
-          <CompleteButtonImg src={buttonImage} alt="complete" />
-        </CompleteButton>
+        <NicknameButton onClick={() => handleCheckNick(nickname)}>
+          Check <br /> Nickname
+        </NicknameButton>
+        {/* <CompleteButton> COMPLETE! </CompleteButton> */}
       </PreviewFrame>
     </>
   );
@@ -51,7 +54,7 @@ const PreviewFrame = styled.div`
 
 const TitleText = styled.div`
   color: ${(props) => props.theme.colors.brown};
-  font-family: "BMHANNAPro";
+  font-family: 'BMHANNAPro';
   text-align: center;
   font-size: 2em;
 `;
@@ -81,14 +84,14 @@ const NicknameFrame = styled.div`
 
 const NicknameText = styled.div`
   color: ${(props) => props.theme.colors.white};
-  font-family: "BMHANNAPro";
+  font-family: 'BMHANNAPro';
   text-align: center;
   font-size: large;
 `;
 
 const IntraText = styled.div`
   color: ${(props) => props.theme.colors.brown};
-  font-family: "BMHANNAPro";
+  font-family: 'BMHANNAPro';
   text-align: center;
   font-size: medium;
 `;
@@ -99,14 +102,34 @@ const DivisionBar = styled.div`
   background-color: ${(props) => props.theme.colors.brown};
 `;
 
-const CompleteButton = styled.div`
-  width: 70%;
-  height: auto;
-  cursor: pointer;
-  border: none;
+const NicknameButton = styled.div`
+  width: 60%;
+  height: 10%;
+  font-family: 'BMHANNAPro';
+  background-color: #f7cd67;
+  color: #7a5025;
+  padding: 0.5vw 1vw;
+  border-radius: 50px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 2vw;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const CompleteButtonImg = styled(Image)`
-  width: 100%;
-  height: auto;
+const CompleteButton = styled.div`
+  width: 60%;
+  height: 10%;
+  font-family: 'BMHANNAPro';
+  background-color: #f7cd67;
+  color: #7a5025;
+  padding: 0.5vw 1vw;
+  border-radius: 50px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 2vw;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
