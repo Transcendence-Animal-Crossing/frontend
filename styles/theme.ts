@@ -8,6 +8,11 @@ declare module "styled-components" {
       brown05: string;
       pink: string;
       white: string;
+      Emerald: string;
+      orange: string;
+      beige: string;
+      craem: string;
+      gold: string;
     };
   }
 }
@@ -19,5 +24,10 @@ export const theme: DefaultTheme = {
     brown05: "rgba(138, 123, 102, 0.5)",
     pink: "#E2826A",
     white: "#FFFFF7",
+    Emerald: "#04AFA6",
+    orange: "#F39801",
+    beige: "rgba(255, 251, 231, 0.5);",
+    craem: "#FFFBE7",
+    gold: "#BEA745",
   },
 };
