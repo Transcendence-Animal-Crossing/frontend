@@ -1,12 +1,10 @@
-import NextAuth from "next-auth";
-import type { NextAuthOptions } from "next-auth";
-import FortyTwoProvider from "next-auth/providers/42-school";
-import axios from "axios";
+import NextAuth from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
+import FortyTwoProvider from 'next-auth/providers/42-school';
+import axios from 'axios';
 
 const invalidPrimaryCampus = (profile: any) => {
-  const campusId = profile.campus_users.find(
-    (cu: any) => cu.is_primary
-  )?.campus_id;
+  const campusId = profile.campus_users.find((cu: any) => cu.is_primary)?.campus_id;
 
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
@@ -33,22 +31,17 @@ export const authOptions: NextAuthOptions = {
         token.user_id = profile.id;
         token.login = profile.login;
         try {
-          const apiUrl = "http://localhost:8080/auth/login";
+          const apiUrl = 'http://localhost:8080/auth/login';
           const response = await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
-          token.accessToken = response.headers.authorization.replace(
-            "Bearer ",
-            ""
-          );
+          token.accessToken = response.headers.authorization.replace('Bearer ', '');
           console.log(response);
 
-          axios.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${token.accessToken}`;
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token.accessToken}`;
         } catch (error) {
-          console.error("jwt error:", error);
-          token.accessToken = "fail";
+          console.error('jwt error:', error);
+          token.accessToken = 'fail';
         }
       }
       return token;

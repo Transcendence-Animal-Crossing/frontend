@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from "./profile";
-import pen from "../../../public/Icon/pen.png";
+import React from 'react';
+import styled from 'styled-components';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from './profile';
+import pen from '../../../public/Icon/pen.png';
 
 const InfoContainer: React.FC<{
   checknick: boolean;
@@ -15,14 +15,14 @@ const InfoContainer: React.FC<{
 
   useEffect(() => {
     handleProfileFrameWidth();
-    window.addEventListener("resize", handleProfileFrameWidth);
+    window.addEventListener('resize', handleProfileFrameWidth);
     return () => {
-      window.removeEventListener("resize", handleProfileFrameWidth);
+      window.removeEventListener('resize', handleProfileFrameWidth);
     };
   }, []);
 
   const handleProfileFrameWidth = () => {
-    const profileFrame = document.getElementById("profile-frame");
+    const profileFrame = document.getElementById('profile-frame');
     if (profileFrame) {
       setProfileFrameWidth(profileFrame.clientWidth);
     }
@@ -122,7 +122,7 @@ const Input = styled.input.attrs({ required: true })`
   border: none;
   cursor: pointer;
   color: ${(props) => props.theme.colors.brown};
-  font-family: "BMHANNAAir";
+  font-family: 'BMHANNAAir';
   font-size: 1.5vw;
   &:focus {
     outline: none;
@@ -131,7 +131,7 @@ const Input = styled.input.attrs({ required: true })`
 
 const Text = styled.div`
   color: #fc736d;
-  font-family: "BMHANNAAir";
+  font-family: 'BMHANNAAir';
   font-size: 1vw;
 `;
 

@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { ReactNode } from "react";
-import { useSession, signOut } from "next-auth/react";
+import styled from 'styled-components';
+import { ReactNode } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 
 const nevigation = () => {
   const { data: session } = useSession();

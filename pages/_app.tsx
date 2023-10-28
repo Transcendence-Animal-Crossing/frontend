@@ -1,10 +1,9 @@
-import type { AppProps } from "next/app";
-import { ThemeProvider } from "styled-components";
-import { GlobalStyle } from "../styles/global-style";
-import { theme } from "../styles/theme";
-import { SessionProvider } from "next-auth/react";
-
-import { SocketProvider } from "../components/SocketProvider";
+import type { AppProps } from 'next/app';
+import { ThemeProvider } from 'styled-components';
+import { GlobalStyle } from '../styles/global-style';
+import { theme } from '../styles/theme';
+import { SessionProvider } from 'next-auth/react';
+import { SocketProvider } from '../utils/SocketProvider';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

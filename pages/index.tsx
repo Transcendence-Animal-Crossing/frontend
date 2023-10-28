@@ -1,6 +1,6 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import { useSession, signIn, signOut } from "next-auth/react"; // 테스트용
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { useSession, signIn, signOut } from 'next-auth/react'; // 테스트용
 
 const Home: NextPage = () => {
   const { data: session } = useSession(); // 테스트용

@@ -24,9 +24,20 @@ const JoinPage: React.FC = () => {
   const handleCheckNick = async (newNickname: string) => {
     try {
       const apiUrl = 'http://localhost:8080/users/nickname';
-      const response = await axios.post(apiUrl, {
-        nickName: nickname,
-      });
+      // const response = await axios.post(apiUrl, {
+      //   nickName: nickname,
+      // });
+      const response = await axios.post(
+        apiUrl,
+        {
+          nickName: nickname,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+          },
+        }
+      );
       console.log(response);
       setChecknick(true);
     } catch (error) {

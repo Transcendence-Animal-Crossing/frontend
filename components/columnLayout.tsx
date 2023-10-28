@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import Head from "next/head";
-import { ReactNode } from "react";
+import styled from 'styled-components';
+import Head from 'next/head';
+import { ReactNode } from 'react';
 
 interface LayoutProps {
   children: ReactNode;
