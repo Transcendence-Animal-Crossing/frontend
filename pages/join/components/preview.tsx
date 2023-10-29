@@ -2,9 +2,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
 import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from './profile';
-import buttonImage from '../../../public/completeButton.png';
 
 const PreviewContainer: React.FC<{
   nickname: string;
@@ -31,10 +29,13 @@ const PreviewContainer: React.FC<{
           {session ? <IntraText> {session.user.login} </IntraText> : null}
         </NameFrame>
         <DivisionBar />
-        <NicknameButton onClick={() => handleCheckNick(nickname)}>
-          Check <br /> Nickname
-        </NicknameButton>
-        {/* <CompleteButton> COMPLETE! </CompleteButton> */}
+        {!checknick ? (
+          <NicknameButton onClick={() => handleCheckNick(nickname)}>
+            Check <br /> Nickname
+          </NicknameButton>
+        ) : (
+          <CompleteButton> COMPLETE! </CompleteButton>
+        )}
       </PreviewFrame>
     </>
   );
@@ -56,7 +57,7 @@ const TitleText = styled.div`
   color: ${(props) => props.theme.colors.brown};
   font-family: 'BMHANNAPro';
   text-align: center;
-  font-size: 2em;
+  font-size: 3vw;
 `;
 
 const ProfileImage = styled(Image)`

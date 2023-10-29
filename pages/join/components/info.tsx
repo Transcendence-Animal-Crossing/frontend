@@ -6,10 +6,10 @@ import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from './profile';
 import pen from '../../../public/Icon/pen.png';
 
 const InfoContainer: React.FC<{
-  checknick: boolean;
+  message: string;
   onNicknameChange: (newNickname: string) => void;
   handleImageChange: (newIndex: number) => void;
-}> = ({ checknick, onNicknameChange, handleImageChange }) => {
+}> = ({ message, onNicknameChange, handleImageChange }) => {
   const [profileFrameWidth, setProfileFrameWidth] = useState(0);
   const imagePaths = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12];
 
@@ -47,7 +47,7 @@ const InfoContainer: React.FC<{
             required
           />
         </InputFrame>
-        {checknick ? <Text> 중복된 닉네임입니다. </Text> : null}
+        <Text> {message} </Text>
       </NicknameFrame>
       <DivisionBar />
       <ProfileFrame id="profile-frame" onLoad={handleProfileFrameWidth}>
