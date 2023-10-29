@@ -21,9 +21,10 @@ const PreviewContainer: React.FC<{
   nickname: string;
   profile: number;
   checknick: boolean;
+  uploadedImage: File | null;
   handleCheckNick: (newNickname: string) => void;
   handleComplete: (newNickname: string, profile: number) => void;
-}> = ({ nickname, profile, checknick, handleCheckNick, handleComplete }) => {
+}> = ({ nickname, profile, checknick, uploadedImage, handleCheckNick, handleComplete }) => {
   const imagePaths = [
     profile1,
     profile2,
@@ -44,7 +45,16 @@ const PreviewContainer: React.FC<{
     <>
       <PreviewFrame>
         <TitleText> [Preview] </TitleText>
-        <ProfileImage src={imagePaths[profile]} alt="Profile Image" />
+        {profile === 0 && uploadedImage ? (
+          <ProfileImage
+            src={URL.createObjectURL(uploadedImage)}
+            alt="Uploaded Image"
+            width={300}
+            height={300}
+          />
+        ) : (
+          <ProfileImage src={imagePaths[profile]} alt="Profile Image" />
+        )}
         <NameFrame>
           <NicknameFrame>
             {nickname ? (
@@ -90,10 +100,11 @@ const TitleText = styled.div`
 `;
 
 const ProfileImage = styled(Image)`
-  width: 40%;
+  width: 60%;
   height: auto;
   margin: 10px;
   gap: 1%;
+  border-radius: 50px;
 `;
 
 const NameFrame = styled.div`

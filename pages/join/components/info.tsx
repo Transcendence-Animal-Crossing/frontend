@@ -21,8 +21,9 @@ import pen from '../../../public/Icon/pen.png';
 const InfoContainer: React.FC<{
   message: string;
   onNicknameChange: (newNickname: string) => void;
-  handleImageChange: (newIndex: number) => void;
-}> = ({ message, onNicknameChange, handleImageChange }) => {
+  handleImageChange: (newIndex: number, e: any) => void;
+  handleFileInputChange: (e: any) => void;
+}> = ({ message, onNicknameChange, handleImageChange, handleFileInputChange }) => {
   const [profileFrameWidth, setProfileFrameWidth] = useState(0);
   const imagePaths = [
     profile1,
@@ -83,9 +84,15 @@ const InfoContainer: React.FC<{
             src={imagePath}
             alt={`Image ${index + 1}`}
             width={calculateImageWidth()}
-            onClick={() => handleImageChange(index)}
+            onClick={(e) => handleImageChange(index, e)}
           />
         ))}
+        <input
+          type="file"
+          id="file-input"
+          style={{ display: 'none' }}
+          onChange={handleFileInputChange}
+        />
       </ProfileFrame>
     </InfoFrame>
   );
