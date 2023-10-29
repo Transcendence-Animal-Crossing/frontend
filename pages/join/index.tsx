@@ -38,7 +38,7 @@ const JoinPage: React.FC = () => {
     } catch (error) {
       console.log('join err', error);
       setChecknick(false);
-      setMessage('중복된 닉네임입니다. ');
+      setMessage('중복된 닉네임입니다.');
     }
   };
 
