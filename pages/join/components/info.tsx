@@ -2,7 +2,20 @@ import React from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from './profile';
+import {
+  profile1,
+  profile2,
+  profile3,
+  profile4,
+  profile5,
+  profile6,
+  profile7,
+  profile8,
+  profile9,
+  profile10,
+  profile11,
+  profile12,
+} from './profile';
 import pen from '../../../public/Icon/pen.png';
 
 const InfoContainer: React.FC<{
@@ -11,7 +24,20 @@ const InfoContainer: React.FC<{
   handleImageChange: (newIndex: number) => void;
 }> = ({ message, onNicknameChange, handleImageChange }) => {
   const [profileFrameWidth, setProfileFrameWidth] = useState(0);
-  const imagePaths = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12];
+  const imagePaths = [
+    profile1,
+    profile2,
+    profile3,
+    profile4,
+    profile5,
+    profile6,
+    profile7,
+    profile8,
+    profile9,
+    profile10,
+    profile11,
+    profile12,
+  ];
 
   useEffect(() => {
     handleProfileFrameWidth();

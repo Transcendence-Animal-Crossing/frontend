@@ -2,15 +2,42 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from './profile';
+import {
+  profile1,
+  profile2,
+  profile3,
+  profile4,
+  profile5,
+  profile6,
+  profile7,
+  profile8,
+  profile9,
+  profile10,
+  profile11,
+  profile12,
+} from './profile';
 
 const PreviewContainer: React.FC<{
   nickname: string;
   profile: number;
   checknick: boolean;
   handleCheckNick: (newNickname: string) => void;
-}> = ({ nickname, profile, checknick, handleCheckNick }) => {
-  const imagePaths = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12];
+  handleComplete: (newNickname: string, profile: number) => void;
+}> = ({ nickname, profile, checknick, handleCheckNick, handleComplete }) => {
+  const imagePaths = [
+    profile1,
+    profile2,
+    profile3,
+    profile4,
+    profile5,
+    profile6,
+    profile7,
+    profile8,
+    profile9,
+    profile10,
+    profile11,
+    profile12,
+  ];
   const { data: session } = useSession();
 
   return (
@@ -34,7 +61,9 @@ const PreviewContainer: React.FC<{
             Check <br /> Nickname
           </NicknameButton>
         ) : (
-          <CompleteButton> COMPLETE! </CompleteButton>
+          <CompleteButton onClick={() => handleComplete(nickname, profile)}>
+            COMPLETE!
+          </CompleteButton>
         )}
       </PreviewFrame>
     </>
