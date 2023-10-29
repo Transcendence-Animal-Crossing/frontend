@@ -84,7 +84,7 @@ const PreviewFrame = styled.div`
 
 const TitleText = styled.div`
   color: ${(props) => props.theme.colors.brown};
-  font-family: 'BMHANNAPro';
+  font-family: 'Giants';
   text-align: center;
   font-size: 3vw;
 `;
@@ -114,14 +114,14 @@ const NicknameFrame = styled.div`
 
 const NicknameText = styled.div`
   color: ${(props) => props.theme.colors.white};
-  font-family: 'BMHANNAPro';
+  font-family: 'GiantsLight';
   text-align: center;
   font-size: large;
 `;
 
 const IntraText = styled.div`
   color: ${(props) => props.theme.colors.brown};
-  font-family: 'BMHANNAPro';
+  font-family: 'GiantsLight';
   text-align: center;
   font-size: medium;
 `;
@@ -135,7 +135,7 @@ const DivisionBar = styled.div`
 const NicknameButton = styled.div`
   width: 60%;
   height: 10%;
-  font-family: 'BMHANNAPro';
+  font-family: 'GiantsBold';
   background-color: #f7cd67;
   color: #7a5025;
   padding: 0.5vw 1vw;
@@ -151,7 +151,7 @@ const NicknameButton = styled.div`
 const CompleteButton = styled.div`
   width: 60%;
   height: 10%;
-  font-family: 'BMHANNAPro';
+  font-family: 'GiantsBold';
   background-color: #f7cd67;
   color: #7a5025;
   padding: 0.5vw 1vw;

@@ -105,7 +105,7 @@ const Room = styled.div`
 
 const RoomTitle = styled.div`
   color: ${(props) => props.theme.colors.brown};
-  font-family: 'BMHANNAPro';
+  font-family: 'Giants';
   font-size: 2vw;
   display: flex;
   align-items: center;
@@ -117,6 +117,7 @@ const RoomInfo = styled.div`
   font-size: 1vw;
   display: flex;
   flex-direction: column;
+  line-height: 1.2;
 `;
 
 const RoomInfoText = styled.div`
@@ -128,7 +129,7 @@ const RoomInfoText = styled.div`
 
 const ColoredText = styled.p`
   color: ${(props) => props.theme.colors[props.color]};
-  font-family: 'BMHANNAPro';
+  font-family: 'GiantsLight';
 `;
 
 const LockImage = styled(Image)`

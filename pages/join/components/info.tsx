@@ -157,7 +157,7 @@ const Input = styled.input.attrs({ required: true })`
 
 const Text = styled.div`
   color: #fc736d;
-  font-family: 'BMHANNAAir';
+  font-family: 'GiantsLight';
   font-size: 1vw;
 `;
 

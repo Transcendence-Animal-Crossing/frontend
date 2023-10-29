@@ -71,7 +71,7 @@ const InfoFrame = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
+  gap: 8px;
 `;
 
 const TitleFrame = styled.div`
@@ -81,13 +81,13 @@ const TitleFrame = styled.div`
   padding-right: 1.5vw;
   align-items: center;
   color: ${(props) => props.theme.colors.ivory};
-  font-family: 'BMHANNAPro';
+  font-family: 'Giants';
   font-size: 3vh;
 `;
 
 const SubText = styled.p`
   color: ${(props) => props.theme.colors.brown05};
-  font-family: 'BMHANNAPro';
+  font-family: 'GiantsLight';
   font-size: 2vh;
 `;
 

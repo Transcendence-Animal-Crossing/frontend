@@ -243,7 +243,7 @@ const CompleteButtonFrame = styled.div`
 const CompleteButton = styled.div`
   width: auto;
   height: auto;
-  font-family: 'BMHANNAPro';
+  font-family: 'GiantsLight';
   background-color: #f7cd67;
   color: #7a5025;
   padding: 0.5vw 1vw;
