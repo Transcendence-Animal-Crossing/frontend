@@ -7,22 +7,12 @@ import SelectLoginImage from '../../public/Login/selectLogin.png';
 import SelectNoImage from '../../public/Login/selectNo.png';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import Container from '../../components/columnLayout';
 
 const LoginPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);
   const [loginButtonRect, setLoginButtonRect] = useState<DOMRect | null>(null);
   const loginButtonRef = useRef<HTMLDivElement | null>(null);
-  const { data: session } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (session) {
-      console.log(session);
-      router.push('http://localhost:3000/');
-    }
-  });
 
   useEffect(() => {
     if (loginButtonRef.current) {

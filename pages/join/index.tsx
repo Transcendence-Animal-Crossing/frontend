@@ -73,6 +73,7 @@ const JoinPage: React.FC = () => {
           avatar: profilePath,
         });
       }
+      router.push('http://localhost:3000/');
     } catch (error) {
       console.log('join err', error);
       setChecknick(false);
