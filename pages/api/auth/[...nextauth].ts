@@ -37,8 +37,6 @@ export const authOptions: NextAuthOptions = {
           });
           token.accessToken = response.headers.authorization.replace('Bearer ', '');
           console.log(response);
-
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token.accessToken}`;
         } catch (error) {
           console.error('jwt error:', error);
           token.accessToken = 'fail';

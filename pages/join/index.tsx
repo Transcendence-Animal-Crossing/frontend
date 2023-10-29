@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import Container from '../../components/rowLayout';
 import InfoContainer from './components/info';
 import PreviewContainer from './components/preview';
+import axiosInstance from '../../utils/axiosInstance';
 
 const JoinPage: React.FC = () => {
   const [nickname, setNickname] = useState('');
@@ -23,21 +23,7 @@ const JoinPage: React.FC = () => {
 
   const handleCheckNick = async (newNickname: string) => {
     try {
-      const apiUrl = 'http://localhost:8080/users/nickname';
-      // const response = await axios.post(apiUrl, {
-      //   nickName: nickname,
-      // });
-      const response = await axios.post(
-        apiUrl,
-        {
-          nickName: nickname,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-        }
-      );
+      const response = await axiosInstance.post('/users/nickname');
       console.log(response);
       setChecknick(true);
     } catch (error) {
