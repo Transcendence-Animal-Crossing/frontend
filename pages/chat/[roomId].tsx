@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useSocket } from "../../components/SocketProvider";
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useSocket } from '../../utils/SocketProvider';
 
 const Chat = () => {
   const { socket } = useSocket();
@@ -11,18 +11,18 @@ const Chat = () => {
 
   useEffect(() => {
     if (socket) {
-      console.log("Room ID:", roomId);
+      console.log('Room ID:', roomId);
 
-      socket.on("room-join", (response) => {
+      socket.on('room-join', (response) => {
         console.log(response);
       });
 
-      socket.on("room-detail", (response) => {
-        console.log("room-detail :", response);
+      socket.on('room-detail', (response) => {
+        console.log('room-detail :', response);
         setUserlist(response.ParticipantData);
       });
     } else {
-      router.push("http://localhost:3000/chat/");
+      router.push('http://localhost:3000/chat/');
     }
   }, []);
 

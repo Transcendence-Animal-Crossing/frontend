@@ -1,41 +1,39 @@
-import styled from "styled-components";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useSocket } from "../../../components/SocketProvider";
-import { useRouter } from "next/router";
-import pen from "../../../public/Icon/pen.png";
-import info from "../../../public/Icon/info.png";
-import unlock from "../../../public/Chat/unlock.png";
-import lock from "../../../public/Chat/lock.png";
-import secret from "../../../public/Chat/secret.png";
+import styled from 'styled-components';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useSocket } from '../../../utils/SocketProvider';
+import { useRouter } from 'next/router';
+import pen from '../../../public/Icon/pen.png';
+import info from '../../../public/Icon/info.png';
+import unlock from '../../../public/Chat/unlock.png';
+import lock from '../../../public/Chat/lock.png';
+import secret from '../../../public/Chat/secret.png';
 
 const createRoomModal: React.FC<{
   handleCloseModal: () => void;
   createButtonRect: DOMRect;
 }> = ({ handleCloseModal, createButtonRect }) => {
   const { socket } = useSocket();
-  const [title, setTitle] = useState("");
-  const [password, setPassword] = useState("");
-  const [mode, setMode] = useState("PUBLIC");
+  const [title, setTitle] = useState('');
+  const [password, setPassword] = useState('');
+  const [mode, setMode] = useState('PUBLIC');
   const [isUnlockButtonPressed, setIsUnlockButtonPressed] = useState(true);
   const [isLockButtonPressed, setIsLockButtonPressed] = useState(false);
   const [isSecretButtonPressed, setIsSecretButtonPressed] = useState(false);
   const router = useRouter();
   const overlayLeft = `${createButtonRect.right - window.innerWidth * 0.2}px`;
-  const overlayTop = `${
-    createButtonRect.top + createButtonRect.height * 1.5
-  }px`;
+  const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
 
   const handleCreateRoom = async () => {
     if (socket) {
       await socket
-        .emitWithAck("room-create", {
+        .emitWithAck('room-create', {
           title: title,
           mode: mode,
           password: password,
         })
         .then((response) => {
-          console.log("room-create : ", response);
+          console.log('room-create : ', response);
           const responseRoomId = response.body.id;
           router.push(`chat/${responseRoomId}`);
         });
@@ -60,21 +58,21 @@ const createRoomModal: React.FC<{
     setIsUnlockButtonPressed(true);
     setIsLockButtonPressed(false);
     setIsSecretButtonPressed(false);
-    setMode("PUBLIC");
+    setMode('PUBLIC');
   };
 
   const handleLockButton = () => {
     setIsUnlockButtonPressed(false);
     setIsLockButtonPressed(true);
     setIsSecretButtonPressed(false);
-    setMode("PROTECTED");
+    setMode('PROTECTED');
   };
 
   const handleSecretButton = () => {
     setIsUnlockButtonPressed(false);
     setIsLockButtonPressed(false);
     setIsSecretButtonPressed(true);
-    setMode("PRIVATE");
+    setMode('PRIVATE');
   };
 
   return (
@@ -94,22 +92,13 @@ const createRoomModal: React.FC<{
             />
           </InputFrame>
           <ButtonRowFrame>
-            <ButtonFrame
-              onClick={handleUnlockButton}
-              isPressed={isUnlockButtonPressed}
-            >
+            <ButtonFrame onClick={handleUnlockButton} isPressed={isUnlockButtonPressed}>
               <ButtonImage src={unlock} alt="unlock" />
             </ButtonFrame>
-            <ButtonFrame
-              onClick={handleLockButton}
-              isPressed={isLockButtonPressed}
-            >
+            <ButtonFrame onClick={handleLockButton} isPressed={isLockButtonPressed}>
               <ButtonImage src={lock} alt="lock" />
             </ButtonFrame>
-            <ButtonFrame
-              onClick={handleSecretButton}
-              isPressed={isSecretButtonPressed}
-            >
+            <ButtonFrame onClick={handleSecretButton} isPressed={isSecretButtonPressed}>
               <ButtonImage src={secret} alt="secret" />
             </ButtonFrame>
           </ButtonRowFrame>
@@ -136,9 +125,7 @@ const createRoomModal: React.FC<{
             )}
           </>
           <CompleteButtonFrame>
-            <CompleteButton onClick={handleCreateRoom}>
-              채팅방 생성
-            </CompleteButton>
+            <CompleteButton onClick={handleCreateRoom}>채팅방 생성</CompleteButton>
           </CompleteButtonFrame>
         </Content>
       </Container>
@@ -212,7 +199,7 @@ const Input = styled.input.attrs({ required: true })`
   border: none;
   cursor: pointer;
   color: ${(props) => props.theme.colors.brown};
-  font-family: "BMHANNAAir";
+  font-family: 'BMHANNAAir';
   font-size: 2vh;
   &:focus {
     outline: none;
@@ -256,7 +243,7 @@ const CompleteButtonFrame = styled.div`
 const CompleteButton = styled.div`
   width: auto;
   height: auto;
-  font-family: "BMHANNAPro";
+  font-family: 'GiantsLight';
   background-color: #f7cd67;
   color: #7a5025;
   padding: 0.5vw 1vw;
@@ -269,7 +256,7 @@ const CompleteButton = styled.div`
 `;
 
 const Text = styled.p`
-  font-family: "BMHANNAAir";
+  font-family: 'BMHANNAAir';
   font-size: 1vw;
   color: ${(props) => props.theme.colors.brown};
 `;

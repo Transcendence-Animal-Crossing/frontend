@@ -1,28 +1,18 @@
-import styled from "styled-components";
-import Image from "next/image";
-import Logo from "../../public/Login/logo.png";
-import ButtonImage from "../../public/Login/loginplz.png";
-import OverlayImage from "../../public/Login/overlay.png";
-import SelectLoginImage from "../../public/Login/selectLogin.png";
-import SelectNoImage from "../../public/Login/selectNo.png";
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import Container from "../../components/columnLayout";
+import styled from 'styled-components';
+import Image from 'next/image';
+import Logo from '../../public/Login/logo.png';
+import ButtonImage from '../../public/Login/loginplz.png';
+import OverlayImage from '../../public/Login/overlay.png';
+import SelectLoginImage from '../../public/Login/selectLogin.png';
+import SelectNoImage from '../../public/Login/selectNo.png';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
+import Container from '../../components/columnLayout';
 
 const LoginPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);
   const [loginButtonRect, setLoginButtonRect] = useState<DOMRect | null>(null);
   const loginButtonRef = useRef<HTMLDivElement | null>(null);
-  const { data: session } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (session) {
-      console.log(session);
-      router.push("http://localhost:3000/");
-    }
-  });
 
   useEffect(() => {
     if (loginButtonRef.current) {
@@ -45,10 +35,7 @@ const LoginPage: React.FC = () => {
         </LoginButton>
       </Container>
       {clickState && loginButtonRect && (
-        <OverlayWindow
-          loginButtonRect={loginButtonRect}
-          handleLoginView={handleLoginView}
-        />
+        <OverlayWindow loginButtonRect={loginButtonRect} handleLoginView={handleLoginView} />
       )}
     </>
   );
@@ -83,13 +70,11 @@ const OverlayWindow = ({
   handleLoginView: () => void;
 }) => {
   const router = useRouter();
-  const overlayRight = `${
-    loginButtonRect.right - loginButtonRect.width * 0.2
-  }px`;
+  const overlayRight = `${loginButtonRect.right - loginButtonRect.width * 0.2}px`;
   const overlayTop = `${loginButtonRect.top - loginButtonRect.height * 0.3}px`;
 
   const handleLoginChoice = async () => {
-    router.push("http://localhost:3000/login/choice");
+    router.push('http://localhost:3000/login/choice');
   };
 
   return (

@@ -1,23 +1,60 @@
-import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from "./profile";
-import buttonImage from "../../../public/completeButton.png";
+import styled from 'styled-components';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import {
+  profile1,
+  profile2,
+  profile3,
+  profile4,
+  profile5,
+  profile6,
+  profile7,
+  profile8,
+  profile9,
+  profile10,
+  profile11,
+  profile12,
+} from './profile';
 
-const PreviewContainer: React.FC<{ nickname: string; profile: number }> = ({
-  nickname,
-  profile,
-}) => {
-  const imagePaths = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12];
+const PreviewContainer: React.FC<{
+  nickname: string;
+  profile: number;
+  checknick: boolean;
+  uploadedImage: File | null;
+  handleCheckNick: (newNickname: string) => void;
+  handleComplete: (newNickname: string, profile: number) => void;
+}> = ({ nickname, profile, checknick, uploadedImage, handleCheckNick, handleComplete }) => {
+  const imagePaths = [
+    profile1,
+    profile2,
+    profile3,
+    profile4,
+    profile5,
+    profile6,
+    profile7,
+    profile8,
+    profile9,
+    profile10,
+    profile11,
+    profile12,
+  ];
   const { data: session } = useSession();
 
   return (
     <>
       <PreviewFrame>
         <TitleText> [Preview] </TitleText>
-        <ProfileImage src={imagePaths[profile]} alt="Profile Image" />
+        {profile === 0 && uploadedImage ? (
+          <ProfileImage
+            src={URL.createObjectURL(uploadedImage)}
+            alt="Uploaded Image"
+            width={300}
+            height={300}
+          />
+        ) : (
+          <ProfileImage src={imagePaths[profile]} alt="Profile Image" />
+        )}
         <NameFrame>
           <NicknameFrame>
             {nickname ? (
@@ -29,9 +66,15 @@ const PreviewContainer: React.FC<{ nickname: string; profile: number }> = ({
           {session ? <IntraText> {session.user.login} </IntraText> : null}
         </NameFrame>
         <DivisionBar />
-        <CompleteButton>
-          <CompleteButtonImg src={buttonImage} alt="complete" />
-        </CompleteButton>
+        {!checknick ? (
+          <NicknameButton onClick={() => handleCheckNick(nickname)}>
+            Check <br /> Nickname
+          </NicknameButton>
+        ) : (
+          <CompleteButton onClick={() => handleComplete(nickname, profile)}>
+            COMPLETE!
+          </CompleteButton>
+        )}
       </PreviewFrame>
     </>
   );
@@ -51,16 +94,17 @@ const PreviewFrame = styled.div`
 
 const TitleText = styled.div`
   color: ${(props) => props.theme.colors.brown};
-  font-family: "BMHANNAPro";
+  font-family: 'Giants';
   text-align: center;
-  font-size: 2em;
+  font-size: 3vw;
 `;
 
 const ProfileImage = styled(Image)`
-  width: 40%;
+  width: 60%;
   height: auto;
   margin: 10px;
   gap: 1%;
+  border-radius: 50px;
 `;
 
 const NameFrame = styled.div`
@@ -81,14 +125,14 @@ const NicknameFrame = styled.div`
 
 const NicknameText = styled.div`
   color: ${(props) => props.theme.colors.white};
-  font-family: "BMHANNAPro";
+  font-family: 'GiantsLight';
   text-align: center;
   font-size: large;
 `;
 
 const IntraText = styled.div`
   color: ${(props) => props.theme.colors.brown};
-  font-family: "BMHANNAPro";
+  font-family: 'GiantsLight';
   text-align: center;
   font-size: medium;
 `;
@@ -99,14 +143,34 @@ const DivisionBar = styled.div`
   background-color: ${(props) => props.theme.colors.brown};
 `;
 
-const CompleteButton = styled.div`
-  width: 70%;
-  height: auto;
-  cursor: pointer;
-  border: none;
+const NicknameButton = styled.div`
+  width: 60%;
+  height: 10%;
+  font-family: 'GiantsBold';
+  background-color: #f7cd67;
+  color: #7a5025;
+  padding: 0.5vw 1vw;
+  border-radius: 50px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 2vw;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const CompleteButtonImg = styled(Image)`
-  width: 100%;
-  height: auto;
+const CompleteButton = styled.div`
+  width: 60%;
+  height: 10%;
+  font-family: 'GiantsBold';
+  background-color: #f7cd67;
+  color: #7a5025;
+  padding: 0.5vw 1vw;
+  border-radius: 50px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 2vw;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

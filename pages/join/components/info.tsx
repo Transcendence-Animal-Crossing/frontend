@@ -1,20 +1,55 @@
-import React from "react";
-import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 } from "./profile";
-import pen from "../../../public/Icon/pen.png";
+import React from 'react';
+import styled from 'styled-components';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import {
+  profile1,
+  profile2,
+  profile3,
+  profile4,
+  profile5,
+  profile6,
+  profile7,
+  profile8,
+  profile9,
+  profile10,
+  profile11,
+  profile12,
+} from './profile';
+import pen from '../../../public/Icon/pen.png';
 
 const InfoContainer: React.FC<{
-  checknick: boolean;
+  message: string;
   onNicknameChange: (newNickname: string) => void;
-  handleImageChange: (newIndex: number) => void;
-}> = ({ checknick, onNicknameChange, handleImageChange }) => {
+  handleImageChange: (newIndex: number, e: any) => void;
+  handleFileInputChange: (e: any) => void;
+}> = ({ message, onNicknameChange, handleImageChange, handleFileInputChange }) => {
   const [profileFrameWidth, setProfileFrameWidth] = useState(0);
-  const imagePaths = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12];
+  const imagePaths = [
+    profile1,
+    profile2,
+    profile3,
+    profile4,
+    profile5,
+    profile6,
+    profile7,
+    profile8,
+    profile9,
+    profile10,
+    profile11,
+    profile12,
+  ];
+
+  useEffect(() => {
+    handleProfileFrameWidth();
+    window.addEventListener('resize', handleProfileFrameWidth);
+    return () => {
+      window.removeEventListener('resize', handleProfileFrameWidth);
+    };
+  }, []);
 
   const handleProfileFrameWidth = () => {
-    const profileFrame = document.getElementById("profile-frame");
+    const profileFrame = document.getElementById('profile-frame');
     if (profileFrame) {
       setProfileFrameWidth(profileFrame.clientWidth);
     }
@@ -39,7 +74,7 @@ const InfoContainer: React.FC<{
             required
           />
         </InputFrame>
-        {checknick ? <Text> 중복된 닉네임입니다. </Text> : null}
+        <Text> {message} </Text>
       </NicknameFrame>
       <DivisionBar />
       <ProfileFrame id="profile-frame" onLoad={handleProfileFrameWidth}>
@@ -49,9 +84,15 @@ const InfoContainer: React.FC<{
             src={imagePath}
             alt={`Image ${index + 1}`}
             width={calculateImageWidth()}
-            onClick={() => handleImageChange(index)}
+            onClick={(e) => handleImageChange(index, e)}
           />
         ))}
+        <input
+          type="file"
+          id="file-input"
+          style={{ display: 'none' }}
+          onChange={handleFileInputChange}
+        />
       </ProfileFrame>
     </InfoFrame>
   );
@@ -114,7 +155,7 @@ const Input = styled.input.attrs({ required: true })`
   border: none;
   cursor: pointer;
   color: ${(props) => props.theme.colors.brown};
-  font-family: "BMHANNAAir";
+  font-family: 'BMHANNAAir';
   font-size: 1.5vw;
   &:focus {
     outline: none;
@@ -123,7 +164,7 @@ const Input = styled.input.attrs({ required: true })`
 
 const Text = styled.div`
   color: #fc736d;
-  font-family: "BMHANNAAir";
+  font-family: 'GiantsLight';
   font-size: 1vw;
 `;
 
