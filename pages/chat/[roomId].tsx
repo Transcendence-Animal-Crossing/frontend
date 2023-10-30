@@ -44,7 +44,7 @@ const Chat = () => {
       const handleRoomMessage = (response) => {
         const text = response.text;
         console.log('response.text : ' + text);
-        setMessages((prevMessages) => [...prevMessages, text]);
+        setMessages((prevMessages) => [...prevMessages, response]);
       };
       socket.on('room-message', handleRoomMessage);
 
@@ -55,6 +55,12 @@ const Chat = () => {
       router.push('http://localhost:3000/chat/');
     }
   }, [socket]);
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  };
 
   const sendMessage = () => {
     if (socket && messageText) {
@@ -73,7 +79,11 @@ const Chat = () => {
       <ChatListFrame>
         <MessageListFrame>
           {messages.map((message, index) => (
-            <Message key={index}>{message}</Message>
+            <MessageFrame senderId={message.senderId} currentUser={session?.user.user_id}>
+              <Message key={index} senderId={message.senderId} currentUser={session?.user.user_id}>
+                {message.senderId} : {message.text}
+              </Message>
+            </MessageFrame>
           ))}
         </MessageListFrame>
         <InputFrame>
@@ -82,6 +92,7 @@ const Chat = () => {
             placeholder="메세지를 입력하세요"
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
+            onKeyPress={handleKeyPress}
           />
           <ButtonFrame onClick={sendMessage}>
             <ButtonImage src={send} alt="send" />
@@ -105,25 +116,38 @@ const ChatListFrame = styled.div`
 `;
 
 const MessageListFrame = styled.div`
-  width: 70%;
+  width: 90%;
   height: auto;
+  padding: 2%;
   overflow: auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  align-content: flex-start;
   overflow-x: hidden;
 `;
 
+const MessageFrame = styled.div`
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: ${(props) => (props.senderId === props.currentUser ? 'row-reverse' : 'row')};
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const Message = styled.div`
-  background-color: ${(props) => props.theme.colors.ivory};
-  color: ${(props) => props.theme.colors.brown};
+  width: auto;
+  max-width: 50%;
+  height: auto;
+  background-color: ${(props) =>
+    props.senderId === props.currentUser ? props.theme.colors.brown : props.theme.colors.ivory};
+  color: ${(props) =>
+    props.senderId === props.currentUser ? props.theme.colors.ivory : props.theme.colors.brown};
   font-family: 'GiantsLight';
   font-size: 2vh;
   border-radius: 10px;
   padding: 2%;
-  margin: 2% 0;
-  width: 80%;
+  margin: 0.5% 0;
 `;
 
 const InputFrame = styled.div`
@@ -131,7 +155,7 @@ const InputFrame = styled.div`
   height: auto;
   background-color: ${(props) => props.theme.colors.ivory};
   border-radius: 10px;
-  padding: 2%;
+  padding: 1.5%;
   border: none;
   cursor: pointer;
   display: flex;
@@ -147,7 +171,7 @@ const Input = styled.input.attrs({ required: true })`
   cursor: pointer;
   color: ${(props) => props.theme.colors.brown};
   font-family: 'BMHANNAAir';
-  font-size: 2vh;
+  font-size: 2.5vh;
   &:focus {
     outline: none;
   }
