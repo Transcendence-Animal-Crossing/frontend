@@ -7,7 +7,7 @@ import info from '../../../public/Icon/info.png';
 import plus from '../../../public/Icon/plus.png';
 import home from '../../../public/Icon/home.png';
 
-const Header = () => {
+const Header: React.FC<{ roomTitle: string }> = ({ roomTitle }) => {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [createButtonRect, setCreateButtonRect] = useState<DOMRect | null>(null);
   const CreateButtonRef = useRef<HTMLDivElement | null>(null);
@@ -33,7 +33,7 @@ const Header = () => {
     <>
       <HeaderFrame>
         <InfoFrame>
-          <TitleFrame>Chatting Room</TitleFrame>
+          <TitleFrame> {roomTitle} </TitleFrame>
         </InfoFrame>
         <ButtonFrame>
           <Button onClick={handleOpenCreate} ref={CreateButtonRef}>

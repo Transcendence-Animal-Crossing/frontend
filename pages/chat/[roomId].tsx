@@ -11,6 +11,7 @@ import send from '../../public/Chat/send.png';
 const Chat = () => {
   const { socket } = useSocket();
   const [userlist, setUserlist] = useState([]);
+  const [roomTitle, setRoomTitle] = useState('');
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
   const router = useRouter();
@@ -20,6 +21,25 @@ const Chat = () => {
   useEffect(() => {
     if (socket) {
       console.log('Room ID:', roomId);
+
+      if (!roomTitle) {
+        if (socket) {
+          console.log('roomId:', roomId);
+          socket
+            .emitWithAck('room-detail', {
+              roomId: roomId,
+            })
+            .then((response) => {
+              if (response.status === 200) {
+                console.log(response);
+                setUserlist(response.body);
+                setRoomTitle(response.body.title);
+              } else {
+                console.log('room-detail : Failed', response);
+              }
+            });
+        }
+      }
 
       const handleRoomMessage = (response) => {
         const text = response.text;
@@ -36,10 +56,6 @@ const Chat = () => {
     }
   }, [socket]);
 
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
-
   const sendMessage = () => {
     if (socket && messageText) {
       socket.emit('room-message', {
@@ -53,9 +69,13 @@ const Chat = () => {
 
   return (
     <Container>
-      <Header />
+      <Header roomTitle={roomTitle} />
       <ChatListFrame>
-        <>채 팅</>
+        <MessageListFrame>
+          {messages.map((message, index) => (
+            <Message key={index}>{message}</Message>
+          ))}
+        </MessageListFrame>
         <InputFrame>
           <Input
             type="text"
@@ -82,7 +102,28 @@ const ChatListFrame = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+`;
+
+const MessageListFrame = styled.div`
+  width: 70%;
+  height: auto;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   overflow-x: hidden;
+`;
+
+const Message = styled.div`
+  background-color: ${(props) => props.theme.colors.ivory};
+  color: ${(props) => props.theme.colors.brown};
+  font-family: 'GiantsLight';
+  font-size: 2vh;
+  border-radius: 10px;
+  padding: 2%;
+  margin: 2% 0;
+  width: 80%;
 `;
 
 const InputFrame = styled.div`
