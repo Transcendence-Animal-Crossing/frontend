@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
 import { useSession } from 'next-auth/react';
 import Container from '../../components/columnNevLayout';
 import Header from './components/chatRoomHeader';
-import send from '../../public/Chat/send.png';
+import MessageContainer from './components/renderMessage';
+import InputContainer from './components/inputMessage';
 
 const Chat = () => {
   const { socket } = useSocket();
@@ -73,31 +73,21 @@ const Chat = () => {
     }
   };
 
+  const handleMessageTextChange = (newMessage: string) => {
+    setMessageText(newMessage);
+  };
+
   return (
     <Container>
       <Header roomTitle={roomTitle} />
       <ChatListFrame>
-        <MessageListFrame>
-          {messages.map((message, index) => (
-            <MessageFrame senderId={message.senderId} currentUser={session?.user.user_id}>
-              <Message key={index} senderId={message.senderId} currentUser={session?.user.user_id}>
-                {message.senderId} : {message.text}
-              </Message>
-            </MessageFrame>
-          ))}
-        </MessageListFrame>
-        <InputFrame>
-          <Input
-            type="text"
-            placeholder="메세지를 입력하세요"
-            value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <ButtonFrame onClick={sendMessage}>
-            <ButtonImage src={send} alt="send" />
-          </ButtonFrame>
-        </InputFrame>
+        <MessageContainer messages={messages} />
+        <InputContainer
+          messageText={messageText}
+          setMessageText={handleMessageTextChange}
+          handleKeyPress={handleKeyPress}
+          sendMessage={sendMessage}
+        />
       </ChatListFrame>
     </Container>
   );
@@ -113,81 +103,4 @@ const ChatListFrame = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-`;
-
-const MessageListFrame = styled.div`
-  width: 90%;
-  height: auto;
-  padding: 2%;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  align-content: flex-start;
-  overflow-x: hidden;
-`;
-
-const MessageFrame = styled.div`
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-direction: ${(props) => (props.senderId === props.currentUser ? 'row-reverse' : 'row')};
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const Message = styled.div`
-  width: auto;
-  max-width: 50%;
-  height: auto;
-  background-color: ${(props) =>
-    props.senderId === props.currentUser ? props.theme.colors.brown : props.theme.colors.ivory};
-  color: ${(props) =>
-    props.senderId === props.currentUser ? props.theme.colors.ivory : props.theme.colors.brown};
-  font-family: 'GiantsLight';
-  font-size: 2vh;
-  border-radius: 10px;
-  padding: 2%;
-  margin: 0.5% 0;
-`;
-
-const InputFrame = styled.div`
-  width: 90%;
-  height: auto;
-  background-color: ${(props) => props.theme.colors.ivory};
-  border-radius: 10px;
-  padding: 1.5%;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const Input = styled.input.attrs({ required: true })`
-  width: 100%;
-  height: auto;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  color: ${(props) => props.theme.colors.brown};
-  font-family: 'BMHANNAAir';
-  font-size: 2.5vh;
-  &:focus {
-    outline: none;
-  }
-`;
-
-const ButtonFrame = styled.div`
-  width: 3vw;
-  height: 3.5vh;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ButtonImage = styled(Image)`
-  height: 3vh;
-  width: auto;
-  cursor: pointer;
 `;
