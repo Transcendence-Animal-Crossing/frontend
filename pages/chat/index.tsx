@@ -7,7 +7,7 @@ import Container from '../../components/columnNevLayout';
 import Header from './components/lobbyHeader';
 import Lock from '../../public/Chat/lock_gold.png';
 
-const Chat = () => {
+const ChatLobby = () => {
   const { socket } = useSocket();
   const [roomlist, setRoomlist] = useState([]);
   const router = useRouter();
@@ -75,7 +75,7 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default ChatLobby;
 
 const RoomListFrame = styled.div`
   width: 70%;
