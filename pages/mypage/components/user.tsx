@@ -8,18 +8,21 @@ import info from "../../../public/Icon/info.png";
 
 const UserContainer: React.FC<{
   nickname: string;
-  // profile: number;
-}> = ({ nickname }) => {
+  tierIndex: number;
+  totalGames: number;
+  totalWins: number;
+  winRate: number;
+  avatar: string;
+}> = ({ nickname, tierIndex, totalGames, totalWins, winRate, avatar }) => {
   const { data: session } = useSession();
-  const stat = {
-    totalGames: 2,
-    totalWins: 2,
-    winRate: 100,
-  };
+  // console.log(session.user.user_id);
+
+  const tierImages = [bronze, silver, gold, platinum, diamond];
+  const tierTexts = ["브론즈", "실버", "골드", "플래티넘", "다이아몬드"];
 
   return (
     <UserProfile>
-      <ProfileImage src={profile12} alt="Profile Image" />
+      <ProfileImage src={avatar} alt="Profle Image" width={100} height={100} />
       <NameFrame>
         <NicknameFrame>
           {nickname ? (
@@ -32,23 +35,32 @@ const UserContainer: React.FC<{
       </NameFrame>
       <DivisionBar />
       <TierFrame>
-        <TierImage src={bronze} alt="Bronze" />
-        <TierText> 브론즈 </TierText>
+        {session ? (
+          <TierImage
+            src={tierImages[tierIndex]}
+            alt="Tier Image"
+            width={30}
+            height={30}
+          />
+        ) : (
+          <TierImage src={tierImages[tierIndex]} alt="default Image" />
+        )}
+        <TierText> {tierTexts[tierIndex]} </TierText>
         <InfoImage src={info} alt="info" />
       </TierFrame>
       <DivisionBar />
       <MatchStatFrame>
         <MatchStatText>
           <MatchStatName> 경기 수 </MatchStatName>
-          <MatchStatNumber> {stat.totalGames} </MatchStatNumber>
+          <MatchStatNumber> {totalGames} </MatchStatNumber>
         </MatchStatText>
         <MatchStatText>
           <MatchStatName> 승리 </MatchStatName>
-          <MatchStatNumber> {stat.totalWins} </MatchStatNumber>
+          <MatchStatNumber> {totalWins} </MatchStatNumber>
         </MatchStatText>
         <MatchStatText>
           <MatchStatName> 승률 </MatchStatName>
-          <MatchStatNumber> {stat.winRate}% </MatchStatNumber>
+          <MatchStatNumber> {winRate}% </MatchStatNumber>
         </MatchStatText>
       </MatchStatFrame>
       <DivisionBar />
@@ -133,7 +145,7 @@ const TierText = styled.div`
   font-family: "GiantsLight";
   vertical-align: middle;
   text-align: center;
-  font-size: x-large;
+  font-size: large;
   margin: auto 0;
 `;
 
