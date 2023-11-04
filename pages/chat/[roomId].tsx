@@ -63,10 +63,18 @@ const Chat = () => {
         console.log('response.text : ' + text);
         setMessages((prevMessages) => [...prevMessages, response]);
       };
+
+      const handleRoomJoin = (response: ParticipantData) => {
+        console.log(response);
+        setUserlist((prevMessages) => [...prevMessages, response]);
+      };
+
       socket.on('room-message', handleRoomMessage);
+      socket.on('room-join', handleRoomJoin);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
+        socket.off('room-join', handleRoomJoin);
       };
     } else {
       router.push('http://localhost:3000/chat/');
