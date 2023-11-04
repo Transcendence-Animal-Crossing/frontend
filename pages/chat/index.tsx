@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
 import Container from '../../components/columnNevLayout';
 import Header from '../../components/chat/lobbyHeader';
+import JoinRoomModal from '../../components/chat/joinRoomModal';
+import FailRoomModal from '../../components/chat/failRoomModal';
 import Lock from '../../public/Chat/lock_gold.png';
 
 interface RoomOwnerData {
@@ -25,6 +27,9 @@ interface RoomListData {
 const ChatLobby = () => {
   const { socket } = useSocket();
   const [roomlist, setRoomlist] = useState<RoomListData[]>([]);
+  const [openJoinModal, setOpenJoinModal] = useState<boolean>(false);
+  const [openFailModal, setOpenFailModal] = useState<boolean>(false);
+  const [joinRoomId, setJoinRoomId] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -43,22 +48,40 @@ const ChatLobby = () => {
 
   const handleRoomJoin = async (roomId: string) => {
     if (socket) {
-      await socket
-        .emitWithAck('room-join', {
-          roomId: roomId,
-          password: '0',
-        })
-        .then((response) => {
-          if (response.status === 200) {
-            console.log('room-join : Success', response);
-            const responseRoomId = response.body.id;
-            router.push(`chat/${responseRoomId}`);
-          } else {
-            console.log('room-join : Failed', response);
-            // Join 실패 모달
-          }
-        });
+      const room = roomlist.find((room) => room.id === roomId);
+      if (room?.mode == 'PROTECTED') {
+        setJoinRoomId(roomId);
+        setOpenJoinModal(true);
+      } else {
+        await socket
+          .emitWithAck('room-join', {
+            roomId: roomId,
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              console.log('room-join : Success', response);
+              const responseRoomId = response.body.id;
+              router.push(`chat/${responseRoomId}`);
+            } else {
+              console.log('room-join : Failed', response);
+              handleCloseFailModal();
+            }
+          });
+      }
     }
+  };
+
+  const handleFailModal = () => {
+    setOpenJoinModal(false);
+    setOpenFailModal(true);
+  };
+
+  const handleCloseJoinModal = () => {
+    setOpenJoinModal(false);
+  };
+
+  const handleCloseFailModal = () => {
+    setOpenFailModal(false);
   };
 
   return (
@@ -71,7 +94,6 @@ const ChatLobby = () => {
               {room.title}
               <>{room.mode === 'PROTECTED' && <LockImage src={Lock} alt="Lock" />}</>
             </RoomTitle>
-
             <RoomInfo>
               <RoomInfoText>
                 <ColoredText textColor="0">방장:</ColoredText>
@@ -81,11 +103,18 @@ const ChatLobby = () => {
                 <ColoredText textColor="0">참여인원:</ColoredText>
                 <ColoredText textColor="2">{room.headCount}명</ColoredText>
               </RoomInfoText>
-              {/* <p>Mode: {room.mode}</p> */}
             </RoomInfo>
           </Room>
         ))}
       </RoomListFrame>
+      {openJoinModal && (
+        <JoinRoomModal
+          handleCloseModal={handleCloseJoinModal}
+          handleFailModal={handleFailModal}
+          roomId={joinRoomId}
+        />
+      )}
+      {openFailModal && <FailRoomModal handleCloseModal={handleCloseFailModal} />}
     </Container>
   );
 };
