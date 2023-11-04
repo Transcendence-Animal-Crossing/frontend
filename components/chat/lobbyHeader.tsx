@@ -3,19 +3,28 @@ import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import CreateRoomModal from './createRoomModal';
+import InfoModal from '../infoModal';
 import info from '../../public/Icon/info.png';
 import plus from '../../public/Icon/plus.png';
 import home from '../../public/Icon/home.png';
 
 const Header = () => {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
+  const [isOpenInfo, setOpenInfo] = useState<boolean>(false);
   const [createButtonRect, setCreateButtonRect] = useState<{
     top: number;
     right: number;
     height: number;
   }>({ top: 0, right: 0, height: 0 });
+  const [InfoButtonRect, setInfoButtonRect] = useState<{
+    top: number;
+    left: number;
+  }>({ top: 0, left: 0 });
+  const infoText =
+    '단체 채팅이 가능한 채팅방이다구리. 채탕방을 생성 하고싶다면 오른쪽 위 + 버튼을 누르면 된다구리.';
 
   const CreateButtonRef = useRef<HTMLDivElement | null>(null);
+  const InfoButtonRef = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,6 +34,14 @@ const Header = () => {
         top: buttonRect.top,
         right: buttonRect.right,
         height: buttonRect.height,
+      });
+    }
+
+    if (InfoButtonRef.current) {
+      const buttonRect = InfoButtonRef.current.getBoundingClientRect();
+      setInfoButtonRect({
+        top: buttonRect.top,
+        left: buttonRect.left,
       });
     }
   }, []);
@@ -37,6 +54,14 @@ const Header = () => {
     setOpenModal(false);
   };
 
+  const handleOpenInfo = () => {
+    setOpenInfo(true);
+  };
+
+  const handleCloseInfo = () => {
+    setOpenInfo(false);
+  };
+
   const handleRouteLobby = async () => {
     router.push('/');
   };
@@ -47,7 +72,7 @@ const Header = () => {
         <InfoFrame>
           <TitleFrame>Chatting Room</TitleFrame>
           <SubText> 단체채팅 </SubText>
-          <InfoImage src={info} alt="info" />
+          <InfoImage src={info} alt="info" onClick={handleOpenInfo} ref={InfoButtonRef} />
         </InfoFrame>
         <ButtonFrame>
           <Button onClick={handleOpenCreate} ref={CreateButtonRef}>
@@ -60,6 +85,13 @@ const Header = () => {
       </HeaderFrame>
       {isOpenModal && (
         <CreateRoomModal handleCloseModal={handleCloseModal} createButtonRect={createButtonRect} />
+      )}
+      {isOpenInfo && (
+        <InfoModal
+          handleCloseModal={handleCloseInfo}
+          infoText={infoText}
+          InfoButtonRect={InfoButtonRect}
+        />
       )}
     </>
   );
