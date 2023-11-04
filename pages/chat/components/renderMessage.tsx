@@ -2,7 +2,24 @@ import styled from 'styled-components';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 
-const MessageContainer: React.FC<{ messages: array; userlist: array }> = ({
+interface RoomMessageDto {
+  text: string;
+  roomId: string;
+  senderId: number;
+}
+
+interface ParticipantData {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
+  grade: number;
+  mute: boolean;
+  joinTime: Date;
+  adminTime: Date;
+}
+
+const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: ParticipantData[] }> = ({
   messages,
   userlist,
 }) => {
@@ -12,7 +29,7 @@ const MessageContainer: React.FC<{ messages: array; userlist: array }> = ({
     console.log(userlist);
   }, [userlist]);
 
-  const handleFindUser = (userId: string) => {
+  const handleFindUser = (userId: number) => {
     if (userId == session?.user.user_id) {
       return false;
     }
@@ -23,14 +40,14 @@ const MessageContainer: React.FC<{ messages: array; userlist: array }> = ({
     }
   };
 
-  const handleUserNick = (userId: string) => {
+  const handleUserNick = (userId: number) => {
     const user = userlist.find((user) => user.id === userId);
     if (user) {
       return user.nickName;
     }
   };
 
-  const handleUserAvatar = (userId: string) => {
+  const handleUserAvatar = (userId: number) => {
     const user = userlist.find((user) => user.id === userId);
     if (user) {
       return user.avatar;
@@ -40,7 +57,7 @@ const MessageContainer: React.FC<{ messages: array; userlist: array }> = ({
   return (
     <MessageListFrame>
       {messages.map((message, index) => (
-        <Frame key={message.id}>
+        <Frame key={index}>
           {handleFindUser(message.senderId) && (
             <UserFrame senderId={message.senderId} currentUser={session?.user.user_id}>
               {handleUserNick(message.senderId)}
@@ -79,7 +96,7 @@ const Frame = styled.div`
   margin: 1% 0;
 `;
 
-const MessageFrame = styled.div`
+const MessageFrame = styled.div<{ senderId: number; currentUser?: number }>`
   width: 100%;
   height: auto;
   display: flex;
@@ -87,7 +104,7 @@ const MessageFrame = styled.div`
   align-items: center;
 `;
 
-const Message = styled.div`
+const Message = styled.div<{ senderId: number; currentUser?: number }>`
   width: auto;
   max-width: 50%;
   word-wrap: break-word;
@@ -102,7 +119,7 @@ const Message = styled.div`
   padding: 2%;
 `;
 
-const UserFrame = styled.div`
+const UserFrame = styled.div<{ senderId: number; currentUser?: number }>`
   width: auto;
   display: flex;
   flex-direction: ${(props) => (props.senderId === props.currentUser ? 'row-reverse' : 'row')};

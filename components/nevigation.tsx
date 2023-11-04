@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { ReactNode } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 
-const nevigation = () => {
+const Nevigation = () => {
   const { data: session } = useSession();
 
   return (
@@ -11,7 +11,7 @@ const nevigation = () => {
         {session ? (
           <>
             {/* <Text> Sign in as {session.user.email} </Text> <br /> */}
-            <Text> Sign in as {session.user.login} </Text> <br />
+            <Text> Sign in as {session?.user?.login} </Text> <br />
             {/* <Text> accessToken : {session.accessToken} </Text> <br /> */}
             <button onClick={() => signOut()}>Sign out</button>
           </>
@@ -21,7 +21,7 @@ const nevigation = () => {
   );
 };
 
-export default nevigation;
+export default Nevigation;
 
 const Container = styled.div`
   width: 20%;

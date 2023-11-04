@@ -9,9 +9,9 @@ import unlock from '../../../public/Chat/unlock.png';
 import lock from '../../../public/Chat/lock.png';
 import secret from '../../../public/Chat/secret.png';
 
-const createRoomModal: React.FC<{
+const CreateRoomModal: React.FC<{
   handleCloseModal: () => void;
-  createButtonRect: DOMRect;
+  createButtonRect: { top: number; right: number; height: number };
 }> = ({ handleCloseModal, createButtonRect }) => {
   const { socket } = useSocket();
   const [title, setTitle] = useState('');
@@ -133,7 +133,7 @@ const createRoomModal: React.FC<{
   );
 };
 
-export default createRoomModal;
+export default CreateRoomModal;
 
 const Container = styled.div`
   position: absolute;

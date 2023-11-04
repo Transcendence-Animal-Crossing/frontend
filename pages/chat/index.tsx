@@ -7,9 +7,24 @@ import Container from '../../components/columnNevLayout';
 import Header from './components/lobbyHeader';
 import Lock from '../../public/Chat/lock_gold.png';
 
+interface RoomOwnerData {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
+}
+
+interface RoomListData {
+  id: string;
+  title: string;
+  owner: RoomOwnerData;
+  headCount: number;
+  mode: string;
+}
+
 const ChatLobby = () => {
   const { socket } = useSocket();
-  const [roomlist, setRoomlist] = useState([]);
+  const [roomlist, setRoomlist] = useState<RoomListData[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -59,12 +74,12 @@ const ChatLobby = () => {
 
             <RoomInfo>
               <RoomInfoText>
-                <ColoredText color="brown">방장:</ColoredText>
-                <ColoredText color="Emerald">{room.owner.nickName}</ColoredText>
+                <ColoredText textColor="0">방장:</ColoredText>
+                <ColoredText textColor="1">{room.owner.nickName}</ColoredText>
               </RoomInfoText>
               <RoomInfoText>
-                <ColoredText color="brown">참여인원:</ColoredText>
-                <ColoredText color="orange">{room.headCount}명</ColoredText>
+                <ColoredText textColor="0">참여인원:</ColoredText>
+                <ColoredText textColor="2">{room.headCount}명</ColoredText>
               </RoomInfoText>
               {/* <p>Mode: {room.mode}</p> */}
             </RoomInfo>
@@ -127,8 +142,17 @@ const RoomInfoText = styled.div`
   justify-content: space-between;
 `;
 
-const ColoredText = styled.p`
-  color: ${(props) => props.theme.colors[props.color]};
+const ColoredText = styled.p<{ textColor: string }>`
+  color: ${(props) => {
+    switch (props.textColor) {
+      case '1':
+        return props.theme.colors.Emerald;
+      case '2':
+        return props.theme.colors.orange;
+      default:
+        return props.theme.colors.brown;
+    }
+  }};
   font-family: 'GiantsLight';
 `;
 

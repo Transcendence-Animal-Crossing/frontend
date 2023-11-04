@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import CreateRoomModal from './createRoomModal';
 import info from '../../../public/Icon/info.png';
@@ -9,15 +9,27 @@ import home from '../../../public/Icon/home.png';
 
 const Header = () => {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
-  const [createButtonRect, setCreateButtonRect] = useState<DOMRect | null>(null);
+  const [createButtonRect, setCreateButtonRect] = useState<{
+    top: number;
+    right: number;
+    height: number;
+  }>({ top: 0, right: 0, height: 0 });
+
   const CreateButtonRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
-  const handleOpenCreate = () => {
+  useEffect(() => {
     if (CreateButtonRef.current) {
-      const createButtonRect = CreateButtonRef.current.getBoundingClientRect();
-      setCreateButtonRect(createButtonRect);
+      const buttonRect = CreateButtonRef.current.getBoundingClientRect();
+      setCreateButtonRect({
+        top: buttonRect.top,
+        right: buttonRect.right,
+        height: buttonRect.height,
+      });
     }
+  }, []);
+
+  const handleOpenCreate = () => {
     setOpenModal(true);
   };
 

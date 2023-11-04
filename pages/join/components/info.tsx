@@ -15,7 +15,7 @@ import {
   profile10,
   profile11,
   profile12,
-} from './profile';
+} from '../../../components/profile/profile';
 import pen from '../../../public/Icon/pen.png';
 
 const InfoContainer: React.FC<{

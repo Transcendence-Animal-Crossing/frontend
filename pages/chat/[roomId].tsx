@@ -8,11 +8,28 @@ import Header from './components/chatRoomHeader';
 import MessageContainer from './components/renderMessage';
 import InputContainer from './components/inputMessage';
 
+interface RoomMessageDto {
+  text: string;
+  roomId: string;
+  senderId: number;
+}
+
+interface ParticipantData {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
+  grade: number;
+  mute: boolean;
+  joinTime: Date;
+  adminTime: Date;
+}
+
 const Chat = () => {
   const { socket } = useSocket();
-  const [userlist, setUserlist] = useState([]);
+  const [userlist, setUserlist] = useState<ParticipantData[]>([]);
   const [roomTitle, setRoomTitle] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<RoomMessageDto[]>([]);
   const [messageText, setMessageText] = useState('');
   const router = useRouter();
   const { data: session } = useSession();
@@ -32,7 +49,7 @@ const Chat = () => {
             .then((response) => {
               if (response.status === 200) {
                 console.log(response);
-                setUserlist(response.body);
+                setUserlist(response.body.participants);
                 setRoomTitle(response.body.title);
               } else {
                 console.log('room-detail : Failed', response);
@@ -41,7 +58,7 @@ const Chat = () => {
         }
       }
 
-      const handleRoomMessage = (response) => {
+      const handleRoomMessage = (response: RoomMessageDto) => {
         const text = response.text;
         console.log('response.text : ' + text);
         setMessages((prevMessages) => [...prevMessages, response]);
@@ -81,7 +98,7 @@ const Chat = () => {
     <Container>
       <Header roomTitle={roomTitle} />
       <ChatListFrame>
-        <MessageContainer messages={messages} />
+        <MessageContainer messages={messages} userlist={userlist} />
         <InputContainer
           messageText={messageText}
           setMessageText={handleMessageTextChange}
