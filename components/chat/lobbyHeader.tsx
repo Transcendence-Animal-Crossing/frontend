@@ -136,7 +136,7 @@ const SubText = styled.p`
 `;
 
 const InfoImage = styled(Image)`
-  height: 2.5vh;
+  height: 3vh;
   width: auto;
   cursor: pointer;
 `;

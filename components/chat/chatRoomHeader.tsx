@@ -2,12 +2,28 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import CreateRoomModal from './createRoomModal';
-import info from '../../public/Icon/info.png';
-import plus from '../../public/Icon/plus.png';
-import home from '../../public/Icon/home.png';
+import { useSocket } from '../../utils/SocketProvider';
+import UserListModal from './userListModal';
+import users from '../../public/Icon/users.png';
+import exit from '../../public/Icon/exit.png';
 
-const Header: React.FC<{ roomTitle: string }> = ({ roomTitle }) => {
+interface ParticipantData {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
+  grade: number;
+  mute: boolean;
+  joinTime: Date;
+  adminTime: Date;
+}
+
+const Header: React.FC<{ roomTitle: string; roomId: string; userlist: ParticipantData[] }> = ({
+  roomTitle,
+  roomId,
+  userlist,
+}) => {
+  const { socket } = useSocket();
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [createButtonRect, setCreateButtonRect] = useState<{
     top: number;
@@ -28,7 +44,7 @@ const Header: React.FC<{ roomTitle: string }> = ({ roomTitle }) => {
     }
   }, []);
 
-  const handleOpenCreate = () => {
+  const handleOpenModal = () => {
     setOpenModal(true);
   };
 
@@ -36,8 +52,12 @@ const Header: React.FC<{ roomTitle: string }> = ({ roomTitle }) => {
     setOpenModal(false);
   };
 
-  const handleRouteLobby = async () => {
-    router.push('/');
+  const handleRouteChatLobby = async () => {
+    if (socket) {
+      console.log(roomId);
+      socket.emit('room-leave', roomId);
+    }
+    router.push('/chat');
   };
 
   return (
@@ -47,16 +67,20 @@ const Header: React.FC<{ roomTitle: string }> = ({ roomTitle }) => {
           <TitleFrame> {roomTitle} </TitleFrame>
         </InfoFrame>
         <ButtonFrame>
-          <Button onClick={handleOpenCreate} ref={CreateButtonRef}>
-            <InfoImage src={plus} alt="plus" />
+          <Button onClick={handleOpenModal} ref={CreateButtonRef}>
+            <InfoImage src={users} alt="users" />
           </Button>
-          <Button onClick={handleRouteLobby}>
-            <InfoImage src={home} alt="home" />
+          <Button onClick={handleRouteChatLobby}>
+            <InfoImage src={exit} alt="exit" />
           </Button>
         </ButtonFrame>
       </HeaderFrame>
       {isOpenModal && (
-        <CreateRoomModal handleCloseModal={handleCloseModal} createButtonRect={createButtonRect} />
+        <UserListModal
+          handleCloseModal={handleCloseModal}
+          userlist={userlist}
+          createButtonRect={createButtonRect}
+        />
       )}
     </>
   );
@@ -95,7 +119,7 @@ const TitleFrame = styled.div`
 `;
 
 const InfoImage = styled(Image)`
-  height: 2.5vh;
+  height: 3vh;
   width: auto;
   cursor: pointer;
 `;

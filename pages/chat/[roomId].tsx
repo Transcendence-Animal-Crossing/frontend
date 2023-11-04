@@ -33,7 +33,7 @@ const Chat = () => {
   const [messageText, setMessageText] = useState('');
   const router = useRouter();
   const { data: session } = useSession();
-  const { roomId } = router.query;
+  const { roomId } = router.query as { roomId: string };
 
   useEffect(() => {
     if (socket) {
@@ -104,7 +104,7 @@ const Chat = () => {
 
   return (
     <Container>
-      <Header roomTitle={roomTitle} />
+      <Header roomTitle={roomTitle} roomId={roomId} userlist={userlist} />
       <ChatListFrame>
         <MessageContainer messages={messages} userlist={userlist} />
         <InputContainer
