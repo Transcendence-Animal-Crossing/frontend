@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Container from '../../components/rowLayout';
-import InfoContainer from './components/info';
-import PreviewContainer from './components/preview';
+import InfoContainer from '../../components/join/info';
+import PreviewContainer from '../../components/join/preview';
 import axiosInstance from '../../utils/axiosInstance';
 
 const JoinPage: React.FC = () => {

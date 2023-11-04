@@ -15,7 +15,7 @@ import {
   profile10,
   profile11,
   profile12,
-} from '../../../components/profile/profile';
+} from './profile';
 
 const PreviewContainer: React.FC<{
   nickname: string;
