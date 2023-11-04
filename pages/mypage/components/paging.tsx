@@ -1,0 +1,115 @@
+import Pagination from "react-js-pagination";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import axiosInstance from "../../../utils/axiosInstance";
+import Cards from "./cards";
+import styled from "styled-components";
+import {
+  achieveDark1,
+  achieveDark2,
+  achieveDark3,
+  achieveDark4,
+  achieveDark5,
+  achieveDark6,
+  achieveDark7,
+} from "./achieveDark";
+import {
+  achieveLight1,
+  achieveLight2,
+  achieveLight3,
+  achieveLight4,
+  achieveLight5,
+  achieveLight6,
+  achieveLight7,
+} from "./achieveLight";
+
+const Paging = () => {
+  const { data: session } = useSession();
+
+  const [achievements, setAchievements] = useState([
+    achieveDark1,
+    achieveDark2,
+    achieveDark3,
+    achieveDark4,
+    achieveDark5,
+    achieveDark6,
+    achieveDark7,
+  ]);
+
+  // 달성 목록
+  const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
+  // 현재 페이지
+  const [page, setPage] = useState(1);
+
+  const cardPerPage = 3;
+  const totalItemsCount = achievements.length;
+  const indexOfLastCard = page * cardPerPage;
+  const indexOfFirstCard = indexOfLastCard - cardPerPage;
+  const currentCards = achievements.slice(indexOfFirstCard, indexOfLastCard);
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
+
+  useEffect(() => {
+    handleAchieveList();
+  });
+
+  const handleAchieveList = async () => {
+    try {
+      const userId = session?.user.user_id;
+      const response = await axiosInstance.get("/users/detail", {
+        params: { id: userId },
+      });
+      console.log("handleAchieveList() response");
+      console.log(response);
+
+      await setAchieveList(response.data.achievements);
+
+      console.log(achieveList);
+    } catch (error) {
+      console.log("Error occured in handleAchieveList()");
+      console.log(error);
+    }
+  };
+
+  return (
+    <PagingFrame>
+      <Cards cards={currentCards} />
+      <StyledPagination
+        activePage={page}
+        itemsCountPerPage={cardPerPage}
+        totalItemsCount={totalItemsCount}
+        prevPageText={"‹"}
+        nextPageText={"›"}
+        onChange={handlePageChange}
+      ></StyledPagination>
+    </PagingFrame>
+  );
+};
+
+export default Paging;
+
+const PagingFrame = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledPagination = styled(Pagination)`
+  ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5%;
+  }
+  li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5%;
+  }
+`;

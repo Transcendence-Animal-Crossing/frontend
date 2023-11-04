@@ -20,7 +20,6 @@ export default InfoContainer;
 const InfoProfile = styled.div`
   width: 70%;
   height: 100%;
-  background-color: lightgray;
   display: flex;
   flex-direction: column;
   align-items: center;

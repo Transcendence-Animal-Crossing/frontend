@@ -11,8 +11,9 @@ declare module "styled-components" {
       Emerald: string;
       orange: string;
       beige: string;
-      craem: string;
+      cream: string;
       gold: string;
+      lightgold: string;
     };
   }
 }
@@ -27,7 +28,8 @@ export const theme: DefaultTheme = {
     Emerald: "#04AFA6",
     orange: "#F39801",
     beige: "rgba(255, 251, 231, 0.5);",
-    craem: "#FFFBE7",
+    cream: "#FFFBE7",
     gold: "#BEA745",
+    lightgold: "#C1B175",
   },
 };
