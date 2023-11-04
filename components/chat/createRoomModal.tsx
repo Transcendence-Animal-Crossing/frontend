@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { useSocket } from '../../../utils/SocketProvider';
+import { useSocket } from '../../utils/SocketProvider';
 import { useRouter } from 'next/router';
-import pen from '../../../public/Icon/pen.png';
-import info from '../../../public/Icon/info.png';
-import unlock from '../../../public/Chat/unlock.png';
-import lock from '../../../public/Chat/lock.png';
-import secret from '../../../public/Chat/secret.png';
+import pen from '../../public/Icon/pen.png';
+import info from '../../public/Icon/info.png';
+import unlock from '../../public/Chat/unlock.png';
+import lock from '../../public/Chat/lock.png';
+import secret from '../../public/Chat/secret.png';
 
 const CreateRoomModal: React.FC<{
   handleCloseModal: () => void;

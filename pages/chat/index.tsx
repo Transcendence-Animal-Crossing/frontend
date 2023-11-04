@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
 import Container from '../../components/columnNevLayout';
-import Header from './components/lobbyHeader';
+import Header from '../../components/chat/lobbyHeader';
 import Lock from '../../public/Chat/lock_gold.png';
 
 interface RoomOwnerData {

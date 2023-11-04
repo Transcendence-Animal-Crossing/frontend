@@ -4,9 +4,9 @@ import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
 import { useSession } from 'next-auth/react';
 import Container from '../../components/columnNevLayout';
-import Header from './components/chatRoomHeader';
-import MessageContainer from './components/renderMessage';
-import InputContainer from './components/inputMessage';
+import Header from '../../components/chat/chatRoomHeader';
+import MessageContainer from '../../components/chat/renderMessage';
+import InputContainer from '../../components/chat/inputMessage';
 
 interface RoomMessageDto {
   text: string;
