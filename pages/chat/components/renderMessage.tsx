@@ -1,17 +1,58 @@
 import styled from 'styled-components';
 import { useSession } from 'next-auth/react';
+import React, { useEffect, useState } from 'react';
 
-const MessageContainer: React.FC<{ messages: array }> = ({ messages }) => {
+const MessageContainer: React.FC<{ messages: array; userlist: array }> = ({
+  messages,
+  userlist,
+}) => {
   const { data: session } = useSession();
+
+  useEffect(() => {
+    console.log(userlist);
+  }, [userlist]);
+
+  const handleFindUser = (userId: string) => {
+    if (userId == session?.user.user_id) {
+      return false;
+    }
+
+    const user = userlist.find((user) => user.id === userId);
+    if (user) {
+      return true;
+    }
+  };
+
+  const handleUserNick = (userId: string) => {
+    const user = userlist.find((user) => user.id === userId);
+    if (user) {
+      return user.nickName;
+    }
+  };
+
+  const handleUserAvatar = (userId: string) => {
+    const user = userlist.find((user) => user.id === userId);
+    if (user) {
+      return user.avatar;
+    }
+  };
 
   return (
     <MessageListFrame>
       {messages.map((message, index) => (
-        <MessageFrame senderId={message.senderId} currentUser={session?.user.user_id}>
-          <Message key={index} senderId={message.senderId} currentUser={session?.user.user_id}>
-            {message.senderId} : {message.text}
-          </Message>
-        </MessageFrame>
+        <Frame key={message.id}>
+          {handleFindUser(message.senderId) && (
+            <UserFrame senderId={message.senderId} currentUser={session?.user.user_id}>
+              {handleUserNick(message.senderId)}
+            </UserFrame>
+          )}
+
+          <MessageFrame senderId={message.senderId} currentUser={session?.user.user_id}>
+            <Message key={index} senderId={message.senderId} currentUser={session?.user.user_id}>
+              {message.text}
+            </Message>
+          </MessageFrame>
+        </Frame>
       ))}
     </MessageListFrame>
   );
@@ -30,13 +71,20 @@ const MessageListFrame = styled.div`
   overflow-x: hidden;
 `;
 
+const Frame = styled.div`
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  margin: 1% 0;
+`;
+
 const MessageFrame = styled.div`
   width: 100%;
   height: auto;
   display: flex;
   flex-direction: ${(props) => (props.senderId === props.currentUser ? 'row-reverse' : 'row')};
   align-items: center;
-  justify-content: space-between;
 `;
 
 const Message = styled.div`
@@ -52,5 +100,14 @@ const Message = styled.div`
   font-size: 2vh;
   border-radius: 10px;
   padding: 2%;
-  margin: 0.5% 0;
+`;
+
+const UserFrame = styled.div`
+  width: auto;
+  display: flex;
+  flex-direction: ${(props) => (props.senderId === props.currentUser ? 'row-reverse' : 'row')};
+  color: ${(props) => props.theme.colors.brown};
+  font-family: 'GiantsLight';
+  font-size: 2vh;
+  margin-bottom: 1%;
 `;
