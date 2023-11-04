@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface RoomMessageDto {
   text: string;
@@ -47,10 +48,13 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
     }
   };
 
-  const handleUserAvatar = (userId: number) => {
+  const handleSetUserAvatar = (userId: number) => {
     const user = userlist.find((user) => user.id === userId);
     if (user) {
-      return user.avatar;
+      const apiUrl = 'http://localhost:8080/';
+      return apiUrl + user.avatar;
+    } else {
+      return 'http://localhost:8080/original/profile2.png';
     }
   };
 
@@ -60,6 +64,12 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
         <Frame key={index}>
           {handleFindUser(message.senderId) && (
             <UserFrame senderId={message.senderId} currentUser={session?.user.user_id}>
+              <UserImage
+                src={handleSetUserAvatar(message.senderId)}
+                alt="Profle Image"
+                width={100}
+                height={100}
+              />
               {handleUserNick(message.senderId)}
             </UserFrame>
           )}
@@ -85,7 +95,6 @@ const MessageListFrame = styled.div`
   display: flex;
   flex-direction: column;
   align-content: flex-start;
-  overflow-x: hidden;
 `;
 
 const Frame = styled.div`
@@ -102,6 +111,8 @@ const MessageFrame = styled.div<{ senderId: number; currentUser?: number }>`
   display: flex;
   flex-direction: ${(props) => (props.senderId === props.currentUser ? 'row-reverse' : 'row')};
   align-items: center;
+  padding: 0 1vw;
+  box-sizing: border-box;
 `;
 
 const Message = styled.div<{ senderId: number; currentUser?: number }>`
@@ -127,4 +138,15 @@ const UserFrame = styled.div<{ senderId: number; currentUser?: number }>`
   font-family: 'GiantsLight';
   font-size: 2vh;
   margin-bottom: 1%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5vw;
+`;
+
+const UserImage = styled(Image)`
+  width: 2vw;
+  height: 2vw;
+  border-radius: 20px;
 `;
