@@ -11,7 +11,7 @@ const UserList: React.FC<{
     intraName: string;
     avatar: string;
     rankScore: number;
-    matchCount: number;
+    rankGameTotalCount: number;
   }[];
 }> = ({ userList }) => {
   return (
@@ -24,7 +24,7 @@ const UserList: React.FC<{
             intraName={user.intraName}
             avatar={user.avatar}
             rankScore={user.rankScore}
-            matchCount={user.matchCount}
+            rankGameTotalCount={user.rankGameTotalCount}
           ></UserFrame>
         );
       })}

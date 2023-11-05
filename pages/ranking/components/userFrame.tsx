@@ -9,10 +9,21 @@ const UserFrame: React.FC<{
   intraName: string;
   avatar: string;
   rankScore: number;
-  matchCount: number;
-}> = ({ ranking, nickName, intraName, avatar, rankScore, matchCount }) => {
+  rankGameTotalCount: number;
+}> = ({
+  ranking,
+  nickName,
+  intraName,
+  avatar,
+  rankScore,
+  rankGameTotalCount,
+}) => {
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const [tierIndex, setTierIndex] = useState(0);
+
+  useEffect(() => {
+    handleRank(rankScore);
+  });
 
   const handleRank = async (rankScore: number) => {
     if (rankScore < 1000) {
@@ -45,7 +56,7 @@ const UserFrame: React.FC<{
           </NameFrame>
         </UserInfoFrame>
       </LeftFrame>
-      <MatchCountFrame> 경기 횟수: {matchCount}회</MatchCountFrame>
+      <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
     </UserRankFrame>
   );
 };
