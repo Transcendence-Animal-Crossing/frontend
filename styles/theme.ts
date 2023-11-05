@@ -14,6 +14,7 @@ declare module "styled-components" {
       cream: string;
       gold: string;
       lightgold: string;
+      indigo: string;
     };
   }
 }
@@ -31,5 +32,6 @@ export const theme: DefaultTheme = {
     cream: "#FFFBE7",
     gold: "#BEA745",
     lightgold: "#C1B175",
+    indigo: "#253B52",
   },
 };
