@@ -18,6 +18,7 @@ const Ranking = () => {
   console.log(session);
 
   const [offset, setOffset] = useState(0);
+  const [searchText, setSearchText] = useState("");
 
   const [userList, setUserList] = useState([
     {
@@ -41,11 +42,11 @@ const Ranking = () => {
   ]);
 
   useEffect(() => {
-    getRankingList();
+    // getRankingList();
   }, []);
 
   useEffect(() => {
-    getRankingList();
+    // getRankingList();
   }, [offset]);
 
   const getRankingList = async () => {
@@ -68,8 +69,18 @@ const Ranking = () => {
     console.log("printResponse() data");
     console.log(data);
   };
+
   const handleSearch = async () => {
-    // 버튼 클릭 시 검색 기능 구현
+    try {
+      const response = await axiosInstance.post("/users/search", {
+        name: searchText,
+      });
+      console.log("handleSearch() response");
+      console.log(response.data);
+      await setUserList(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handlePrevButton = async () => {
@@ -80,6 +91,12 @@ const Ranking = () => {
     setOffset(offset + 1);
   };
 
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <Container>
       <RankingFrame>
@@ -88,6 +105,14 @@ const Ranking = () => {
           <Button onClick={handleSearch}>
             <InfoImage src={search} alt="Search Button" />
           </Button>
+          <Input
+            type="text"
+            placeholder="검색할 유저 이름을 입력해주세요"
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={(e) => handleKeyDown(e)}
+            maxLength={10}
+            required
+          />
         </SearchFrame>
         <RankingListFrame>
           <UserList userList={userList}></UserList>
@@ -126,13 +151,11 @@ const SearchFrame = styled.div`
   margin-bottom: 2vh;
   flex-direction: row;
   border-radius: 10px;
-  background-color: ${(props) => props.theme.colors.gold};
-  opacity: 0.2;
+  background-color: ${(props) => props.theme.colors.gold02};
 `;
 
 const Button = styled.div`
   width: auto;
-  float: right;
   padding: 0.5vh 1.5vh;
   border-radius: 20px;
   display: flex;
@@ -169,5 +192,19 @@ const RankingListFrame = styled.div`
   height: 80%;
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => props.theme.colors.beige};
+  // background-color: ${(props) => props.theme.colors.beige};
+`;
+
+const Input = styled.input.attrs({ required: true })`
+  width: 90%;
+  height: 90%;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: ${(props) => props.theme.colors.brown};
+  font-family: "BMHANNAAir";
+  font-size: 2vh;
+  &:focus {
+    outline: none;
+  }
 `;
