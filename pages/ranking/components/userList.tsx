@@ -41,5 +41,5 @@ const UserListFrame = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5%;
+  gap: 2%;
 `;

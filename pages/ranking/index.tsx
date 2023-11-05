@@ -24,6 +24,15 @@ const Ranking = () => {
       rankScore: 1000,
       matchCount: 10,
     },
+    {
+      id: 107066,
+      ranking: 1,
+      nickName: "반여동물주먹",
+      intraName: "sohlee",
+      avatar: "http://localhost:8080/original/profile2.png",
+      rankScore: 1000,
+      matchCount: 10,
+    },
   ]);
 
   const handleSearch = async () => {};
