@@ -53,7 +53,7 @@ const Paging = () => {
 
   useEffect(() => {
     handleAchieveList();
-  });
+  }, [page]);
 
   const handleAchieveList = async () => {
     try {
@@ -76,14 +76,17 @@ const Paging = () => {
   return (
     <PagingFrame>
       <Cards cards={currentCards} />
-      <StyledPagination
-        activePage={page}
-        itemsCountPerPage={cardPerPage}
-        totalItemsCount={totalItemsCount}
-        prevPageText={"‹"}
-        nextPageText={"›"}
-        onChange={handlePageChange}
-      ></StyledPagination>
+      <StyledPagination>
+        <Pagination
+          activePage={page}
+          itemsCountPerPage={cardPerPage}
+          totalItemsCount={totalItemsCount}
+          prevPageText={"‹"}
+          nextPageText={"›"}
+          onChange={handlePageChange}
+          hideFirstLastPages={true}
+        />
+      </StyledPagination>
     </PagingFrame>
   );
 };
@@ -97,19 +100,29 @@ const PagingFrame = styled.div`
   flex-direction: column;
 `;
 
-const StyledPagination = styled(Pagination)`
-  ul {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 5%;
+const StyledPagination = styled.div`
+  .pagination { 
+    display: flex; 
+    justify-content: center; 
+    margin-top: 15px; 
+    font-family: "GiantsLight";
+    gap: 0.5%;
   }
-  li {
+  ul.pagination li {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     display: flex;
-    flex-direction: row;
-    align-items: center;
     justify-content: center;
-    gap: 5%;
+    align-items: center;
+    font-size: 1rem; 
+  }
+  ul.pagination li a { 
+    text-decoration: none; color: white; font-size: 1rem;
+    color: ${(props) => props.theme.colors.lightgold}}
+  ul.pagination li.active a { color: white; }
+  ul.pagination li.active {
+      background-color: ${(props) => props.theme.colors.brown} }
   }
 `;
