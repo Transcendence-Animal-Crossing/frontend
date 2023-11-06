@@ -15,6 +15,8 @@ declare module "styled-components" {
       gold: string;
       lightgold: string;
       lightbrown: string;
+      green: string;
+      red: string;
     };
   }
 }
@@ -33,5 +35,7 @@ export const theme: DefaultTheme = {
     gold: "#BEA745",
     lightgold: "#C1B175",
     lightbrown: "#e9e2c7",
+    green: "#8AC68A",
+    red: "#FC736D",
   },
 };

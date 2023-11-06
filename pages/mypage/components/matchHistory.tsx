@@ -1,17 +1,88 @@
 import styled from "styled-components";
+import css from "styled-jsx/css";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import home from "../../../public/Icon/home.png";
 import axiosInstance from "../../../utils/axiosInstance";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Game from "./game";
+import { match } from "assert";
 
 const MatchHistoryContainer = () => {
   const { data: session } = useSession();
   const router = useRouter();
-
   const [mode, setMode] = useState("rank");
-  const [matchHistory, setMatchHistory] = useState([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [matchHistory, setMatchHistory] = useState({
+    games: [
+      {
+        id: 5,
+        winnerScore: 7,
+        loserScore: 10,
+        playTime: 8,
+        loser: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+        winner: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+      },
+      {
+        id: 4,
+        winnerScore: 7,
+        loserScore: 10,
+        playTime: 8,
+        loser: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+        winner: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+      },
+      {
+        id: 3,
+        winnerScore: 7,
+        loserScore: 10,
+        playTime: 10,
+        loser: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+        winner: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+      },
+      {
+        id: 2,
+        winnerScore: 7,
+        loserScore: 10,
+        playTime: 12,
+        loser: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+        winner: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+      },
+    ],
+  });
 
   useEffect(() => {
     getMatchHistory();
@@ -32,7 +103,7 @@ const MatchHistoryContainer = () => {
       });
       console.log("getMatchHistory() response");
       console.log(response);
-      await setMatchHistory(response.data);
+      // await setMatchHistory(response.data);
     } catch (error) {
       console.log("Error occured in getMatchHistory()");
       console.log(error);
@@ -41,6 +112,13 @@ const MatchHistoryContainer = () => {
 
   const handleRouteLobby = async () => {
     router.push("/");
+  };
+
+  // 임시로 더미데이터를 갖다 붙이는 함수
+  const fetchMoreData = async () => {
+    let copy = { ...matchHistory };
+    copy.games = copy.games.concat(matchHistory.games);
+    setMatchHistory(copy);
   };
 
   return (
@@ -62,7 +140,19 @@ const MatchHistoryContainer = () => {
           <InfoImage src={home} alt="home" />
         </Button>
       </MatchHistoryHeader>
-      <MatchHistoryBody></MatchHistoryBody>
+      <MatchHistoryBody>
+        <InfiniteScroll
+          dataLength={matchHistory.games.length}
+          next={fetchMoreData}
+          hasMore={hasMore}
+          loader={<h4>Loading...</h4>}
+        >
+          {matchHistory.games.map((game) => (
+            <Game game={game} />
+          ))}
+        </InfiniteScroll>
+        <style jsx>{Scroller}</style>
+      </MatchHistoryBody>
     </MatchHistoryFrame>
   );
 };
@@ -80,7 +170,7 @@ const MatchHistoryFrame = styled.div`
 `;
 
 const MatchHistoryHeader = styled.div`
-  width: 100%;
+  width: 80%;
   height: 10%;
   display: flex;
   flex-direction: row;
@@ -93,8 +183,8 @@ const Mode = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 10%;
-  gap: 5%;
+  padding: 5%;
+  gap: 10%;
 `;
 
 const ModeButton = styled.button`
@@ -138,5 +228,27 @@ const InfoImage = styled(Image)`
 const MatchHistoryBody = styled.div`
   height: 90%;
   width: 100%;
-  background-color: ${(props) => props.theme.colors.beige};
+  // background-color: skyblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1%;
+  .infinite-scroll-component__outerdiv {
+    height: 100%;
+    width: 80%;
+  }
+  .infinite-scroll-component {
+    height: 100%;
+  }
+`;
+
+const Scroller = css`
+  .infinite-scroll-component__outerdiv {
+    height: 100%;
+    width: 80%;
+  }
+  .infinite-scroll-component {
+    height: 100%;
+    back
+  }
 `;
