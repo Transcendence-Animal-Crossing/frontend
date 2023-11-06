@@ -15,6 +15,7 @@ interface CustomProfile extends Profile {
 }
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.SECRET as string,
   providers: [
     FortyTwoProvider({
       clientId: process.env.FT_UID as string,
