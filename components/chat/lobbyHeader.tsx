@@ -126,7 +126,7 @@ const TitleFrame = styled.div`
   align-items: center;
   color: ${(props) => props.theme.colors.ivory};
   font-family: 'Giants';
-  font-size: 3vh;
+  font-size: 2.5vh;
 `;
 
 const SubText = styled.p`
