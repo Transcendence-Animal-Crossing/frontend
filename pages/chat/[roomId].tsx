@@ -7,7 +7,7 @@ import Container from '../../components/columnNevLayout';
 import Header from '../../components/chat/chatRoomHeader';
 import MessageContainer from '../../components/chat/renderMessage';
 import InputContainer from '../../components/chat/inputMessage';
-import NoticeModal from '../../components/chat/noticeModal';
+import NoticeModal from '../../components/noticeModal';
 
 interface RoomMessageDto {
   text: string;

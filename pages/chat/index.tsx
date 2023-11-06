@@ -6,7 +6,7 @@ import { useSocket } from '../../utils/SocketProvider';
 import Container from '../../components/columnNevLayout';
 import Header from '../../components/chat/lobbyHeader';
 import JoinRoomModal from '../../components/chat/joinRoomModal';
-import FailRoomModal from '../../components/chat/failRoomModal';
+import NoticeModal from '../../components/noticeModal';
 import Lock from '../../public/Chat/lock_gold.png';
 
 interface RoomOwnerData {
@@ -28,7 +28,8 @@ const ChatLobby = () => {
   const { socket } = useSocket();
   const [roomlist, setRoomlist] = useState<RoomListData[]>([]);
   const [openJoinModal, setOpenJoinModal] = useState<boolean>(false);
-  const [openFailModal, setOpenFailModal] = useState<boolean>(false);
+  const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
+  const [noticeMessage, setNoticeMessage] = useState('');
   const [joinRoomId, setJoinRoomId] = useState('');
   const router = useRouter();
 
@@ -64,7 +65,8 @@ const ChatLobby = () => {
               router.push(`chat/${responseRoomId}`);
             } else {
               console.log('room-join : Failed', response);
-              handleCloseFailModal();
+              setNoticeMessage('채팅방에 입장하실 수 없어요!');
+              setOpenNotice(true);
             }
           });
       }
@@ -73,15 +75,16 @@ const ChatLobby = () => {
 
   const handleFailModal = () => {
     setOpenJoinModal(false);
-    setOpenFailModal(true);
+    setNoticeMessage('비밀번호를 틀리셨어요!');
+    setOpenNotice(true);
   };
 
   const handleCloseJoinModal = () => {
     setOpenJoinModal(false);
   };
 
-  const handleCloseFailModal = () => {
-    setOpenFailModal(false);
+  const handleCloseNotice = () => {
+    setOpenNotice(false);
   };
 
   return (
@@ -114,7 +117,9 @@ const ChatLobby = () => {
           roomId={joinRoomId}
         />
       )}
-      {openFailModal && <FailRoomModal handleCloseModal={handleCloseFailModal} />}
+      {isOpenNotice && (
+        <NoticeModal handleCloseModal={handleCloseNotice} noticeMessage={noticeMessage} />
+      )}
     </Container>
   );
 };
