@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 interface RoomMessageDto {
@@ -24,11 +24,14 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
   messages,
   userlist,
 }) => {
+  const messageListRef = useRef<HTMLDivElement | null>(null);
   const { data: session } = useSession();
 
   useEffect(() => {
-    console.log(userlist);
-  }, [userlist]);
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const handleFindUser = (userId: number) => {
     if (userId == session?.user.user_id) {
@@ -59,7 +62,7 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
   };
 
   return (
-    <MessageListFrame>
+    <MessageListFrame ref={messageListRef}>
       {messages.map((message, index) => (
         <Frame key={index}>
           {handleFindUser(message.senderId) && (
