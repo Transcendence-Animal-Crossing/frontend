@@ -25,6 +25,13 @@ interface ParticipantData {
   adminTime: Date;
 }
 
+interface UserData {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
+}
+
 interface ActionRoomData {
   roomId: string;
   targetId: number;
@@ -33,6 +40,7 @@ interface ActionRoomData {
 const Chat = () => {
   const { socket } = useSocket();
   const [userlist, setUserlist] = useState<ParticipantData[]>([]);
+  const [banlist, setBanlist] = useState<UserData[]>([]);
   const [roomTitle, setRoomTitle] = useState('');
   const [messages, setMessages] = useState<RoomMessageDto[]>([]);
   const [messageText, setMessageText] = useState('');
@@ -42,8 +50,6 @@ const Chat = () => {
 
   useEffect(() => {
     if (socket) {
-      console.log('Room ID:', roomId);
-
       if (!roomTitle) {
         socket
           .emitWithAck('room-detail', {
@@ -74,25 +80,49 @@ const Chat = () => {
       const handleRoomKick = (response: ActionRoomData) => {
         const { targetId } = response;
         const userId = session?.user.user_id;
-        setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
         if (targetId == userId) {
           router.push('http://localhost:3000/chat/');
+        }
+        setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+      };
+
+      const handleRoomBan = (response: ActionRoomData) => {
+        const { targetId } = response;
+        console.log(targetId);
+        console.log(userlist);
+        const userId = session?.user.user_id;
+        const targetUser = userlist.find((user) => user.id === targetId);
+        console.log(targetUser);
+        if (targetId == userId) {
+          router.push('http://localhost:3000/chat/');
+        }
+        if (targetUser) {
+          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+          const banUserData: UserData = {
+            id: targetUser.id,
+            nickName: targetUser.nickName,
+            intraName: targetUser.intraName,
+            avatar: targetUser.avatar,
+          };
+          setBanlist((prevMessages) => [...prevMessages, banUserData]);
         }
       };
 
       socket.on('room-message', handleRoomMessage);
       socket.on('room-join', handleRoomJoin);
       socket.on('room-kick', handleRoomKick);
+      socket.on('room-ban', handleRoomBan);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
         socket.off('room-join', handleRoomJoin);
         socket.off('room-kick', handleRoomKick);
+        socket.off('room-ban', handleRoomBan);
       };
     } else {
       router.push('http://localhost:3000/chat/');
     }
-  }, [socket]);
+  }, [socket, userlist, banlist, roomTitle, roomId, router]);
 
   const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {

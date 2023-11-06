@@ -63,6 +63,15 @@ const userListModal: React.FC<{
     }
   };
 
+  const handleUserBan = (targetId: number) => {
+    if (socket) {
+      socket.emit('room-ban', {
+        roomId: roomId,
+        targetId: targetId,
+      });
+    }
+  };
+
   return (
     <>
       <Container onClick={handleOverlayClick}>
@@ -91,7 +100,13 @@ const userListModal: React.FC<{
                         handleUserKick(user.id);
                       }}
                     />
-                    <AdminImage src={ban} alt="ban" />
+                    <AdminImage
+                      src={ban}
+                      alt="ban"
+                      onClick={() => {
+                        handleUserBan(user.id);
+                      }}
+                    />
                     <AdminImage src={mute} alt="mute" />
                   </AdminFrame>
                 )}
