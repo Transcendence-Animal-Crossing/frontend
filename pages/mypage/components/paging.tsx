@@ -26,6 +26,26 @@ import {
 const Paging = () => {
   const { data: session } = useSession();
 
+  const achieveDark = [
+    achieveDark1,
+    achieveDark2,
+    achieveDark3,
+    achieveDark4,
+    achieveDark5,
+    achieveDark6,
+    achieveDark7,
+  ];
+
+  const achieveLight = [
+    achieveLight1,
+    achieveLight2,
+    achieveLight3,
+    achieveLight4,
+    achieveLight5,
+    achieveLight6,
+    achieveLight7,
+  ];
+
   const [achievements, setAchievements] = useState([
     achieveDark1,
     achieveDark2,
@@ -35,6 +55,9 @@ const Paging = () => {
     achieveDark6,
     achieveDark7,
   ]);
+
+  console.log("achievements first");
+  console.log(achievements);
 
   // 달성 목록
   const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
@@ -65,12 +88,25 @@ const Paging = () => {
       console.log(response);
 
       await setAchieveList(response.data.achievements);
+      // await handleAchievements([1, 0, 1, 1, 1, 0, 0]);
 
       console.log(achieveList);
     } catch (error) {
       console.log("Error occured in handleAchieveList()");
       console.log(error);
     }
+  };
+
+  const handleAchievements = (achieveList: number[]) => {
+    let newAchievements = [...achievements];
+    achieveList.map((achieve, index) => {
+      if (achieve === 1) {
+        newAchievements[index] = achieveLight[index];
+      } else {
+        newAchievements[index] = achieveDark[index];
+      }
+    });
+    setAchievements(newAchievements);
   };
 
   return (
