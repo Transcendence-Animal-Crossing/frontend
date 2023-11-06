@@ -45,7 +45,7 @@ const Chat = () => {
   const [roomTitle, setRoomTitle] = useState('');
   const [messages, setMessages] = useState<RoomMessageDto[]>([]);
   const [messageText, setMessageText] = useState('');
-  const [isOpenNotice, setOpenNotic] = useState<boolean>(false);
+  const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
   const [noticeMessage, setNoticeMessage] = useState('');
   const router = useRouter();
   const { data: session } = useSession();
@@ -117,7 +117,7 @@ const Chat = () => {
         }
         if (targetId == userId) {
           setNoticeMessage('30분간 뮤트당하셨어요!');
-          setOpenNotic(true);
+          setOpenNotice(true);
         } else {
           console.log('뮤트당한사람있음');
         }
@@ -161,7 +161,7 @@ const Chat = () => {
             setMessageText('');
           } else {
             setNoticeMessage('뮤트 상태에서는 메세지를 보낼 수 없어요!');
-            setOpenNotic(true);
+            setOpenNotice(true);
           }
         });
     }
@@ -172,7 +172,7 @@ const Chat = () => {
   };
 
   const handleCloseNotice = () => {
-    setOpenNotic(false);
+    setOpenNotice(false);
   };
 
   return (
