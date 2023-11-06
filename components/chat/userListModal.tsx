@@ -2,8 +2,11 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSocket } from '../../utils/SocketProvider';
-import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import exit from '../../public/Icon/exit.png';
+import kick from '../../public/Chat/kick.png';
+import ban from '../../public/Chat/ban.png';
+import mute from '../../public/Chat/mute.png';
 
 interface ParticipantData {
   id: number;
@@ -18,13 +21,27 @@ interface ParticipantData {
 
 const userListModal: React.FC<{
   handleCloseModal: () => void;
+  roomId: string;
   userlist: ParticipantData[];
   createButtonRect: { top: number; right: number; height: number };
-}> = ({ handleCloseModal, userlist, createButtonRect }) => {
+}> = ({ handleCloseModal, roomId, userlist, createButtonRect }) => {
+  const [isOwner, setIsOwner] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { socket } = useSocket();
-  const router = useRouter();
+  const { data: session } = useSession();
   const overlayLeft = `${createButtonRect.right - window.innerWidth * 0.2}px`;
   const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
+
+  useEffect(() => {
+    const userId = session?.user.user_id;
+    const user = userlist.find((user) => user.id === userId);
+    if (user && user.grade == 2) {
+      setIsOwner(true);
+      setIsAdmin(true);
+    } else if (user && user.grade == 1) {
+      setIsAdmin(true);
+    }
+  }, [userlist]);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -35,6 +52,15 @@ const userListModal: React.FC<{
   const handleSetUserAvatar = (avatar: string) => {
     const apiUrl = 'http://localhost:8080/';
     return apiUrl + avatar;
+  };
+
+  const handleUserKick = (targetId: number) => {
+    if (socket) {
+      socket.emit('room-kick', {
+        roomId: roomId,
+        targetId: targetId,
+      });
+    }
   };
 
   return (
@@ -56,6 +82,20 @@ const userListModal: React.FC<{
                 />
                 <Text fontSize="2vh">{user.nickName}</Text>
                 <Text fontSize="1.2vh">{user.intraName}</Text>
+                {isAdmin && (
+                  <AdminFrame>
+                    <AdminImage
+                      src={kick}
+                      alt="kick"
+                      onClick={() => {
+                        handleUserKick(user.id);
+                      }}
+                    />
+                    <AdminImage src={ban} alt="ban" />
+                    <AdminImage src={mute} alt="mute" />
+                  </AdminFrame>
+                )}
+                {isOwner && <SetAdmin> Give admin </SetAdmin>}
               </UserFrame>
             ))}
           </UsersFrame>
@@ -143,4 +183,28 @@ const Text = styled.div<{ fontSize: string }>`
   color: ${(props) => props.theme.colors.brown};
   font-family: 'GiantsLight';
   font-size: ${(props) => props.fontSize};
+`;
+
+const AdminFrame = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5vw;
+`;
+
+const AdminImage = styled(Image)`
+  width: 1.5vw;
+  height: auto;
+  cursor: pointer;
+`;
+
+const SetAdmin = styled.div`
+  color: ${(props) => props.theme.colors.ivory};
+  font-family: 'GiantsLight';
+  font-size: 0.7vw;
+  background-color: ${(props) => props.theme.colors.brown05};
+  border-radius: 5px;
+  padding: 0.3vw 0.7vw;
+  cursor: pointer;
 `;

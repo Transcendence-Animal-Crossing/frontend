@@ -25,6 +25,11 @@ interface ParticipantData {
   adminTime: Date;
 }
 
+interface ActionRoomData {
+  roomId: string;
+  targetId: number;
+}
+
 const Chat = () => {
   const { socket } = useSocket();
   const [userlist, setUserlist] = useState<ParticipantData[]>([]);
@@ -40,22 +45,19 @@ const Chat = () => {
       console.log('Room ID:', roomId);
 
       if (!roomTitle) {
-        if (socket) {
-          console.log('roomId:', roomId);
-          socket
-            .emitWithAck('room-detail', {
-              roomId: roomId,
-            })
-            .then((response) => {
-              if (response.status === 200) {
-                console.log(response);
-                setUserlist(response.body.participants);
-                setRoomTitle(response.body.title);
-              } else {
-                console.log('room-detail : Failed', response);
-              }
-            });
-        }
+        socket
+          .emitWithAck('room-detail', {
+            roomId: roomId,
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              console.log(response);
+              setUserlist(response.body.participants);
+              setRoomTitle(response.body.title);
+            } else {
+              console.log('room-detail : Failed', response);
+            }
+          });
       }
 
       const handleRoomMessage = (response: RoomMessageDto) => {
@@ -69,12 +71,23 @@ const Chat = () => {
         setUserlist((prevMessages) => [...prevMessages, response]);
       };
 
+      const handleRoomKick = (response: ActionRoomData) => {
+        const { targetId } = response;
+        const userId = session?.user.user_id;
+        setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+        if (targetId == userId) {
+          router.push('http://localhost:3000/chat/');
+        }
+      };
+
       socket.on('room-message', handleRoomMessage);
       socket.on('room-join', handleRoomJoin);
+      socket.on('room-kick', handleRoomKick);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
         socket.off('room-join', handleRoomJoin);
+        socket.off('room-kick', handleRoomKick);
       };
     } else {
       router.push('http://localhost:3000/chat/');

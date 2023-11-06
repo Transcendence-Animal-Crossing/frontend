@@ -78,6 +78,7 @@ const Header: React.FC<{ roomTitle: string; roomId: string; userlist: Participan
       {isOpenModal && (
         <UserListModal
           handleCloseModal={handleCloseModal}
+          roomId={roomId}
           userlist={userlist}
           createButtonRect={createButtonRect}
         />
