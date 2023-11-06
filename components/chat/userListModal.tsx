@@ -72,6 +72,15 @@ const userListModal: React.FC<{
     }
   };
 
+  const handleUserMute = (targetId: number) => {
+    if (socket) {
+      socket.emit('room-mute', {
+        roomId: roomId,
+        targetId: targetId,
+      });
+    }
+  };
+
   return (
     <>
       <Container onClick={handleOverlayClick}>
@@ -107,7 +116,13 @@ const userListModal: React.FC<{
                         handleUserBan(user.id);
                       }}
                     />
-                    <AdminImage src={mute} alt="mute" />
+                    <AdminImage
+                      src={mute}
+                      alt="mute"
+                      onClick={() => {
+                        handleUserMute(user.id);
+                      }}
+                    />
                   </AdminFrame>
                 )}
                 {isOwner && <SetAdmin> Give admin </SetAdmin>}

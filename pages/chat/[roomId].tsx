@@ -7,6 +7,7 @@ import Container from '../../components/columnNevLayout';
 import Header from '../../components/chat/chatRoomHeader';
 import MessageContainer from '../../components/chat/renderMessage';
 import InputContainer from '../../components/chat/inputMessage';
+import NoticeModal from '../../components/chat/noticeModal';
 
 interface RoomMessageDto {
   text: string;
@@ -44,6 +45,8 @@ const Chat = () => {
   const [roomTitle, setRoomTitle] = useState('');
   const [messages, setMessages] = useState<RoomMessageDto[]>([]);
   const [messageText, setMessageText] = useState('');
+  const [isOpenNotice, setOpenNotic] = useState<boolean>(false);
+  const [noticeMessage, setNoticeMessage] = useState('');
   const router = useRouter();
   const { data: session } = useSession();
   const { roomId } = router.query as { roomId: string };
@@ -88,11 +91,8 @@ const Chat = () => {
 
       const handleRoomBan = (response: ActionRoomData) => {
         const { targetId } = response;
-        console.log(targetId);
-        console.log(userlist);
         const userId = session?.user.user_id;
         const targetUser = userlist.find((user) => user.id === targetId);
-        console.log(targetUser);
         if (targetId == userId) {
           router.push('http://localhost:3000/chat/');
         }
@@ -108,16 +108,33 @@ const Chat = () => {
         }
       };
 
+      const handleRoomMute = (response: ActionRoomData) => {
+        const { targetId } = response;
+        const userId = session?.user.user_id;
+        const targetUser = userlist.find((user) => user.id === targetId);
+        if (targetUser) {
+          targetUser.mute = true;
+        }
+        if (targetId == userId) {
+          setNoticeMessage('30분간 뮤트당하셨어요!');
+          setOpenNotic(true);
+        } else {
+          console.log('뮤트당한사람있음');
+        }
+      };
+
       socket.on('room-message', handleRoomMessage);
       socket.on('room-join', handleRoomJoin);
       socket.on('room-kick', handleRoomKick);
       socket.on('room-ban', handleRoomBan);
+      socket.on('room-mute', handleRoomMute);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
         socket.off('room-join', handleRoomJoin);
         socket.off('room-kick', handleRoomKick);
         socket.off('room-ban', handleRoomBan);
+        socket.off('room-mute', handleRoomMute);
       };
     } else {
       router.push('http://localhost:3000/chat/');
@@ -132,17 +149,30 @@ const Chat = () => {
 
   const sendMessage = () => {
     if (socket && messageText) {
-      socket.emit('room-message', {
-        text: messageText,
-        roomId,
-        senderId: session?.user.user_id,
-      });
-      setMessageText('');
+      socket
+        .emitWithAck('room-message', {
+          text: messageText,
+          roomId: roomId,
+          senderId: session?.user.user_id,
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            setMessageText('');
+          } else {
+            setNoticeMessage('뮤트 상태에서는 메세지를 보낼 수 없어요!');
+            setOpenNotic(true);
+          }
+        });
     }
   };
 
   const handleMessageTextChange = (newMessage: string) => {
     setMessageText(newMessage);
+  };
+
+  const handleCloseNotice = () => {
+    setOpenNotic(false);
   };
 
   return (
@@ -157,6 +187,9 @@ const Chat = () => {
           sendMessage={sendMessage}
         />
       </ChatListFrame>
+      {isOpenNotice && (
+        <NoticeModal handleCloseModal={handleCloseNotice} noticeMessage={noticeMessage} />
+      )}
     </Container>
   );
 };
