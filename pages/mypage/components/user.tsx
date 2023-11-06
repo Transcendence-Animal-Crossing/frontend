@@ -9,13 +9,12 @@ import info from "../../../public/Icon/info.png";
 const UserContainer: React.FC<{
   nickname: string;
   tierIndex: number;
-  totalGames: number;
-  totalWins: number;
+  totalCount: number;
+  winCount: number;
   winRate: number;
   avatar: string;
-}> = ({ nickname, tierIndex, totalGames, totalWins, winRate, avatar }) => {
+}> = ({ nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
   const { data: session } = useSession();
-  // console.log(session.user.user_id);
 
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const tierTexts = ["브론즈", "실버", "골드", "플래티넘", "다이아몬드"];
@@ -52,11 +51,11 @@ const UserContainer: React.FC<{
       <MatchStatFrame>
         <MatchStatText>
           <MatchStatName> 경기 수 </MatchStatName>
-          <MatchStatNumber> {totalGames} </MatchStatNumber>
+          <MatchStatNumber> {totalCount} </MatchStatNumber>
         </MatchStatText>
         <MatchStatText>
           <MatchStatName> 승리 </MatchStatName>
-          <MatchStatNumber> {totalWins} </MatchStatNumber>
+          <MatchStatNumber> {winCount} </MatchStatNumber>
         </MatchStatText>
         <MatchStatText>
           <MatchStatName> 승률 </MatchStatName>

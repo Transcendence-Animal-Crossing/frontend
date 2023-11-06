@@ -17,14 +17,13 @@ const MyPage = () => {
   const [nickname, setNickname] = useState("nickname");
   const [rankScore, setRankScore] = useState(0);
   const [tierIndex, setTierIndex] = useState(0);
-  const [totalGames, setTotalGames] = useState(1);
-  const [totalWins, setTotalWins] = useState(1);
-  const [winRate, setWinRate] = useState(1);
+  const [totalCount, setTotalCount] = useState(1);
+  const [winCount, setWinCount] = useState(1);
+  const [winRate, setWinRate] = useState(100);
   const [avatarPath, setAvatarPath] = useState(
     "http://localhost:8080/original/profile2.png"
   );
 
-  // 렌더링 될 때마다 실행
   useEffect(() => {
     console.log("rendering");
     getUserInfo();
@@ -39,27 +38,30 @@ const MyPage = () => {
       console.log("getUserInfo() response");
       console.log(response);
       setNickname(response.data.nickName);
-      handleRank(response.data.rankScore);
       setAvatarPath(apiUrl + response.data.avatar);
-      // handleAvatarPath(response.data.avatar);
-      // console.log(response.data.avatar);
+      handleRank(response.data.rankScore);
     } catch (error) {
       console.log("Error occured in getUserInfo()");
       console.log(error);
     }
 
-    try {
-      const userId = session?.user.user_id;
-      const response = await axiosInstance.get("/games/general/" + userId);
-      console.log("getUserInfo() response");
-      console.log(response);
-      setTotalGames(response.data.stats.totalGames);
-      setTotalWins(response.data.stats.totalWins);
-      setWinRate(response.data.stats.winRate);
-    } catch (error) {
-      console.log("Error occured in getUserInfo()");
-      console.log(error);
-    }
+    // try {
+    //   const userId = session?.user.user_id;
+    //   const response = await axiosInstance.get("/record", {
+    //     params: {
+    //       id: userId,
+    //       isRank: false,
+    //     },
+    //   });
+    //   console.log("getRecord() response");
+    //   console.log(response);
+    //   setTotalCount(response.data.totalCount);
+    //   setWinCount(response.data.winCount);
+    //   setWinRate(response.data.winRate);
+    // } catch (error) {
+    //   console.log("Error occured in getRecord()");
+    //   console.log(error);
+    // }
   };
 
   const handleRank = async (rankScore: number) => {
@@ -78,8 +80,8 @@ const MyPage = () => {
           avatar={avatarPath}
           nickname={nickname}
           tierIndex={tierIndex}
-          totalGames={totalGames}
-          totalWins={totalWins}
+          totalCount={totalCount}
+          winCount={winCount}
           winRate={winRate}
         ></UserContainer>
         <InfoContainer></InfoContainer>
