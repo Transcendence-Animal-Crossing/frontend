@@ -7,6 +7,8 @@ import exit from '../../public/Icon/exit.png';
 import kick from '../../public/Chat/kick.png';
 import ban from '../../public/Chat/ban.png';
 import mute from '../../public/Chat/mute.png';
+import slider from '../../public/Chat/slider.png';
+import users from '../../public/Icon/users.png';
 
 interface ParticipantData {
   id: number;
@@ -19,14 +21,23 @@ interface ParticipantData {
   adminTime: Date;
 }
 
+interface UserData {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
+}
+
 const userListModal: React.FC<{
   handleCloseModal: () => void;
   roomId: string;
   userlist: ParticipantData[];
+  banlist: UserData[];
   createButtonRect: { top: number; right: number; height: number };
-}> = ({ handleCloseModal, roomId, userlist, createButtonRect }) => {
+}> = ({ handleCloseModal, roomId, userlist, banlist, createButtonRect }) => {
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showBan, setShowBan] = useState(false);
   const { socket } = useSocket();
   const { data: session } = useSession();
   const overlayLeft = `${createButtonRect.right - window.innerWidth * 0.2}px`;
@@ -52,6 +63,14 @@ const userListModal: React.FC<{
   const handleSetUserAvatar = (avatar: string) => {
     const apiUrl = 'http://localhost:8080/';
     return apiUrl + avatar;
+  };
+
+  const handlShowBanList = () => {
+    if (showBan) {
+      setShowBan(false);
+    } else {
+      setShowBan(true);
+    }
   };
 
   const handleUserKick = (targetId: number) => {
@@ -87,48 +106,75 @@ const userListModal: React.FC<{
         <Content overlayTop={overlayTop} overlayLeft={overlayLeft}>
           <Header>
             참여중인 유저목록
-            <ExitImage src={exit} alt="exit" onClick={handleOverlayClick} />
+            <HeaderImageFrame>
+              {isAdmin && !showBan && (
+                <HeaderImage src={slider} alt="slider" onClick={handlShowBanList} />
+              )}
+              {isAdmin && showBan && (
+                <HeaderImage src={users} alt="users" onClick={handlShowBanList} />
+              )}
+              <HeaderImage src={exit} alt="exit" onClick={handleOverlayClick} />
+            </HeaderImageFrame>
           </Header>
-          <UsersFrame>
-            {userlist.map((user, index) => (
-              <UserFrame key={index}>
-                <UserImage
-                  src={handleSetUserAvatar(user.avatar)}
-                  alt="Profle Image"
-                  width={100}
-                  height={100}
-                />
-                <Text fontSize="2vh">{user.nickName}</Text>
-                <Text fontSize="1.2vh">{user.intraName}</Text>
-                {isAdmin && (
-                  <AdminFrame>
-                    <AdminImage
-                      src={kick}
-                      alt="kick"
-                      onClick={() => {
-                        handleUserKick(user.id);
-                      }}
-                    />
-                    <AdminImage
-                      src={ban}
-                      alt="ban"
-                      onClick={() => {
-                        handleUserBan(user.id);
-                      }}
-                    />
-                    <AdminImage
-                      src={mute}
-                      alt="mute"
-                      onClick={() => {
-                        handleUserMute(user.id);
-                      }}
-                    />
-                  </AdminFrame>
-                )}
-                {isOwner && <SetAdmin> Give admin </SetAdmin>}
-              </UserFrame>
-            ))}
-          </UsersFrame>
+          {showBan && (
+            <UsersFrame userCount={banlist.length}>
+              {banlist.map((user, index) => (
+                <UserFrame key={index}>
+                  <UserImage
+                    src={handleSetUserAvatar(user.avatar)}
+                    alt="Profle Image"
+                    width={100}
+                    height={100}
+                  />
+                  <Text fontSize="2vh">{user.nickName}</Text>
+                  <Text fontSize="1.2vh">{user.intraName}</Text>
+                  <SetAdmin> Un Ban </SetAdmin>
+                </UserFrame>
+              ))}
+            </UsersFrame>
+          )}
+          {!showBan && (
+            <UsersFrame userCount={userlist.length}>
+              {userlist.map((user, index) => (
+                <UserFrame key={index}>
+                  <UserImage
+                    src={handleSetUserAvatar(user.avatar)}
+                    alt="Profle Image"
+                    width={100}
+                    height={100}
+                  />
+                  <Text fontSize="2vh">{user.nickName}</Text>
+                  <Text fontSize="1.2vh">{user.intraName}</Text>
+                  {isAdmin && (
+                    <AdminFrame>
+                      <AdminImage
+                        src={kick}
+                        alt="kick"
+                        onClick={() => {
+                          handleUserKick(user.id);
+                        }}
+                      />
+                      <AdminImage
+                        src={ban}
+                        alt="ban"
+                        onClick={() => {
+                          handleUserBan(user.id);
+                        }}
+                      />
+                      <AdminImage
+                        src={mute}
+                        alt="mute"
+                        onClick={() => {
+                          handleUserMute(user.id);
+                        }}
+                      />
+                    </AdminFrame>
+                  )}
+                  {isOwner && <SetAdmin> Give admin </SetAdmin>}
+                </UserFrame>
+              ))}
+            </UsersFrame>
+          )}
         </Content>
       </Container>
     </>
@@ -179,18 +225,31 @@ const Header = styled.div`
   box-sizing: border-box;
 `;
 
-const ExitImage = styled(Image)`
+const HeaderImageFrame = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1vw;
+`;
+
+const HeaderImage = styled(Image)`
   width: 1.5vw;
   height: auto;
   cursor: pointer;
 `;
 
-const UsersFrame = styled.div`
+const UsersFrame = styled.div<{ userCount: number }>`
+  min-width: 26vw;
+  max-width: 30vw;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  /* justify-content: space-around; */
+  /* justify-content: flex-start; */
+  justify-content: ${(props) => (props.userCount >= 4 ? 'flex-start' : 'space-around')};
   gap: 1vw;
+  overflow: auto;
 `;
 
 const UserFrame = styled.div`

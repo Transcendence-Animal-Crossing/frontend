@@ -18,11 +18,19 @@ interface ParticipantData {
   adminTime: Date;
 }
 
-const Header: React.FC<{ roomTitle: string; roomId: string; userlist: ParticipantData[] }> = ({
-  roomTitle,
-  roomId,
-  userlist,
-}) => {
+interface UserData {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
+}
+
+const Header: React.FC<{
+  roomTitle: string;
+  roomId: string;
+  userlist: ParticipantData[];
+  banlist: UserData[];
+}> = ({ roomTitle, roomId, userlist, banlist }) => {
   const { socket } = useSocket();
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [createButtonRect, setCreateButtonRect] = useState<{
@@ -80,6 +88,7 @@ const Header: React.FC<{ roomTitle: string; roomId: string; userlist: Participan
           handleCloseModal={handleCloseModal}
           roomId={roomId}
           userlist={userlist}
+          banlist={banlist}
           createButtonRect={createButtonRect}
         />
       )}

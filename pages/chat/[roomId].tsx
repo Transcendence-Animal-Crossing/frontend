@@ -177,7 +177,7 @@ const Chat = () => {
 
   return (
     <Container>
-      <Header roomTitle={roomTitle} roomId={roomId} userlist={userlist} />
+      <Header roomTitle={roomTitle} roomId={roomId} userlist={userlist} banlist={banlist} />
       <ChatListFrame>
         <MessageContainer messages={messages} userlist={userlist} />
         <InputContainer
