@@ -3,12 +3,25 @@ import Image from 'next/image';
 import Logo from '../../public/Login/Isabelle.png';
 import FTLoginButton from '../../public/Login/42loginButton.png';
 import CommonLoginButton from '../../public/Login/LoginButton.png';
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
 import Container from '../../components/columnLayout';
 
 const ChoicePage: React.FC = () => {
   const router = useRouter();
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      if (session.responseCode === 200) {
+        router.push('http://localhost:3000/');
+      } else if (session.responseCode === 201) {
+        router.push('http://localhost:3000/join');
+      }
+    }
+  });
 
   const handleCommonLogin = async () => {
     // 일반로그인

@@ -35,7 +35,7 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, profile, account }) {
       if (profile && account) {
-        const customProfile = profile as CustomProfile; // 확장한 타입으로 변환
+        const customProfile = profile as CustomProfile;
         token.user_id = customProfile.id;
         token.login = customProfile.login;
         try {
@@ -45,6 +45,7 @@ export const authOptions: NextAuthOptions = {
           });
           token.accessToken = response.headers.authorization.replace('Bearer ', '');
           console.log(response);
+          token.responseCode = response.status;
         } catch (error) {
           console.error('jwt error:', error);
           token.accessToken = 'fail';
@@ -56,6 +57,7 @@ export const authOptions: NextAuthOptions = {
       session.user.login = token.login as string;
       session.user.user_id = token.user_id as number;
       session.accessToken = token.accessToken as string;
+      session.responseCode = token.responseCode as number;
       return session;
     },
   },
