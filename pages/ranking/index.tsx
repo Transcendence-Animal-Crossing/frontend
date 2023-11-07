@@ -14,6 +14,7 @@ import Container from "../../components/columnNevLayout";
 
 const Ranking = () => {
   const apiUrl = "http://localhost:8080/";
+  const userPerPage = 8;
   const { data: session } = useSession();
   console.log(session);
 
@@ -60,7 +61,6 @@ const Ranking = () => {
       });
       console.log(response.data);
       await printResponse(response.data);
-      // await setOffset(offset + response.data.length);
       await setUserList(response.data);
     } catch (error) {
       console.log(error);
@@ -89,11 +89,11 @@ const Ranking = () => {
   };
 
   const handlePrevButton = async () => {
-    setOffset(offset - 8);
+    setOffset(offset - userPerPage);
   };
 
   const handlerNextButton = async () => {
-    setOffset(offset + 8);
+    setOffset(offset + userPerPage);
   };
 
   const handleKeyDown = (e: any) => {
@@ -175,6 +175,7 @@ const InfoImage = styled(Image)`
 `;
 
 const PageButton = styled.div`
+  height: 10%;
   width: auto;
   padding: 0.5vh 1.5vh;
   border-radius: 20px;
@@ -194,10 +195,9 @@ const PageMoveImage = styled(Image)`
 
 const RankingListFrame = styled.div`
   width: 100%;
-  height: 80%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  // background-color: ${(props) => props.theme.colors.beige};
 `;
 
 const Input = styled.input.attrs({ required: true })`
