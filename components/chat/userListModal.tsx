@@ -39,7 +39,7 @@ const userListModal: React.FC<{
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showBan, setShowBan] = useState(false);
-  const [headetText, setHeaderText] = useState('참여중인 유저목록');
+  const [headerText, setHeaderText] = useState('참여중인 유저목록');
   const { socket } = useSocket();
   const { data: session } = useSession();
   const overlayLeft = `${createButtonRect.right - window.innerWidth * 0.2}px`;
@@ -122,12 +122,40 @@ const userListModal: React.FC<{
     }
   };
 
+  const handleUserAdmin = (targetId: number) => {
+    const targetUser = userlist.find((user) => user.id === targetId);
+    if (socket && targetUser) {
+      if (targetUser.grade == 1) {
+        socket.emit('remove-admin', {
+          roomId: roomId,
+          targetId: targetId,
+        });
+      } else {
+        socket.emit('add-admin', {
+          roomId: roomId,
+          targetId: targetId,
+        });
+      }
+    }
+  };
+
+  const handleUserAdminText = (targetId: number) => {
+    const targetUser = userlist.find((user) => user.id === targetId);
+    if (socket && targetUser) {
+      if (targetUser.grade == 1) {
+        return 'Remove Admin';
+      } else {
+        return 'Add Admin';
+      }
+    }
+  };
+
   return (
     <>
       <Container onClick={handleOverlayClick}>
         <Content overlayTop={overlayTop} overlayLeft={overlayLeft}>
           <Header>
-            {headetText}
+            {headerText}
             <HeaderImageFrame>
               {isAdmin && !showBan && (
                 <HeaderImage src={slider} alt="slider" onClick={handlShowBanList} />
@@ -209,7 +237,15 @@ const userListModal: React.FC<{
                       )}
                     </AdminFrame>
                   )}
-                  {isOwner && <SetAdmin> Give admin </SetAdmin>}
+                  {isOwner && (
+                    <SetAdmin
+                      onClick={() => {
+                        handleUserAdmin(user.id);
+                      }}
+                    >
+                      {handleUserAdminText(user.id)}
+                    </SetAdmin>
+                  )}
                 </UserFrame>
               ))}
             </UsersFrame>

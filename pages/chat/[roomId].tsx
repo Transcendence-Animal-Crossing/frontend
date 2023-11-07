@@ -64,7 +64,7 @@ const Chat = () => {
               console.log(response);
               setUserlist(response.body.participants);
               setRoomTitle(response.body.title);
-              setRoomMode(response.body.mode);
+              // setRoomMode(response.body.mode);
             } else {
               console.log('room-detail : Failed', response);
             }
@@ -138,10 +138,25 @@ const Chat = () => {
 
       const handleRoomUnmute = (response: ActionRoomData) => {
         const { targetId } = response;
-        const userId = session?.user.user_id;
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
           targetUser.mute = false;
+        }
+      };
+
+      const handleAddAdmin = (response: ActionRoomData) => {
+        const { targetId } = response;
+        const targetUser = userlist.find((user) => user.id === targetId);
+        if (targetUser) {
+          targetUser.grade = 1;
+        }
+      };
+
+      const handleRemoveAdmin = (response: ActionRoomData) => {
+        const { targetId } = response;
+        const targetUser = userlist.find((user) => user.id === targetId);
+        if (targetUser) {
+          targetUser.grade = 0;
         }
       };
 
@@ -153,6 +168,8 @@ const Chat = () => {
       socket.on('room-mute', handleRoomMute);
       socket.on('room-unban', handleRoomUnban);
       socket.on('room-unmute', handleRoomUnmute);
+      socket.on('add-admin', handleAddAdmin);
+      socket.on('remove-admin', handleRemoveAdmin);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
@@ -163,6 +180,8 @@ const Chat = () => {
         socket.off('room-mute', handleRoomMute);
         socket.off('room-unban', handleRoomUnban);
         socket.off('room-unmute', handleRoomUnmute);
+        socket.off('add-admin', handleAddAdmin);
+        socket.off('remove-admin', handleRemoveAdmin);
       };
     } else {
       router.push('http://localhost:3000/chat/');
@@ -205,7 +224,13 @@ const Chat = () => {
 
   return (
     <Container>
-      <Header roomTitle={roomTitle} roomMode={roomMode} roomId={roomId} userlist={userlist} banlist={banlist} />
+      <Header
+        roomTitle={roomTitle}
+        roomMode={roomMode}
+        roomId={roomId}
+        userlist={userlist}
+        banlist={banlist}
+      />
       <ChatListFrame>
         <MessageContainer messages={messages} userlist={userlist} />
         <InputContainer
