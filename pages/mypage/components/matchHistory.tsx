@@ -23,7 +23,7 @@ const MatchHistoryContainer = () => {
           <InfoImage src={home} alt="home" />
         </Button>
       </MatchHistoryHeader>
-      <MatchHistoryBody></MatchHistoryBody>
+      <MatchHistoryBody />
     </MatchHistoryFrame>
   );
 };

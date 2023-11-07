@@ -2,10 +2,10 @@ import styled from "styled-components";
 import Image from "next/image";
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/router";
-import info from "../../public/Icon/info.png";
-import home from "../../public/Icon/home.png";
+import info from "../public/Icon/info.png";
+import home from "../public/Icon/home.png";
 
-const Header = () => {
+const Header = (props: { title: string; text: string }) => {
   const router = useRouter();
 
   const handleRouteLobby = async () => {
@@ -16,8 +16,8 @@ const Header = () => {
     <>
       <HeaderFrame>
         <InfoFrame>
-          <TitleFrame>Ranking</TitleFrame>
-          <SubText> 전체 랭킹 </SubText>
+          <TitleFrame>{props.title}</TitleFrame>
+          <SubText>{props.text}</SubText>
           <InfoImage src={info} alt="info" />
         </InfoFrame>
         <ButtonFrame>
@@ -59,7 +59,7 @@ const TitleFrame = styled.div`
   align-items: center;
   color: ${(props) => props.theme.colors.ivory};
   font-family: "Giants";
-  font-size: 3vh;
+  font-size: 2.5vh;
 `;
 
 const SubText = styled.p`

@@ -24,7 +24,6 @@ const MyPage = () => {
     "http://localhost:8080/original/profile2.png"
   );
 
-  // 렌더링 될 때마다 실행
   useEffect(() => {
     console.log("rendering");
     getUserInfo();

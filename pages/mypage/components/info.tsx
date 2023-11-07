@@ -8,9 +8,9 @@ import AchievementFrame from "./achievement";
 const InfoContainer = () => {
   return (
     <InfoProfile>
-      <MatchHistoryFrame></MatchHistoryFrame>
+      <MatchHistoryFrame />
       <DivisionBar />
-      <AchievementFrame></AchievementFrame>
+      <AchievementFrame />
     </InfoProfile>
   );
 };

@@ -9,7 +9,7 @@ const AchievementContainer = () => {
     <AchievementFrame>
       <AchievementHeader>Achievements</AchievementHeader>
       <AchievementBody>
-        <Paging></Paging>
+        <Paging />
       </AchievementBody>
     </AchievementFrame>
   );

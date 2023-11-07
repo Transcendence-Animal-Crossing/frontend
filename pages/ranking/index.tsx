@@ -4,19 +4,11 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import axiosInstance from "../../utils/axiosInstance";
-import Header from "../../components/ranking/rankingHeader";
+import Header from "../../components/lobbyHeader";
 import UserList from "../../components/ranking/userList";
 import search from "../../public/Icon/search.png";
 import prev from "../../public/Icon/prev.png";
 import next from "../../public/Icon/next.png";
-
-import {
-  bronze,
-  silver,
-  gold,
-  platinum,
-  diamond,
-} from "../../components/ranking/tier";
 
 const Ranking = () => {
   const apiUrl = "http://localhost:8080/";
@@ -27,26 +19,7 @@ const Ranking = () => {
   const [offset, setOffset] = useState(0);
   const [searchText, setSearchText] = useState("");
 
-  const [userList, setUserList] = useState([
-    {
-      id: 107066,
-      nickName: "sohlee",
-      intraName: "sohlee",
-      rankScore: 1000,
-      avatar: apiUrl + "original/profile2.png",
-      rankGameTotalCount: 4,
-      ranking: 1,
-    },
-    {
-      id: 106932,
-      nickName: "mkwon",
-      intraName: "mkwon",
-      rankScore: 333,
-      avatar: apiUrl + "original/profile2.png",
-      rankGameTotalCount: 11,
-      ranking: 2,
-    },
-  ]);
+  const [userList, setUserList] = useState([]);
 
   useEffect(() => {
     getRankingList();
@@ -111,7 +84,7 @@ const Ranking = () => {
   return (
     <Container>
       <RankingFrame>
-        <Header />
+        <Header title="Ranking" text="전체 랭킹" />
         <SearchFrame>
           <Button onClick={handleSearch}>
             <InfoImage src={search} alt="Search Button" />
@@ -147,7 +120,6 @@ const Ranking = () => {
 
 export default Ranking;
 
-// 모든 아이템 들어가는 네모 박스
 const RankingFrame = styled.div`
   width: 70%;
   height: 70%;
