@@ -42,11 +42,11 @@ const Ranking = () => {
   ]);
 
   useEffect(() => {
-    // getRankingList();
+    getRankingList();
   }, []);
 
   useEffect(() => {
-    // getRankingList();
+    getRankingList();
   }, [offset]);
 
   const getRankingList = async () => {
@@ -55,10 +55,12 @@ const Ranking = () => {
         params: { offset: offset },
       });
       console.log("getRankingList() response");
-      // response.data.avatar = apiUrl + response.data.avatar;
+      response.data.map((user: any) => {
+        user.avatar = apiUrl + user.avatar;
+      });
       console.log(response.data);
       await printResponse(response.data);
-      await setOffset(offset);
+      // await setOffset(offset + response.data.length);
       await setUserList(response.data);
     } catch (error) {
       console.log(error);
@@ -77,6 +79,9 @@ const Ranking = () => {
       });
       console.log("handleSearch() response");
       console.log(response.data);
+      response.data.map((user: any) => {
+        user.avatar = apiUrl + user.avatar;
+      });
       await setUserList(response.data);
     } catch (error) {
       console.log(error);
@@ -84,11 +89,11 @@ const Ranking = () => {
   };
 
   const handlePrevButton = async () => {
-    setOffset(offset - 1);
+    setOffset(offset - 8);
   };
 
   const handlerNextButton = async () => {
-    setOffset(offset + 1);
+    setOffset(offset + 8);
   };
 
   const handleKeyDown = (e: any) => {

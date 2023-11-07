@@ -28,8 +28,14 @@ const UserFrame: React.FC<{
   const handleRank = async (rankScore: number) => {
     if (rankScore < 1000) {
       setTierIndex(0);
-    } else {
+    } else if (rankScore < 3000) {
       setTierIndex(1);
+    } else if (rankScore < 5000) {
+      setTierIndex(2);
+    } else if (rankScore < 7000) {
+      setTierIndex(3);
+    } else {
+      setTierIndex(4);
     }
   };
 
