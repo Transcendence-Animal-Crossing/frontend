@@ -38,6 +38,7 @@ const userListModal: React.FC<{
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showBan, setShowBan] = useState(false);
+  const [headetText, setHeaderText] = useState('참여중인 유저목록');
   const { socket } = useSocket();
   const { data: session } = useSession();
   const overlayLeft = `${createButtonRect.right - window.innerWidth * 0.2}px`;
@@ -68,8 +69,10 @@ const userListModal: React.FC<{
   const handlShowBanList = () => {
     if (showBan) {
       setShowBan(false);
+      setHeaderText('참여중인 유저목록');
     } else {
       setShowBan(true);
+      setHeaderText('밴 유저목록');
     }
   };
 
@@ -91,6 +94,15 @@ const userListModal: React.FC<{
     }
   };
 
+  const handleUserUnban = (targetId: number) => {
+    if (socket) {
+      socket.emit('room-unban', {
+        roomId: roomId,
+        targetId: targetId,
+      });
+    }
+  };
+
   const handleUserMute = (targetId: number) => {
     if (socket) {
       socket.emit('room-mute', {
@@ -105,7 +117,7 @@ const userListModal: React.FC<{
       <Container onClick={handleOverlayClick}>
         <Content overlayTop={overlayTop} overlayLeft={overlayLeft}>
           <Header>
-            참여중인 유저목록
+            {headetText}
             <HeaderImageFrame>
               {isAdmin && !showBan && (
                 <HeaderImage src={slider} alt="slider" onClick={handlShowBanList} />
@@ -128,7 +140,13 @@ const userListModal: React.FC<{
                   />
                   <Text fontSize="2vh">{user.nickName}</Text>
                   <Text fontSize="1.2vh">{user.intraName}</Text>
-                  <SetAdmin> Un Ban </SetAdmin>
+                  <SetAdmin
+                    onClick={() => {
+                      handleUserUnban(user.id);
+                    }}
+                  >
+                    Un Ban
+                  </SetAdmin>
                 </UserFrame>
               ))}
             </UsersFrame>

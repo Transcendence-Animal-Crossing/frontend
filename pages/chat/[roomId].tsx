@@ -123,11 +123,17 @@ const Chat = () => {
         }
       };
 
+      const handleRoomUnban = (response: ActionRoomData) => {
+        const { targetId } = response;
+        setBanlist((prevBanlist) => prevBanlist.filter((user) => user.id !== targetId));
+      };
+
       socket.on('room-message', handleRoomMessage);
       socket.on('room-join', handleRoomJoin);
       socket.on('room-kick', handleRoomKick);
       socket.on('room-ban', handleRoomBan);
       socket.on('room-mute', handleRoomMute);
+      socket.on('room-unban', handleRoomUnban);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
@@ -135,6 +141,7 @@ const Chat = () => {
         socket.off('room-kick', handleRoomKick);
         socket.off('room-ban', handleRoomBan);
         socket.off('room-mute', handleRoomMute);
+        socket.off('room-unban', handleRoomUnban);
       };
     } else {
       router.push('http://localhost:3000/chat/');
