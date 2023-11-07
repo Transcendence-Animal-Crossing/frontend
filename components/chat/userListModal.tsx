@@ -52,7 +52,11 @@ const userListModal: React.FC<{
       setIsOwner(true);
       setIsAdmin(true);
     } else if (user && user.grade == 1) {
+      setIsOwner(false);
       setIsAdmin(true);
+    } else {
+      setIsOwner(false);
+      setIsAdmin(false);
     }
   }, [userlist]);
 

@@ -64,7 +64,7 @@ const Chat = () => {
               console.log(response);
               setUserlist(response.body.participants);
               setRoomTitle(response.body.title);
-              // setRoomMode(response.body.mode);
+              setRoomMode(response.body.mode);
             } else {
               console.log('room-detail : Failed', response);
             }
@@ -119,10 +119,15 @@ const Chat = () => {
       const handleRoomMute = (response: ActionRoomData) => {
         const { targetId } = response;
         const userId = session?.user.user_id;
-        const targetUser = userlist.find((user) => user.id === targetId);
-        if (targetUser) {
-          targetUser.mute = true;
-        }
+        setUserlist((prevUserlist) => {
+          const updatedUserlist = prevUserlist.map((user) => {
+            if (user.id === targetId) {
+              return { ...user, mute: true };
+            }
+            return user;
+          });
+          return updatedUserlist;
+        });
         if (targetId == userId) {
           setNoticeMessage('30분간 뮤트당하셨어요!');
           setOpenNotice(true);
@@ -138,26 +143,42 @@ const Chat = () => {
 
       const handleRoomUnmute = (response: ActionRoomData) => {
         const { targetId } = response;
-        const targetUser = userlist.find((user) => user.id === targetId);
-        if (targetUser) {
-          targetUser.mute = false;
-        }
+        const userId = session?.user.user_id;
+        setUserlist((prevUserlist) => {
+          const updatedUserlist = prevUserlist.map((user) => {
+            if (user.id === targetId) {
+              return { ...user, mute: false };
+            }
+            return user;
+          });
+          return updatedUserlist;
+        });
       };
 
       const handleAddAdmin = (response: ActionRoomData) => {
         const { targetId } = response;
-        const targetUser = userlist.find((user) => user.id === targetId);
-        if (targetUser) {
-          targetUser.grade = 1;
-        }
+        setUserlist((prevUserlist) => {
+          const updatedUserlist = prevUserlist.map((user) => {
+            if (user.id === targetId) {
+              return { ...user, grade: 1 };
+            }
+            return user;
+          });
+          return updatedUserlist;
+        });
       };
 
       const handleRemoveAdmin = (response: ActionRoomData) => {
         const { targetId } = response;
-        const targetUser = userlist.find((user) => user.id === targetId);
-        if (targetUser) {
-          targetUser.grade = 0;
-        }
+        setUserlist((prevUserlist) => {
+          const updatedUserlist = prevUserlist.map((user) => {
+            if (user.id === targetId) {
+              return { ...user, grade: 0 };
+            }
+            return user;
+          });
+          return updatedUserlist;
+        });
       };
 
       socket.on('room-message', handleRoomMessage);
