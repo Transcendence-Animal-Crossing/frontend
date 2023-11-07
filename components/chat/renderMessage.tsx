@@ -78,9 +78,12 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
           )}
 
           <MessageFrame senderId={message.senderId} currentUser={session?.user.user_id}>
-            <Message key={index} senderId={message.senderId} currentUser={session?.user.user_id}>
-              {message.text}
-            </Message>
+            {message.senderId != 0 && (
+              <Message key={index} senderId={message.senderId} currentUser={session?.user.user_id}>
+                {message.text}
+              </Message>
+            )}
+            {message.senderId == 0 && <ActionMessage key={index}> {message.text} </ActionMessage>}
           </MessageFrame>
         </Frame>
       ))}
@@ -113,6 +116,7 @@ const MessageFrame = styled.div<{ senderId: number; currentUser?: number }>`
   height: auto;
   display: flex;
   flex-direction: ${(props) => (props.senderId === props.currentUser ? 'row-reverse' : 'row')};
+  justify-content: ${(props) => (props.senderId === 0 ? 'center' : 'flex-start')};
   align-items: center;
   padding: 0 1vw;
   box-sizing: border-box;
@@ -131,6 +135,19 @@ const Message = styled.div<{ senderId: number; currentUser?: number }>`
   font-size: 2vh;
   border-radius: 10px;
   padding: 2%;
+`;
+
+const ActionMessage = styled.div`
+  width: auto;
+  max-width: 50%;
+  word-wrap: break-word;
+  height: auto;
+  background-color: rgba(190, 167, 69, 0.2);
+  color: ${(props) => props.theme.colors.brown};
+  font-family: 'GiantsLight';
+  font-size: 1.5vh;
+  border-radius: 10px;
+  padding: 1%;
 `;
 
 const UserFrame = styled.div<{ senderId: number; currentUser?: number }>`

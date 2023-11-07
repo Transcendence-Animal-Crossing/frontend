@@ -77,34 +77,50 @@ const Chat = () => {
         setMessages((prevMessages) => [...prevMessages, response]);
       };
 
+      const handleUserActionMessage = (text: string) => {
+        console.log('userAction : ' + text);
+        const userActionMessage: RoomMessageDto = {
+          text: text,
+          roomId: roomId,
+          senderId: 0,
+        };
+        setMessages((prevMessages) => [...prevMessages, userActionMessage]);
+      };
+
       const handleRoomJoin = (response: ParticipantData) => {
         console.log(response);
         setUserlist((prevMessages) => [...prevMessages, response]);
+        handleUserActionMessage(`${response.nickName}님이 들어왔습니다.`);
       };
 
       const handleRoomLeave = (response: ParticipantData) => {
         const targetId = response.id;
         console.log(targetId);
         setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+        handleUserActionMessage(`${response.nickName}님이 나갔습니다.`);
       };
 
       const handleRoomKick = (response: ActionRoomData) => {
         const { targetId } = response;
         const userId = session?.user.user_id;
-        if (targetId == userId) {
-          router.push('http://localhost:3000/chat/');
+        const targetUser = userlist.find((user) => user.id === targetId);
+        if (targetUser) {
+          if (targetId == userId) {
+            router.push('http://localhost:3000/chat/');
+          }
+          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+          handleUserActionMessage(`${targetUser.nickName}님이 추방당했습니다.`);
         }
-        setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
       };
 
       const handleRoomBan = (response: ActionRoomData) => {
         const { targetId } = response;
         const userId = session?.user.user_id;
         const targetUser = userlist.find((user) => user.id === targetId);
-        if (targetId == userId) {
-          router.push('http://localhost:3000/chat/');
-        }
         if (targetUser) {
+          if (targetId == userId) {
+            router.push('http://localhost:3000/chat/');
+          }
           setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
           const banUserData: UserData = {
             id: targetUser.id,
@@ -113,26 +129,29 @@ const Chat = () => {
             avatar: targetUser.avatar,
           };
           setBanlist((prevMessages) => [...prevMessages, banUserData]);
+          handleUserActionMessage(`${targetUser.nickName}님이 차단당했습니다.`);
         }
       };
 
       const handleRoomMute = (response: ActionRoomData) => {
         const { targetId } = response;
         const userId = session?.user.user_id;
-        setUserlist((prevUserlist) => {
-          const updatedUserlist = prevUserlist.map((user) => {
-            if (user.id === targetId) {
-              return { ...user, mute: true };
-            }
-            return user;
+        const targetUser = userlist.find((user) => user.id === targetId);
+        if (targetUser) {
+          if (targetId == userId) {
+            setNoticeMessage('30분간 뮤트당하셨어요!');
+            setOpenNotice(true);
+          }
+          setUserlist((prevUserlist) => {
+            const updatedUserlist = prevUserlist.map((user) => {
+              if (user.id === targetId) {
+                return { ...user, mute: true };
+              }
+              return user;
+            });
+            return updatedUserlist;
           });
-          return updatedUserlist;
-        });
-        if (targetId == userId) {
-          setNoticeMessage('30분간 뮤트당하셨어요!');
-          setOpenNotice(true);
-        } else {
-          console.log('뮤트당한사람있음');
+          handleUserActionMessage(`${targetUser.nickName}님이 채팅금지당했습니다.`);
         }
       };
 
@@ -143,42 +162,52 @@ const Chat = () => {
 
       const handleRoomUnmute = (response: ActionRoomData) => {
         const { targetId } = response;
-        const userId = session?.user.user_id;
-        setUserlist((prevUserlist) => {
-          const updatedUserlist = prevUserlist.map((user) => {
-            if (user.id === targetId) {
-              return { ...user, mute: false };
-            }
-            return user;
+        const targetUser = userlist.find((user) => user.id === targetId);
+        if (targetUser) {
+          setUserlist((prevUserlist) => {
+            const updatedUserlist = prevUserlist.map((user) => {
+              if (user.id === targetId) {
+                return { ...user, mute: false };
+              }
+              return user;
+            });
+            return updatedUserlist;
           });
-          return updatedUserlist;
-        });
+        }
       };
 
       const handleAddAdmin = (response: ActionRoomData) => {
         const { targetId } = response;
-        setUserlist((prevUserlist) => {
-          const updatedUserlist = prevUserlist.map((user) => {
-            if (user.id === targetId) {
-              return { ...user, grade: 1 };
-            }
-            return user;
+        const targetUser = userlist.find((user) => user.id === targetId);
+        if (targetUser) {
+          setUserlist((prevUserlist) => {
+            const updatedUserlist = prevUserlist.map((user) => {
+              if (user.id === targetId) {
+                return { ...user, grade: 1 };
+              }
+              return user;
+            });
+            return updatedUserlist;
           });
-          return updatedUserlist;
-        });
+          handleUserActionMessage(`${targetUser.nickName}님이 관리자 권한을 얻었습니다.`);
+        }
       };
 
       const handleRemoveAdmin = (response: ActionRoomData) => {
         const { targetId } = response;
-        setUserlist((prevUserlist) => {
-          const updatedUserlist = prevUserlist.map((user) => {
-            if (user.id === targetId) {
-              return { ...user, grade: 0 };
-            }
-            return user;
+        const targetUser = userlist.find((user) => user.id === targetId);
+        if (targetUser) {
+          setUserlist((prevUserlist) => {
+            const updatedUserlist = prevUserlist.map((user) => {
+              if (user.id === targetId) {
+                return { ...user, grade: 0 };
+              }
+              return user;
+            });
+            return updatedUserlist;
           });
-          return updatedUserlist;
-        });
+          handleUserActionMessage(`${targetUser.nickName}님이 관리자 권한이 해제되었습니다.`);
+        }
       };
 
       socket.on('room-message', handleRoomMessage);
