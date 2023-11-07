@@ -8,7 +8,6 @@ import home from "../../../public/Icon/home.png";
 import axiosInstance from "../../../utils/axiosInstance";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Game from "./game";
-import { match } from "assert";
 
 const MatchHistoryContainer = () => {
   const { data: session } = useSession();
@@ -103,7 +102,7 @@ const MatchHistoryContainer = () => {
       });
       console.log("getMatchHistory() response");
       console.log(response);
-      // await setMatchHistory(response.data);
+      setMatchHistory(response.data);
     } catch (error) {
       console.log("Error occured in getMatchHistory()");
       console.log(error);

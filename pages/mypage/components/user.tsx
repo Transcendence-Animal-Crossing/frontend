@@ -2,18 +2,25 @@ import styled from "styled-components";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { profile12 } from "./profile";
+// import { profile12 } from "./profile";
 import { bronze, silver, gold, platinum, diamond } from "./tier";
 import info from "../../../public/Icon/info.png";
 
 const UserContainer: React.FC<{
   nickname: string;
   tierIndex: number;
-  totalCount: number;
-  winCount: number;
-  winRate: number;
+  generalTotalCount: number;
+  generalWinCount: number;
+  generalWinRate: number;
   avatar: string;
-}> = ({ nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
+}> = ({
+  nickname,
+  tierIndex,
+  generalTotalCount,
+  generalWinCount,
+  generalWinRate,
+  avatar,
+}) => {
   const { data: session } = useSession();
 
   const tierImages = [bronze, silver, gold, platinum, diamond];
@@ -51,15 +58,15 @@ const UserContainer: React.FC<{
       <MatchStatFrame>
         <MatchStatText>
           <MatchStatName> 경기 수 </MatchStatName>
-          <MatchStatNumber> {totalCount} </MatchStatNumber>
+          <MatchStatNumber> {generalTotalCount} </MatchStatNumber>
         </MatchStatText>
         <MatchStatText>
           <MatchStatName> 승리 </MatchStatName>
-          <MatchStatNumber> {winCount} </MatchStatNumber>
+          <MatchStatNumber> {generalWinCount} </MatchStatNumber>
         </MatchStatText>
         <MatchStatText>
           <MatchStatName> 승률 </MatchStatName>
-          <MatchStatNumber> {winRate}% </MatchStatNumber>
+          <MatchStatNumber> {generalWinRate}% </MatchStatNumber>
         </MatchStatText>
       </MatchStatFrame>
       <DivisionBar />

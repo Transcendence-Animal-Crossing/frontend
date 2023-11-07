@@ -17,12 +17,13 @@ const MyPage = () => {
   const [nickname, setNickname] = useState("nickname");
   const [rankScore, setRankScore] = useState(0);
   const [tierIndex, setTierIndex] = useState(0);
-  const [totalCount, setTotalCount] = useState(1);
-  const [winCount, setWinCount] = useState(1);
-  const [winRate, setWinRate] = useState(100);
+  const [generalTotalCount, setTotalCount] = useState(1);
+  const [generalWinCount, setWinCount] = useState(1);
+  const [generalWinRate, setWinRate] = useState(100);
   const [avatarPath, setAvatarPath] = useState(
     "http://localhost:8080/original/profile2.png"
   );
+  const [isRank, setIsRank] = useState(true);
 
   useEffect(() => {
     console.log("rendering");
@@ -45,26 +46,27 @@ const MyPage = () => {
       console.log(error);
     }
 
-    // try {
-    //   const userId = session?.user.user_id;
-    //   const response = await axiosInstance.get("/record", {
-    //     params: {
-    //       id: userId,
-    //       isRank: false,
-    //     },
-    //   });
-    //   console.log("getRecord() response");
-    //   console.log(response);
-    //   setTotalCount(response.data.totalCount);
-    //   setWinCount(response.data.winCount);
-    //   setWinRate(response.data.winRate);
-    // } catch (error) {
-    //   console.log("Error occured in getRecord()");
-    //   console.log(error);
-    // }
+    try {
+      const userId = session?.user.user_id;
+      const response = await axiosInstance.get("/record", {
+        params: {
+          id: userId,
+          isRank: { isRank },
+        },
+      });
+      console.log("getRecord() response");
+      console.log(response);
+      setTotalCount(response.data.generalTotalCount);
+      setWinCount(response.data.generalWinCount);
+      setWinRate(response.data.generalWinRate);
+    } catch (error) {
+      console.log("Error occured in getRecord()");
+      console.log(error);
+    }
   };
 
   const handleRank = async (rankScore: number) => {
+    console.log(rankScore);
     setRankScore(rankScore);
     if (rankScore < 1000) {
       setTierIndex(0);
@@ -80,9 +82,9 @@ const MyPage = () => {
           avatar={avatarPath}
           nickname={nickname}
           tierIndex={tierIndex}
-          totalCount={totalCount}
-          winCount={winCount}
-          winRate={winRate}
+          generalTotalCount={generalTotalCount}
+          generalWinCount={generalWinCount}
+          generalWinRate={generalWinRate}
         ></UserContainer>
         <InfoContainer></InfoContainer>
       </MyPageFrame>
