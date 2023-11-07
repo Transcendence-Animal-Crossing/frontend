@@ -1,7 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
 import UserFrame from "./userFrame";
 
 const UserList: React.FC<{

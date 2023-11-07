@@ -2,8 +2,8 @@ import styled from "styled-components";
 import Image from "next/image";
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/router";
-import info from "../../../public/Icon/info.png";
-import home from "../../../public/Icon/home.png";
+import info from "../../public/Icon/info.png";
+import home from "../../public/Icon/home.png";
 
 const Header = () => {
   const router = useRouter();

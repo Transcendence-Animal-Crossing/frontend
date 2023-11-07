@@ -1,16 +1,22 @@
+import Container from "../../components/columnNevLayout";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import axiosInstance from "../../utils/axiosInstance";
-import { bronze, silver, gold, platinum, diamond } from "./components/tier";
-import Header from "./components/rankingHeader";
+import Header from "../../components/ranking/rankingHeader";
+import UserList from "../../components/ranking/userList";
 import search from "../../public/Icon/search.png";
-import UserList from "./components/userList";
 import prev from "../../public/Icon/prev.png";
 import next from "../../public/Icon/next.png";
 
-import Container from "../../components/columnNevLayout";
+import {
+  bronze,
+  silver,
+  gold,
+  platinum,
+  diamond,
+} from "../../components/ranking/tier";
 
 const Ranking = () => {
   const apiUrl = "http://localhost:8080/";
