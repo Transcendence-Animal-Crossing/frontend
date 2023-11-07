@@ -63,7 +63,7 @@ const Header: React.FC<{
   const handleRouteChatLobby = async () => {
     if (socket) {
       console.log(roomId);
-      socket.emit('room-leave', roomId);
+      socket.emit('room-leave', { roomId: roomId });
     }
     router.push('/chat');
   };

@@ -80,6 +80,12 @@ const Chat = () => {
         setUserlist((prevMessages) => [...prevMessages, response]);
       };
 
+      const handleRoomLeave = (response: ParticipantData) => {
+        const targetId = response.id;
+        console.log(targetId);
+        setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+      };
+
       const handleRoomKick = (response: ActionRoomData) => {
         const { targetId } = response;
         const userId = session?.user.user_id;
@@ -139,6 +145,7 @@ const Chat = () => {
 
       socket.on('room-message', handleRoomMessage);
       socket.on('room-join', handleRoomJoin);
+      socket.on('room-leave', handleRoomLeave);
       socket.on('room-kick', handleRoomKick);
       socket.on('room-ban', handleRoomBan);
       socket.on('room-mute', handleRoomMute);
@@ -148,6 +155,7 @@ const Chat = () => {
       return () => {
         socket.off('room-message', handleRoomMessage);
         socket.off('room-join', handleRoomJoin);
+        socket.off('room-leave', handleRoomLeave);
         socket.off('room-kick', handleRoomKick);
         socket.off('room-ban', handleRoomBan);
         socket.off('room-mute', handleRoomMute);
