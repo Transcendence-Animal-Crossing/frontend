@@ -6,6 +6,7 @@ import { useSocket } from '../../utils/SocketProvider';
 import UserListModal from './userListModal';
 import users from '../../public/Icon/users.png';
 import exit from '../../public/Icon/exit.png';
+import lock from '../../public/Chat/lock_gold.png';
 
 interface ParticipantData {
   id: number;
@@ -27,10 +28,11 @@ interface UserData {
 
 const Header: React.FC<{
   roomTitle: string;
+  roomMode: string;
   roomId: string;
   userlist: ParticipantData[];
   banlist: UserData[];
-}> = ({ roomTitle, roomId, userlist, banlist }) => {
+}> = ({ roomTitle, roomMode, roomId, userlist, banlist }) => {
   const { socket } = useSocket();
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [createButtonRect, setCreateButtonRect] = useState<{
@@ -73,6 +75,7 @@ const Header: React.FC<{
       <HeaderFrame>
         <InfoFrame>
           <TitleFrame> {roomTitle} </TitleFrame>
+          {roomMode == 'PROTECTED' && <InfoImage src={lock} alt="lock" />}
         </InfoFrame>
         <ButtonFrame>
           <Button onClick={handleOpenModal} ref={CreateButtonRef}>

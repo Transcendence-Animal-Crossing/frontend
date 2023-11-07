@@ -43,6 +43,7 @@ const Chat = () => {
   const [userlist, setUserlist] = useState<ParticipantData[]>([]);
   const [banlist, setBanlist] = useState<UserData[]>([]);
   const [roomTitle, setRoomTitle] = useState('');
+  const [roomMode, setRoomMode] = useState('');
   const [messages, setMessages] = useState<RoomMessageDto[]>([]);
   const [messageText, setMessageText] = useState('');
   const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
@@ -63,6 +64,7 @@ const Chat = () => {
               console.log(response);
               setUserlist(response.body.participants);
               setRoomTitle(response.body.title);
+              setRoomMode(response.body.mode);
             } else {
               console.log('room-detail : Failed', response);
             }
@@ -203,7 +205,7 @@ const Chat = () => {
 
   return (
     <Container>
-      <Header roomTitle={roomTitle} roomId={roomId} userlist={userlist} banlist={banlist} />
+      <Header roomTitle={roomTitle} roomMode={roomMode} roomId={roomId} userlist={userlist} banlist={banlist} />
       <ChatListFrame>
         <MessageContainer messages={messages} userlist={userlist} />
         <InputContainer
