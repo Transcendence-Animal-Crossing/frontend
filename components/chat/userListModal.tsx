@@ -7,6 +7,7 @@ import exit from '../../public/Icon/exit.png';
 import kick from '../../public/Chat/kick.png';
 import ban from '../../public/Chat/ban.png';
 import mute from '../../public/Chat/mute.png';
+import unmute from '../../public/Chat/unmute.png';
 import slider from '../../public/Chat/slider.png';
 import users from '../../public/Icon/users.png';
 
@@ -112,6 +113,15 @@ const userListModal: React.FC<{
     }
   };
 
+  const handleUserUnmute = (targetId: number) => {
+    if (socket) {
+      socket.emit('room-unmute', {
+        roomId: roomId,
+        targetId: targetId,
+      });
+    }
+  };
+
   return (
     <>
       <Container onClick={handleOverlayClick}>
@@ -179,13 +189,24 @@ const userListModal: React.FC<{
                           handleUserBan(user.id);
                         }}
                       />
-                      <AdminImage
-                        src={mute}
-                        alt="mute"
-                        onClick={() => {
-                          handleUserMute(user.id);
-                        }}
-                      />
+                      {user.mute && (
+                        <AdminImage
+                          src={unmute}
+                          alt="unmute"
+                          onClick={() => {
+                            handleUserUnmute(user.id);
+                          }}
+                        />
+                      )}
+                      {!user.mute && (
+                        <AdminImage
+                          src={mute}
+                          alt="mute"
+                          onClick={() => {
+                            handleUserMute(user.id);
+                          }}
+                        />
+                      )}
                     </AdminFrame>
                   )}
                   {isOwner && <SetAdmin> Give admin </SetAdmin>}
