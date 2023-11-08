@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { useSocket } from '../../../utils/SocketProvider';
+import { useSocket } from '../../utils/SocketProvider';
 import { useRouter } from 'next/router';
-import pen from '../../../public/Icon/pen.png';
-import info from '../../../public/Icon/info.png';
-import unlock from '../../../public/Chat/unlock.png';
-import lock from '../../../public/Chat/lock.png';
-import secret from '../../../public/Chat/secret.png';
+import pen from '../../public/Icon/pen.png';
+import info from '../../public/Icon/info.png';
+import unlock from '../../public/Chat/unlock.png';
+import lock from '../../public/Chat/lock.png';
+import secret from '../../public/Chat/secret.png';
 
-const createRoomModal: React.FC<{
+const CreateRoomModal: React.FC<{
   handleCloseModal: () => void;
-  createButtonRect: DOMRect;
+  createButtonRect: { top: number; right: number; height: number };
 }> = ({ handleCloseModal, createButtonRect }) => {
   const { socket } = useSocket();
   const [title, setTitle] = useState('');
@@ -133,7 +133,7 @@ const createRoomModal: React.FC<{
   );
 };
 
-export default createRoomModal;
+export default CreateRoomModal;
 
 const Container = styled.div`
   position: absolute;
@@ -153,7 +153,7 @@ const Content = styled.div<{ overlayTop: string; overlayLeft: string }>`
   left: ${(props) => props.overlayLeft};
   width: 20vw;
   height: auto;
-  background-color: ${(props) => props.theme.colors.craem};
+  background-color: ${(props) => props.theme.colors.cream};
   padding: 2vh;
   border-radius: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -253,6 +253,7 @@ const CompleteButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 `;
 
 const Text = styled.p`

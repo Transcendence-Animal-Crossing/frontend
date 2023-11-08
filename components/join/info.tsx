@@ -16,7 +16,7 @@ import {
   profile11,
   profile12,
 } from './profile';
-import pen from '../../../public/Icon/pen.png';
+import pen from '../../public/Icon/pen.png';
 
 const InfoContainer: React.FC<{
   message: string;

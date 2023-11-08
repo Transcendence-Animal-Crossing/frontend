@@ -17,6 +17,7 @@ const Home: NextPage = () => {
           Sign in as {session.user.email} <br />
           Sign in as {session.user.login} <br />
           accessToken : {session.accessToken} <br />
+          responseCode : {session.responseCode} <br />
           <button onClick={() => signOut()}>Sign out</button>
         </>
       ) : null}

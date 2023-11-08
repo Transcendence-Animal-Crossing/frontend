@@ -8,7 +8,7 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
   const session = await getToken({ req, secret, raw: true });
   const { pathname } = req.nextUrl;
 
-  if (pathname === '/login' || pathname === '/login/choice' || pathname === '/chat') {
+  if (pathname === '/login') {
     if (session) {
       return NextResponse.redirect(new URL('/', req.url));
     }
@@ -17,8 +17,14 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
       return NextResponse.redirect(new URL('/login', req.url));
     }
   }
+
+  if (pathname === '/chat') {
+    if (!session) {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
+  }
 }
 
 export const config = {
-  matcher: ['/', '/login', '/login/choice'],
+  matcher: ['/', '/login', '/chat'],
 };

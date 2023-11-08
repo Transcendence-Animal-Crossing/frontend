@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth';
-import type { NextAuthOptions } from 'next-auth';
+import type { NextAuthOptions, Profile } from 'next-auth';
 import FortyTwoProvider from 'next-auth/providers/42-school';
 import axios from 'axios';
 
@@ -9,11 +9,17 @@ const invalidPrimaryCampus = (profile: any) => {
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
 
+interface CustomProfile extends Profile {
+  id: string;
+  login: string;
+}
+
 export const authOptions: NextAuthOptions = {
+  secret: process.env.SECRET as string,
   providers: [
     FortyTwoProvider({
-      clientId: process.env.FT_UID,
-      clientSecret: process.env.FT_SECRET,
+      clientId: process.env.FT_UID as string,
+      clientSecret: process.env.FT_SECRET as string,
       httpOptions: {
         timeout: 40000,
       },
@@ -21,6 +27,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
+    // @ts-ignore
     async signIn({ profile, user }) {
       if (!profile || !user) return false;
       if (invalidPrimaryCampus(profile)) return false;
@@ -28,8 +35,9 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, profile, account }) {
       if (profile && account) {
-        token.user_id = profile.id;
-        token.login = profile.login;
+        const customProfile = profile as CustomProfile;
+        token.user_id = customProfile.id;
+        token.login = customProfile.login;
         try {
           const apiUrl = 'http://localhost:8080/auth/login';
           const response = await axios.post(apiUrl, {
@@ -37,6 +45,7 @@ export const authOptions: NextAuthOptions = {
           });
           token.accessToken = response.headers.authorization.replace('Bearer ', '');
           console.log(response);
+          token.responseCode = response.status;
         } catch (error) {
           console.error('jwt error:', error);
           token.accessToken = 'fail';
@@ -45,10 +54,10 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user.login = token.login;
-      session.user.user_id = token.user_id;
-      session.accessToken = token.accessToken;
-      session.refreshToken = token.refreshToken;
+      session.user.login = token.login as string;
+      session.user.user_id = token.user_id as number;
+      session.accessToken = token.accessToken as string;
+      session.responseCode = token.responseCode as number;
       return session;
     },
   },
