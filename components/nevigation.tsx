@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { ReactNode } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 
-const Nevigation = () => {
+const Navigation = () => {
   const { data: session } = useSession();
 
   return (
@@ -21,7 +21,7 @@ const Nevigation = () => {
   );
 };
 
-export default Nevigation;
+export default Navigation;
 
 const Container = styled.div`
   width: 20%;

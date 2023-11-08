@@ -151,7 +151,7 @@ const Chat = () => {
             });
             return updatedUserlist;
           });
-          handleUserActionMessage(`${targetUser.nickName}님이 채팅금지당했습니다.`);
+          handleUserActionMessage(`${targetUser.nickName}님이 채팅 금지 상태입니다.`);
         }
       };
 
@@ -206,7 +206,7 @@ const Chat = () => {
             });
             return updatedUserlist;
           });
-          handleUserActionMessage(`${targetUser.nickName}님이 관리자 권한이 해제되었습니다.`);
+          handleUserActionMessage(`${targetUser.nickName}님의 관리자 권한이 해제되었습니다.`);
         }
       };
 

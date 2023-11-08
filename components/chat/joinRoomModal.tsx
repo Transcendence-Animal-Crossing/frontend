@@ -100,7 +100,7 @@ const Content = styled.div`
   position: fixed;
   width: 20vw;
   height: auto;
-  background-color: ${(props) => props.theme.colors.craem};
+  background-color: ${(props) => props.theme.colors.cream};
   padding: 2vh;
   border-radius: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);

@@ -280,7 +280,7 @@ const Content = styled.div<{ overlayTop: string; overlayLeft: string }>`
   left: ${(props) => props.overlayLeft};
   min-width: 20vw;
   height: auto;
-  background-color: ${(props) => props.theme.colors.craem};
+  background-color: ${(props) => props.theme.colors.cream};
   padding: 3vh 2vh;
   border-radius: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -324,8 +324,6 @@ const UsersFrame = styled.div<{ userCount: number }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* justify-content: space-around; */
-  /* justify-content: flex-start; */
   justify-content: ${(props) => (props.userCount >= 4 ? 'flex-start' : 'space-around')};
   gap: 1vw;
   overflow: auto;

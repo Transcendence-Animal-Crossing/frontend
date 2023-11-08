@@ -132,7 +132,7 @@ const TitleFrame = styled.div`
 `;
 
 const InfoImage = styled(Image)`
-  height: 3vh;
+  height: 2.5vh;
   width: auto;
   cursor: pointer;
 `;
