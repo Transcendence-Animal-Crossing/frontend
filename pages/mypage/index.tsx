@@ -2,13 +2,15 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import UserContainer from "./components/user";
-import InfoContainer from "./components/info";
 import { useSession } from "next-auth/react";
-import { profile12, profile2 } from "./components/profile";
+import { useRouter } from "next/router";
 import axiosInstance from "../../utils/axiosInstance";
-import { bronze, silver, gold, platinum, diamond } from "./components/tier";
-
+import AchievementFrame from "./components/achievement";
+import home from "../../public/Icon/home.png";
+import css from "styled-jsx/css";
+import InfiniteScroll from "react-infinite-scroll-component";
 import Container from "../../components/columnNevLayout";
+import Game from "./components/game";
 
 const MyPage = () => {
   const { data: session } = useSession();
@@ -23,12 +25,63 @@ const MyPage = () => {
   const [avatarPath, setAvatarPath] = useState(
     "http://localhost:8080/original/profile2.png"
   );
-  const [isRank, setIsRank] = useState(true);
+  const [isRank, setIsRank] = useState(false);
+  const router = useRouter();
+  const [mode, setMode] = useState("rank");
+  const [hasMore, setHasMore] = useState(false);
+  const [matchHistory, setMatchHistory] = useState({
+    games: [
+      {
+        id: 5,
+        winnerScore: 7,
+        loserScore: 10,
+        playTime: 8,
+        loser: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+        winner: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+      },
+      {
+        id: 4,
+        winnerScore: 7,
+        loserScore: 10,
+        playTime: 8,
+        loser: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+        winner: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+      },
+    ],
+  });
 
   useEffect(() => {
-    console.log("rendering");
+    getUserInfo();
+    getMatchHistory();
+  }, []);
+
+  useEffect(() => {
     getUserInfo();
   });
+
+  useEffect(() => {
+    getMatchHistory();
+  }, [mode]);
+
+  const handleRouteLobby = async () => {
+    router.push("/");
+  };
 
   const getUserInfo = async () => {
     try {
@@ -63,6 +116,33 @@ const MyPage = () => {
     }
   };
 
+  const getMatchHistory = async () => {
+    try {
+      const userId = session?.user.user_id;
+      await getIsRank();
+      const response = await axiosInstance.get("/games/" + mode, {
+        params: {
+          id: userId,
+          offset: 0,
+        },
+      });
+      console.log("getMatchHistory() response");
+      console.log(response);
+      setMatchHistory(response.data);
+    } catch (error) {
+      console.log("Error occured in getMatchHistory()");
+      console.log(error);
+    }
+  };
+
+  const getIsRank = () => {
+    if (mode === "rank") {
+      setIsRank(true);
+    } else if (mode === "general") {
+      setIsRank(false);
+    }
+  };
+
   const handleRecord = async (data: any) => {
     if (isRank) {
       setTotalCount(data.rankTotalCount);
@@ -86,6 +166,13 @@ const MyPage = () => {
     }
   };
 
+  // 임시로 더미데이터를 갖다 붙이는 함수
+  const fetchMoreData = async () => {
+    let copy = { ...matchHistory };
+    copy.games = copy.games.concat(matchHistory.games);
+    setMatchHistory(copy);
+  };
+
   return (
     <Container>
       <MyPageFrame>
@@ -97,7 +184,44 @@ const MyPage = () => {
           winCount={winCount}
           winRate={winRate}
         ></UserContainer>
-        <InfoContainer></InfoContainer>
+        <InfoContainer>
+          <MatchHistoryFrame>
+            <MatchHistoryHeader>
+              <Mode>
+                <ModeButton onClick={() => setMode("general")}>
+                  <div
+                    className={`${mode === "general" ? "select" : "unselect"}`}
+                  >
+                    일반
+                  </div>
+                </ModeButton>
+                <ModeButton onClick={() => setMode("rank")}>
+                  <div className={`${mode === "rank" ? "select" : "unselect"}`}>
+                    랭크
+                  </div>
+                </ModeButton>
+              </Mode>
+              <Button onClick={handleRouteLobby}>
+                <InfoImage src={home} alt="home" />
+              </Button>
+            </MatchHistoryHeader>
+            <MatchHistory>
+              <InfiniteScroll
+                dataLength={matchHistory.games.length}
+                next={fetchMoreData}
+                hasMore={hasMore}
+                loader={<h4>Loading...</h4>}
+              >
+                {matchHistory.games.map((game) => (
+                  <Game game={game} />
+                ))}
+              </InfiniteScroll>
+              <style jsx>{Scroller}</style>
+            </MatchHistory>
+          </MatchHistoryFrame>
+          <DivisionBar />
+          <AchievementFrame></AchievementFrame>
+        </InfoContainer>
       </MyPageFrame>
     </Container>
   );
@@ -111,4 +235,112 @@ const MyPageFrame = styled.div`
   height: 70%;
   display: flex;
   flex Direction: row;
+`;
+
+const InfoContainer = styled.div`
+  width: 70%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const DivisionBar = styled.div`
+  width: 90%;
+  height: 1.5px;
+  background-color: ${(props) => props.theme.colors.brown};
+`;
+
+const MatchHistoryFrame = styled.div`
+  margin: 3%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1%;
+`;
+
+const MatchHistoryHeader = styled.div`
+  width: 80%;
+  height: 10%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Mode = styled.div`
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5%;
+  gap: 10%;
+`;
+
+const ModeButton = styled.button`
+  width: 100%;
+  height: 100%;
+  background-color: ${(props) => props.theme.colors.lightbrown};
+  font-family: "GiantsLight";
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  .select {
+    border-radius: 15px;
+    background-color: ${(props) => props.theme.colors.lightgold};
+    color: ${(props) => props.theme.colors.white};
+  }
+  .unselect {
+    border-radius: 15px;
+    background-color: ${(props) => props.theme.colors.cream};
+    color: ${(props) => props.theme.colors.lightgold};
+  }
+`;
+
+const Button = styled.div`
+  height: 30%;
+  width: auto;
+  padding: 0.5vh 1.5vh;
+  background-color: ${(props) => props.theme.colors.beige};
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 5%;
+`;
+
+const InfoImage = styled(Image)`
+  height: 100%;
+  width: auto;
+  cursor: pointer;
+`;
+
+const MatchHistory = styled.div`
+  height: 90%;
+  width: 100%;
+  // background-color: skyblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1%;
+  .infinite-scroll-component__outerdiv {
+    height: 100%;
+    width: 80%;
+  }
+  .infinite-scroll-component {
+    height: 100%;
+  }
+`;
+
+const Scroller = css`
+  .infinite-scroll-component__outerdiv {
+    height: 100%;
+    width: 80%;
+  }
+  .infinite-scroll-component {
+    height: 100%;
+    back
+  }
 `;
