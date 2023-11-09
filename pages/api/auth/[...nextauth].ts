@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import type { NextAuthOptions, Profile } from 'next-auth';
 import FortyTwoProvider from 'next-auth/providers/42-school';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
 
 const invalidPrimaryCampus = (profile: any) => {
@@ -24,16 +25,51 @@ export const authOptions: NextAuthOptions = {
         timeout: 40000,
       },
     }),
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        intraname: { label: 'Intraname', type: 'text' },
+        password: { label: 'Password', type: 'password' },
+      },
+      authorize: async (credentials) => {
+        try {
+          const apiUrl = 'http://localhost:8080/auth/signIn';
+          const response = await axios.post(apiUrl, {
+            intraName: credentials.intraname,
+            password: credentials.password,
+          });
+          if (response.status === 200) {
+            console.log(response);
+            const token = response.headers.authorization.replace('Bearer ', '');
+            return {
+              id: credentials.intraname,
+              token,
+            };
+          }
+        } catch (e) {
+          console.error('Sign in error:', e);
+          return null;
+        }
+        return null;
+      },
+    }),
   ],
-
   callbacks: {
     // @ts-ignore
     async signIn({ profile, user }) {
-      if (!profile || !user) return false;
+      if (!profile && !user) return false;
+      if (!profile && user) return user;
       if (invalidPrimaryCampus(profile)) return false;
       return user;
     },
-    async jwt({ token, profile, account }) {
+    async jwt({ user, token, profile, account }) {
+      if (!profile && account?.type == 'credentials') {
+        token.name = user.id;
+        token.login = user.id;
+        token.accessToken = user.token;
+        token.responseCode = 200;
+        return token;
+      }
       if (profile && account) {
         const customProfile = profile as CustomProfile;
         token.user_id = customProfile.id;

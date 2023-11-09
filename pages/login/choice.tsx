@@ -23,11 +23,6 @@ const ChoicePage: React.FC = () => {
     }
   });
 
-  const handleCommonLogin = async () => {
-    // 일반로그인
-    // router.push("http://localhost:3000/");
-  };
-
   return (
     <>
       <Container>
@@ -35,7 +30,7 @@ const ChoicePage: React.FC = () => {
         <LoginButton onClick={() => signIn('42-school')}>
           <LoginButtonImg src={FTLoginButton} alt="42 Login" />
         </LoginButton>
-        <LoginButton onClick={handleCommonLogin}>
+        <LoginButton onClick={() => signIn('Credentials')}>
           <LoginButtonImg src={CommonLoginButton} alt="Common Login" />
         </LoginButton>
       </Container>
