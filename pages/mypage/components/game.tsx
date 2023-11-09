@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import UserInfo from "./userInfo";
+import { useSession } from "next-auth/react";
 
 const Game: React.FC<{
   game: {
@@ -22,7 +23,9 @@ const Game: React.FC<{
       // avatar : string;
     };
   };
-}> = (game) => {
+  userId: number;
+}> = (game, userId) => {
+  const { data: session } = useSession();
   const [user1, setUser1] = useState({
     id: 0,
     nickName: "",
@@ -50,7 +53,10 @@ const Game: React.FC<{
   }, []);
 
   const handleResult = () => {
-    if (game.game.winner.id === game.game.id) {
+    console.log("handleResult()");
+    console.log(game.game.winner.id);
+    console.log(userId);
+    if (game.game.winner.id === 107066) {
       setUser1({
         id: game.game.winner.id,
         nickName: game.game.winner.nickName,
@@ -84,6 +90,7 @@ const Game: React.FC<{
       });
       setIsWin(false);
       setResult("패");
+      console.log(userId, game.game.winner.id);
     }
   };
 
@@ -113,7 +120,7 @@ export default Game;
 
 const GameFrame = styled.div`
   width: 100%;
-  height: 10%;
+  height: 20%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -121,7 +128,8 @@ const GameFrame = styled.div`
   font-family: "GiantsLight";
   background-color: #fbf3e6;
   border-radius: 5px;
-  // gap: 5%;
+  margin-bottom: 1%;
+  // overflow: "auto";
 `;
 
 const GameResult = styled.div<{ result: boolean }>`
@@ -131,7 +139,6 @@ const GameResult = styled.div<{ result: boolean }>`
   flex-direction: col;
   align-items: center;
   justify-content: center;
-  // color: ${(props) => props.theme.colors.white};
   color: ${(props) =>
     props.result ? props.theme.colors.green : props.theme.colors.red};
 `;
@@ -146,12 +153,16 @@ const GameBody = styled.div`
   gap: 5%;
   background-color: #fbf3e6;
   border-radius: 5px;
+  margin: 0 3%;
 `;
 
 const ResultText = styled.div<{ result: boolean }>`
   width: 5%;
   height: 100%;
   font-size: medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: ${(props) =>
     props.result ? props.theme.colors.green : props.theme.colors.red};
 `;
@@ -160,8 +171,8 @@ const VSText = styled.div`
   width: 5%;
   height: 100%;
   font-size: small;
-  // font-family: "GiantsLight";
-  // border-radius: 15px;
-  // border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: ${(props) => props.theme.colors.brown};
 `;

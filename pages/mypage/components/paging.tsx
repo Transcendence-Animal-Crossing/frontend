@@ -87,8 +87,8 @@ const Paging = () => {
       console.log("handleAchieveList() response");
       console.log(response);
 
-      handleAchievements(response.data.achievements);
-      // await handleAchievements([1, 0, 1, 1, 1, 0, 0]);
+      // handleAchievements(response.data.achievements);
+      await handleAchievements([1, 0, 1, 1, 1, 0, 0]);
 
       console.log(achieveList);
     } catch (error) {

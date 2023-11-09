@@ -20,7 +20,7 @@ const UserInfo: React.FC<{
 export default UserInfo;
 
 const UserInfoFrame = styled.div`
-  width: 50%;
+  width: 40%;
   height: 100%;
   display: flex;
   flex-direction: row;
@@ -29,7 +29,7 @@ const UserInfoFrame = styled.div`
 `;
 
 const ProfileImage = styled(Image)`
-  width: 15%;
+  width: 20%;
   height: auto;
   border-radius: 50px;
 `;
@@ -42,12 +42,13 @@ const NameFrame = styled.div`
   align-items: center;
   justify-content: center;
   font-family: "GiantsLight";
+  gap: 3%;
   color: ${(props) => props.theme.colors.brown};
 `;
 
 const NickNameFrame = styled.div`
   width: 100%;
-  font-size: small;
+  font-size: medium;
 `;
 
 const IntraNameFrame = styled.div`

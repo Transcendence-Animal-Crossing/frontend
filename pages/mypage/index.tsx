@@ -11,8 +11,10 @@ import css from "styled-jsx/css";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Container from "../../components/columnNevLayout";
 import Game from "./components/game";
+import { match } from "assert";
 
 const MyPage = () => {
+  const temp = 107066;
   const { data: session } = useSession();
   console.log(session);
   const apiUrl = "http://localhost:8080/";
@@ -28,13 +30,15 @@ const MyPage = () => {
   const [isRank, setIsRank] = useState(false);
   const router = useRouter();
   const [mode, setMode] = useState("rank");
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const matchPerPage = 10;
   const [matchHistory, setMatchHistory] = useState({
     games: [
       {
         id: 5,
-        winnerScore: 7,
-        loserScore: 10,
+        winnerScore: 10,
+        loserScore: 7,
         playTime: 8,
         loser: {
           id: 106932,
@@ -49,8 +53,24 @@ const MyPage = () => {
       },
       {
         id: 4,
-        winnerScore: 7,
-        loserScore: 10,
+        winnerScore: 9,
+        loserScore: 1,
+        playTime: 8,
+        loser: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+        winner: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+      },
+      {
+        id: 5,
+        winnerScore: 10,
+        loserScore: 7,
         playTime: 8,
         loser: {
           id: 106932,
@@ -63,12 +83,60 @@ const MyPage = () => {
           intraName: "sohlee",
         },
       },
+      {
+        id: 4,
+        winnerScore: 9,
+        loserScore: 1,
+        playTime: 8,
+        loser: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+        winner: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+      },
+      {
+        id: 5,
+        winnerScore: 10,
+        loserScore: 7,
+        playTime: 8,
+        loser: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+        winner: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+      },
+      {
+        id: 4,
+        winnerScore: 9,
+        loserScore: 1,
+        playTime: 8,
+        loser: {
+          id: 107066,
+          nickName: "sohlee",
+          intraName: "sohlee",
+        },
+        winner: {
+          id: 106932,
+          nickName: "mkwon",
+          intraName: "mkwon",
+        },
+      },
     ],
   });
 
   useEffect(() => {
     getUserInfo();
-    getMatchHistory();
+    // getMatchHistory();
   }, []);
 
   useEffect(() => {
@@ -76,7 +144,7 @@ const MyPage = () => {
   });
 
   useEffect(() => {
-    getMatchHistory();
+    // getMatchHistory();
   }, [mode]);
 
   const handleRouteLobby = async () => {
@@ -118,7 +186,10 @@ const MyPage = () => {
 
   const getMatchHistory = async () => {
     try {
-      const userId = session?.user.user_id;
+      // const userId = session?.user.user_id;
+      const userId = 1;
+      console.log("getMatchHistory() userId");
+      console.log(userId);
       await getIsRank();
       const response = await axiosInstance.get("/games/" + mode, {
         params: {
@@ -166,11 +237,17 @@ const MyPage = () => {
     }
   };
 
-  // 임시로 더미데이터를 갖다 붙이는 함수
-  const fetchMoreData = async () => {
-    let copy = { ...matchHistory };
-    copy.games = copy.games.concat(matchHistory.games);
-    setMatchHistory(copy);
+  const fetchMoreData = () => {
+    setTimeout(() => {
+      console.log("fetchMoreData()");
+      console.log(matchHistory);
+      let copy = { ...matchHistory };
+      copy.games = copy.games.concat(copy.games);
+      setMatchHistory(copy);
+      console.log("matchHistory");
+      console.log(matchHistory);
+      setOffset(offset + matchPerPage);
+    }, 500);
   };
 
   return (
@@ -210,13 +287,14 @@ const MyPage = () => {
                 dataLength={matchHistory.games.length}
                 next={fetchMoreData}
                 hasMore={hasMore}
-                loader={<h4>Loading...</h4>}
+                loader={<div className="loader">Loading...</div>}
+                height={300}
+                scrollableTarget="scrollableDiv"
               >
                 {matchHistory.games.map((game) => (
-                  <Game game={game} />
+                  <Game game={game} userId={temp} />
                 ))}
               </InfiniteScroll>
-              <style jsx>{Scroller}</style>
             </MatchHistory>
           </MatchHistoryFrame>
           <DivisionBar />
@@ -229,7 +307,6 @@ const MyPage = () => {
 
 export default MyPage;
 
-// 모든 아이템 들어가는 네모 박스
 const MyPageFrame = styled.div`
   width: 70%;
   height: 70%;
@@ -254,7 +331,7 @@ const DivisionBar = styled.div`
 const MatchHistoryFrame = styled.div`
   margin: 3%;
   width: 100%;
-  height: 100%;
+  height: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -325,22 +402,18 @@ const MatchHistory = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1%;
+  // overflow: "auto";
   .infinite-scroll-component__outerdiv {
     height: 100%;
     width: 80%;
   }
-  .infinite-scroll-component {
-    height: 100%;
-  }
-`;
 
-const Scroller = css`
-  .infinite-scroll-component__outerdiv {
-    height: 100%;
-    width: 80%;
-  }
-  .infinite-scroll-component {
-    height: 100%;
-    back
+  .loader {
+    color: ${(props) => props.theme.colors.brown};
+    font-family: "GiantsLight";
+    font-size: small;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
