@@ -14,7 +14,7 @@ import Game from "./components/game";
 import { match } from "assert";
 
 const MyPage = () => {
-  const temp = 107066;
+  const temp = 1;
   const { data: session } = useSession();
   console.log(session);
   const apiUrl = "http://localhost:8080/";
@@ -36,99 +36,21 @@ const MyPage = () => {
   const [matchHistory, setMatchHistory] = useState({
     games: [
       {
-        id: 5,
-        winnerScore: 10,
-        loserScore: 7,
-        playTime: 8,
+        id: 0,
+        winnerScore: 0,
+        loserScore: 0,
+        playTime: 0,
         loser: {
-          id: 106932,
-          nickName: "mkwon",
-          intraName: "mkwon",
+          id: 0,
+          nickName: "",
+          intraName: "",
+          avatar: "",
         },
         winner: {
-          id: 107066,
-          nickName: "sohlee",
-          intraName: "sohlee",
-        },
-      },
-      {
-        id: 4,
-        winnerScore: 9,
-        loserScore: 1,
-        playTime: 8,
-        loser: {
-          id: 107066,
-          nickName: "sohlee",
-          intraName: "sohlee",
-        },
-        winner: {
-          id: 106932,
-          nickName: "mkwon",
-          intraName: "mkwon",
-        },
-      },
-      {
-        id: 5,
-        winnerScore: 10,
-        loserScore: 7,
-        playTime: 8,
-        loser: {
-          id: 106932,
-          nickName: "mkwon",
-          intraName: "mkwon",
-        },
-        winner: {
-          id: 107066,
-          nickName: "sohlee",
-          intraName: "sohlee",
-        },
-      },
-      {
-        id: 4,
-        winnerScore: 9,
-        loserScore: 1,
-        playTime: 8,
-        loser: {
-          id: 107066,
-          nickName: "sohlee",
-          intraName: "sohlee",
-        },
-        winner: {
-          id: 106932,
-          nickName: "mkwon",
-          intraName: "mkwon",
-        },
-      },
-      {
-        id: 5,
-        winnerScore: 10,
-        loserScore: 7,
-        playTime: 8,
-        loser: {
-          id: 106932,
-          nickName: "mkwon",
-          intraName: "mkwon",
-        },
-        winner: {
-          id: 107066,
-          nickName: "sohlee",
-          intraName: "sohlee",
-        },
-      },
-      {
-        id: 4,
-        winnerScore: 9,
-        loserScore: 1,
-        playTime: 8,
-        loser: {
-          id: 107066,
-          nickName: "sohlee",
-          intraName: "sohlee",
-        },
-        winner: {
-          id: 106932,
-          nickName: "mkwon",
-          intraName: "mkwon",
+          id: 0,
+          nickName: "",
+          intraName: "",
+          avatar: "",
         },
       },
     ],
@@ -136,7 +58,7 @@ const MyPage = () => {
 
   useEffect(() => {
     getUserInfo();
-    // getMatchHistory();
+    getMatchHistory();
   }, []);
 
   useEffect(() => {
@@ -144,7 +66,7 @@ const MyPage = () => {
   });
 
   useEffect(() => {
-    // getMatchHistory();
+    getMatchHistory();
   }, [mode]);
 
   const handleRouteLobby = async () => {
@@ -238,15 +160,33 @@ const MyPage = () => {
   };
 
   const fetchMoreData = () => {
-    setTimeout(() => {
-      console.log("fetchMoreData()");
-      console.log(matchHistory);
-      let copy = { ...matchHistory };
-      copy.games = copy.games.concat(copy.games);
-      setMatchHistory(copy);
-      console.log("matchHistory");
-      console.log(matchHistory);
+    if (matchHistory.games.length >= 0) {
+      setHasMore(false);
+      console.log("fetchMoreData() matchHistory.games.length");
+      return;
+    }
+
+    setTimeout(async () => {
+      const userId = 1;
+      const copy = { ...matchHistory };
+
+      console.log("getMatchHistory() userId");
+      console.log(userId);
+
       setOffset(offset + matchPerPage);
+      await getIsRank();
+      const response = await axiosInstance.get("/games/" + mode, {
+        params: {
+          id: userId,
+          offset: offset,
+        },
+      });
+
+      copy.games = copy.games.concat(response.data.games);
+      setMatchHistory(copy);
+
+      console.log("getMatchHistory() response");
+      console.log(response);
     }, 500);
   };
 
@@ -289,7 +229,6 @@ const MyPage = () => {
                 hasMore={hasMore}
                 loader={<div className="loader">Loading...</div>}
                 height={300}
-                scrollableTarget="scrollableDiv"
               >
                 {matchHistory.games.map((game) => (
                   <Game game={game} userId={temp} />

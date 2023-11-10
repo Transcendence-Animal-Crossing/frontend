@@ -56,7 +56,7 @@ const Game: React.FC<{
     console.log("handleResult()");
     console.log(game.game.winner.id);
     console.log(userId);
-    if (game.game.winner.id === 107066) {
+    if (game.game.winner.id === 1) {
       setUser1({
         id: game.game.winner.id,
         nickName: game.game.winner.nickName,
