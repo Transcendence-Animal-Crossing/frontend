@@ -73,7 +73,8 @@ const Chat = () => {
 
       const handleRoomMessage = (response: RoomMessageDto) => {
         const text = response.text;
-        console.log('response.text : ' + text);
+        console.log('room-message response : ' + response.senderId);
+        console.log('room-message response : ' + response.text);
         setMessages((prevMessages) => [...prevMessages, response]);
       };
 

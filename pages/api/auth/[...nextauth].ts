@@ -26,19 +26,26 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials) => {
-        console.log('Credentials');
         try {
           const apiUrl = 'http://localhost:8080/auth/signIn';
           const response = await axios.post(apiUrl, {
             intraName: credentials.intraname,
             password: credentials.password,
           });
-          if (response.status === 200) {
-            console.log('Credentials response', response);
-            const token = response.headers.authorization.replace('Bearer ', '');
+          console.log(response);
+          if (response.status === 201) {
+            // 200으로 바꿔야함
+            const accessToken = response.headers.authorization.replace('Bearer ', '');
+            const refreshToken =
+              response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
             return {
-              id: credentials.intraname,
-              token,
+              id: response.data.id,
+              nickName: response.data.nickName,
+              intraName: response.data.intraName,
+              avatar: response.data.avatar,
+              responseCode: response.status,
+              accessToken,
+              refreshToken,
             };
           }
         } catch (e) {
@@ -60,10 +67,12 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ user, token, profile, account }) {
       if (!profile && account?.type == 'credentials') {
-        console.log('jwt : ', user, token, account);
-        token.name = user.id;
-        token.login = user.id;
-        token.accessToken = user.token;
+        token.id = user.id;
+        token.nickName = user.nickName;
+        token.intraName = user.intraName;
+        token.avatar = user.avatar;
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
         token.responseCode = 200;
         return token;
       }
@@ -76,7 +85,6 @@ export const authOptions: NextAuthOptions = {
           token.accessToken = response.headers.authorization.replace('Bearer ', '');
           token.refreshToken =
             response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
-          console.log('8080 : ', response);
           token.id = response.data.id;
           token.nickName = response.data.nickName;
           token.intraName = response.data.intraName;
@@ -90,7 +98,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log('jwt : ', session, token);
+      console.log('session : ', session, token);
       session.user.id = token.id as number;
       session.user.nickName = token.nickName as string;
       session.user.intraName = token.intraName as string;
