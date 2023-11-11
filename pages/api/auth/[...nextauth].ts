@@ -26,6 +26,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials) => {
+        if (!credentials) return null;
         try {
           const apiUrl = 'http://localhost:8080/auth/signIn';
           const response = await axios.post(apiUrl, {
@@ -33,20 +34,22 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           });
           console.log(response);
-          if (response.status === 201) {
-            // 200으로 바꿔야함
+          if (response.status === 200) {
             const accessToken = response.headers.authorization.replace('Bearer ', '');
             const refreshToken =
               response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
             return {
               id: response.data.id,
+              name: response.data.nickName, // Assuming 'name' is required by NextAuth's User type
+              email: response.data.email, // Include this if 'email' is a required field in User type
+              image: response.data.avatar, //
               nickName: response.data.nickName,
               intraName: response.data.intraName,
               avatar: response.data.avatar,
               responseCode: response.status,
               accessToken,
               refreshToken,
-            };
+            } as any;
           }
         } catch (e) {
           console.error('Sign in error:', e);

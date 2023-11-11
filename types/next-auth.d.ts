@@ -1,4 +1,5 @@
 import NextAuth from 'next-auth';
+import { DefaultUser } from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
@@ -12,4 +13,25 @@ declare module 'next-auth' {
       avatar: string;
     };
   }
+  interface User extends DefaultUser {
+    id: number;
+    nickName: string;
+    intraName: string;
+    avatar: string;
+    responseCode: number;
+    accessToken: string;
+    refreshToken: string;
+  }
 }
+
+// declare module 'next-auth' {
+//   interface User extends DefaultUser {
+//     id: number;
+//     nickName: string;
+//     intraName: string;
+//     avatar: string;
+//     responseCode: number;
+//     accessToken: string;
+//     refreshToken: string;
+//   }
+// }
