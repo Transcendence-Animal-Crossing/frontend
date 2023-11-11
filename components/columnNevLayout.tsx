@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Head from 'next/head';
 import { ReactNode } from 'react';
-import Nev from './nevigation';
+import Nev from './nevigation/nevigation';
 
 interface LayoutProps {
   children: ReactNode;

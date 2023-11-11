@@ -70,7 +70,7 @@ const InfoContainer: React.FC<{
             type="text"
             placeholder="NickName"
             onChange={(e) => onNicknameChange(e.target.value)}
-            maxLength={10}
+            maxLength={8}
             required
           />
         </InputFrame>
