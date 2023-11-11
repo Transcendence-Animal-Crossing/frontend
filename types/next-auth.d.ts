@@ -23,15 +23,3 @@ declare module 'next-auth' {
     refreshToken: string;
   }
 }
-
-// declare module 'next-auth' {
-//   interface User extends DefaultUser {
-//     id: number;
-//     nickName: string;
-//     intraName: string;
-//     avatar: string;
-//     responseCode: number;
-//     accessToken: string;
-//     refreshToken: string;
-//   }
-// }
