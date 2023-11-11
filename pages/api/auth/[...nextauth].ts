@@ -33,7 +33,6 @@ export const authOptions: NextAuthOptions = {
             intraName: credentials.intraname,
             password: credentials.password,
           });
-          console.log(response);
           if (response.status === 200) {
             const accessToken = response.headers.authorization.replace('Bearer ', '');
             const refreshToken =
@@ -59,13 +58,18 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     // @ts-ignore
     async signIn({ profile, user }) {
-      console.log('signIn : ', user);
       if (!profile && !user) return false;
       if (!profile && user) return user;
       if (invalidPrimaryCampus(profile)) return false;
       return user;
     },
-    async jwt({ user, token, profile, account }) {
+    async jwt({ user, token, profile, account, trigger, session }) {
+      if (trigger == 'update') {
+        return {
+          ...token,
+          ...session.user,
+        };
+      }
       if (!profile && account?.type == 'credentials') {
         token.id = user.id;
         token.nickName = user.nickName;
@@ -98,7 +102,6 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log('session : ', session, token);
       session.user.id = token.id as number;
       session.user.nickName = token.nickName as string;
       session.user.intraName = token.intraName as string;
@@ -106,6 +109,7 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
       session.responseCode = token.responseCode as number;
+      console.log(session);
       return session;
     },
   },
