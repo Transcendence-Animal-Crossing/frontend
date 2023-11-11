@@ -1,10 +1,8 @@
 import styled from "styled-components";
 import Image from "next/image";
-import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-// import { profile12 } from "./profile";
 import { bronze, silver, gold, platinum, diamond } from "./tier";
-import info from "../../../public/Icon/info.png";
+import info from "../../public/Icon/info.png";
 
 const UserContainer: React.FC<{
   nickname: string;

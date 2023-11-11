@@ -1,7 +1,4 @@
 import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
 import Paging from "./paging";
 
 const AchievementContainer = () => {
@@ -9,7 +6,7 @@ const AchievementContainer = () => {
     <AchievementFrame>
       <AchievementHeader>Achievements</AchievementHeader>
       <AchievementBody>
-        <Paging></Paging>
+        <Paging />
       </AchievementBody>
     </AchievementFrame>
   );

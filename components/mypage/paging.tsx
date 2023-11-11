@@ -1,7 +1,7 @@
 import Pagination from "react-js-pagination";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import axiosInstance from "../../../utils/axiosInstance";
+import axiosInstance from "../../utils/axiosInstance";
 import Cards from "./cards";
 import styled from "styled-components";
 import {
@@ -59,9 +59,7 @@ const Paging = () => {
   console.log("achievements first");
   console.log(achievements);
 
-  // 달성 목록
   const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
-  // 현재 페이지
   const [page, setPage] = useState(1);
 
   const cardPerPage = 3;
@@ -87,8 +85,7 @@ const Paging = () => {
       console.log("handleAchieveList() response");
       console.log(response);
 
-      // handleAchievements(response.data.achievements);
-      await handleAchievements([1, 0, 1, 1, 1, 0, 0]);
+      await handleAchievements(response.data.achievements);
 
       console.log(achieveList);
     } catch (error) {

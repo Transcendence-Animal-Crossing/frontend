@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import UserInfo from "./userInfo";
 import { useSession } from "next-auth/react";
@@ -14,13 +13,13 @@ const Game: React.FC<{
       id: number;
       nickName: string;
       intraName: string;
-      // avatar: string;
+      avatar: string;
     };
     winner: {
       id: number;
       nickName: string;
       intraName: string;
-      // avatar : string;
+      avatar: string;
     };
   };
   userId: number;
@@ -45,9 +44,6 @@ const Game: React.FC<{
   const [isWin, setIsWin] = useState(true);
   const [result, setResult] = useState("승" || "패");
 
-  const avatar1 = "http://localhost:8080/original/profile2.png";
-  const avatar2 = "http://localhost:8080/original/profile3.png";
-
   useEffect(() => {
     handleResult();
   }, []);
@@ -62,14 +58,14 @@ const Game: React.FC<{
         nickName: game.game.winner.nickName,
         intraName: game.game.winner.intraName,
         score: game.game.winnerScore,
-        avatar: avatar1,
+        avatar: game.game.winner.avatar,
       });
       setUser2({
         id: game.game.loser.id,
         nickName: game.game.loser.nickName,
         intraName: game.game.loser.intraName,
         score: game.game.loserScore,
-        avatar: avatar2,
+        avatar: game.game.loser.avatar,
       });
       setIsWin(true);
       setResult("승");
@@ -79,14 +75,14 @@ const Game: React.FC<{
         nickName: game.game.loser.nickName,
         intraName: game.game.loser.intraName,
         score: game.game.loserScore,
-        avatar: avatar2,
+        avatar: game.game.loser.avatar,
       });
       setUser2({
         id: game.game.winner.id,
         nickName: game.game.winner.nickName,
         intraName: game.game.winner.intraName,
         score: game.game.winnerScore,
-        avatar: avatar1,
+        avatar: game.game.winner.avatar,
       });
       setIsWin(false);
       setResult("패");

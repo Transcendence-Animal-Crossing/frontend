@@ -1,17 +1,15 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import UserContainer from "./components/user";
+import UserContainer from "../../components/mypage/user";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import axiosInstance from "../../utils/axiosInstance";
-import AchievementFrame from "./components/achievement";
+import AchievementFrame from "../../components/mypage/achievement";
 import home from "../../public/Icon/home.png";
-import css from "styled-jsx/css";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Container from "../../components/columnNevLayout";
-import Game from "./components/game";
-import { match } from "assert";
+import Game from "../../components/mypage/game";
 
 const MyPage = () => {
   const temp = 1;
@@ -200,7 +198,7 @@ const MyPage = () => {
           totalCount={totalCount}
           winCount={winCount}
           winRate={winRate}
-        ></UserContainer>
+        />
         <InfoContainer>
           <MatchHistoryFrame>
             <MatchHistoryHeader>
