@@ -11,7 +11,7 @@ const Navigation = () => {
         {session ? (
           <>
             {/* <Text> Sign in as {session.user.email} </Text> <br /> */}
-            <Text> Sign in as {session?.user?.login} </Text> <br />
+            <Text> Sign in as {session?.user?.intraName} </Text> <br />
             {/* <Text> accessToken : {session.accessToken} </Text> <br /> */}
             <button onClick={() => signOut()}>Sign out</button>
           </>

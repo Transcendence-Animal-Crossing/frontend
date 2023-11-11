@@ -46,7 +46,7 @@ const userListModal: React.FC<{
   const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
 
   useEffect(() => {
-    const userId = session?.user.user_id;
+    const userId = session?.user.id;
     const user = userlist.find((user) => user.id === userId);
     if (user && user.grade == 2) {
       setIsOwner(true);

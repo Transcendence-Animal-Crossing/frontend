@@ -34,7 +34,7 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
   }, [messages]);
 
   const handleFindUser = (userId: number) => {
-    if (userId == session?.user.user_id) {
+    if (userId == session?.user.id) {
       return false;
     }
 
@@ -66,7 +66,7 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
       {messages.map((message, index) => (
         <Frame key={index}>
           {handleFindUser(message.senderId) && (
-            <UserFrame senderId={message.senderId} currentUser={session?.user.user_id}>
+            <UserFrame senderId={message.senderId} currentUser={session?.user.id}>
               <UserImage
                 src={handleSetUserAvatar(message.senderId)}
                 alt="Profle Image"
@@ -77,9 +77,9 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
             </UserFrame>
           )}
 
-          <MessageFrame senderId={message.senderId} currentUser={session?.user.user_id}>
+          <MessageFrame senderId={message.senderId} currentUser={session?.user.id}>
             {message.senderId != 0 && (
-              <Message key={index} senderId={message.senderId} currentUser={session?.user.user_id}>
+              <Message key={index} senderId={message.senderId} currentUser={session?.user.id}>
                 {message.text}
               </Message>
             )}

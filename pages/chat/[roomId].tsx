@@ -73,7 +73,8 @@ const Chat = () => {
 
       const handleRoomMessage = (response: RoomMessageDto) => {
         const text = response.text;
-        console.log('response.text : ' + text);
+        console.log('room-message response : ' + response.senderId);
+        console.log('room-message response : ' + response.text);
         setMessages((prevMessages) => [...prevMessages, response]);
       };
 
@@ -102,7 +103,7 @@ const Chat = () => {
 
       const handleRoomKick = (response: ActionRoomData) => {
         const { targetId } = response;
-        const userId = session?.user.user_id;
+        const userId = session?.user.id;
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
           if (targetId == userId) {
@@ -115,7 +116,7 @@ const Chat = () => {
 
       const handleRoomBan = (response: ActionRoomData) => {
         const { targetId } = response;
-        const userId = session?.user.user_id;
+        const userId = session?.user.id;
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
           if (targetId == userId) {
@@ -135,7 +136,7 @@ const Chat = () => {
 
       const handleRoomMute = (response: ActionRoomData) => {
         const { targetId } = response;
-        const userId = session?.user.user_id;
+        const userId = session?.user.id;
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
           if (targetId == userId) {
@@ -250,7 +251,7 @@ const Chat = () => {
         .emitWithAck('room-message', {
           text: messageText,
           roomId: roomId,
-          senderId: session?.user.user_id,
+          senderId: session?.user.id,
         })
         .then((response) => {
           console.log(response);

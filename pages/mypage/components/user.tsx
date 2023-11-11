@@ -1,10 +1,10 @@
-import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { profile12 } from "./profile";
-import { bronze, silver, gold, platinum, diamond } from "./tier";
-import info from "../../../public/Icon/info.png";
+import styled from 'styled-components';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { profile12 } from './profile';
+import { bronze, silver, gold, platinum, diamond } from './tier';
+import info from '../../../public/Icon/info.png';
 
 const UserContainer: React.FC<{
   nickname: string;
@@ -15,10 +15,10 @@ const UserContainer: React.FC<{
   avatar: string;
 }> = ({ nickname, tierIndex, totalGames, totalWins, winRate, avatar }) => {
   const { data: session } = useSession();
-  // console.log(session.user.user_id);
+  // console.log(session.user.id);
 
   const tierImages = [bronze, silver, gold, platinum, diamond];
-  const tierTexts = ["브론즈", "실버", "골드", "플래티넘", "다이아몬드"];
+  const tierTexts = ['브론즈', '실버', '골드', '플래티넘', '다이아몬드'];
 
   return (
     <UserProfile>
@@ -36,12 +36,7 @@ const UserContainer: React.FC<{
       <DivisionBar />
       <TierFrame>
         {session ? (
-          <TierImage
-            src={tierImages[tierIndex]}
-            alt="Tier Image"
-            width={30}
-            height={30}
-          />
+          <TierImage src={tierImages[tierIndex]} alt="Tier Image" width={30} height={30} />
         ) : (
           <TierImage src={tierImages[tierIndex]} alt="default Image" />
         )}
@@ -106,7 +101,7 @@ const NicknameFrame = styled.div`
 
 const NicknameText = styled.div`
   color: ${(props) => props.theme.colors.white};
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   text-align: center;
   font-size: x-large;
 `;
@@ -114,7 +109,7 @@ const NicknameText = styled.div`
 const IntraText = styled.div`
   padding: 3%;
   color: ${(props) => props.theme.colors.brown};
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   text-align: center;
   font-size: large;
 `;
@@ -142,7 +137,7 @@ const TierImage = styled(Image)`
 const TierText = styled.div`
   color: ${(props) => props.theme.colors.brown};
   width: 60%;
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   vertical-align: middle;
   text-align: center;
   font-size: large;
@@ -170,7 +165,7 @@ const MatchStatText = styled.div`
   color: ${(props) => props.theme.colors.brown};
   width: 90%;
   height: auto;
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   display: flex;
   flex-direction: row;
   font-size: large;
