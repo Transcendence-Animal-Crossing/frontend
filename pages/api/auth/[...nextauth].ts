@@ -40,9 +40,6 @@ export const authOptions: NextAuthOptions = {
               response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
             return {
               id: response.data.id,
-              name: response.data.nickName, // Assuming 'name' is required by NextAuth's User type
-              email: response.data.email, // Include this if 'email' is a required field in User type
-              image: response.data.avatar, //
               nickName: response.data.nickName,
               intraName: response.data.intraName,
               avatar: response.data.avatar,
