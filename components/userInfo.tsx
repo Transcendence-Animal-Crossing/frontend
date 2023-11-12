@@ -48,11 +48,11 @@ const NameFrame = styled.div`
 
 const NickNameFrame = styled.div`
   width: 100%;
-  font-size: small;
+  font-size: 0.8vw;
 `;
 
 const IntraNameFrame = styled.div`
   width: 100%;
-  font-size: x-small;
+  font-size: 0.6vw;
   margin-top: 3%;
 `;
