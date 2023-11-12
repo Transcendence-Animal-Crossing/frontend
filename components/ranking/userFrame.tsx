@@ -95,7 +95,7 @@ const RankingFrame = styled.div`
 `;
 
 const TierImage = styled(Image)`
-  width: 10%;
+  width: 8%;
   height: auto;
 `;
 
