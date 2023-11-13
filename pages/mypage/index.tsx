@@ -12,7 +12,7 @@ import Container from "../../components/columnNevLayout";
 import Game from "../../components/mypage/game";
 
 const MyPage = () => {
-  const temp = 1;
+  const temp = 0;
   const { data: session } = useSession();
   console.log(session);
   const apiUrl = "http://localhost:8080/";
@@ -32,26 +32,7 @@ const MyPage = () => {
   const [offset, setOffset] = useState(0);
   const matchPerPage = 10;
   const [matchHistory, setMatchHistory] = useState({
-    games: [
-      {
-        id: 0,
-        winnerScore: 0,
-        loserScore: 0,
-        playTime: 0,
-        loser: {
-          id: 0,
-          nickName: "",
-          intraName: "",
-          avatar: "",
-        },
-        winner: {
-          id: 0,
-          nickName: "",
-          intraName: "",
-          avatar: "",
-        },
-      },
-    ],
+    games: [],
   });
 
   useEffect(() => {
@@ -107,7 +88,7 @@ const MyPage = () => {
   const getMatchHistory = async () => {
     try {
       // const userId = session?.user.user_id;
-      const userId = 1;
+      const userId = temp;
       console.log("getMatchHistory() userId");
       console.log(userId);
       await getIsRank();
@@ -158,33 +139,33 @@ const MyPage = () => {
   };
 
   const fetchMoreData = () => {
-    if (matchHistory.games.length >= 0) {
-      setHasMore(false);
-      console.log("fetchMoreData() matchHistory.games.length");
-      return;
-    }
-
+    // if (matchHistory.games.length >= ) {
+    //   setHasMore(false);
+    //   console.log("fetchMoreData() matchHistory.games.length");
+    //   return;
+    // }
     setTimeout(async () => {
-      const userId = 1;
+      const userId = temp;
       const copy = { ...matchHistory };
-
       console.log("getMatchHistory() userId");
       console.log(userId);
-
       setOffset(offset + matchPerPage);
       await getIsRank();
-      const response = await axiosInstance.get("/games/" + mode, {
-        params: {
-          id: userId,
-          offset: offset,
-        },
-      });
-
-      copy.games = copy.games.concat(response.data.games);
-      setMatchHistory(copy);
-
-      console.log("getMatchHistory() response");
-      console.log(response);
+      try {
+        const response = await axiosInstance.get("/games/" + mode, {
+          params: {
+            id: userId,
+            offset: offset,
+          },
+        });
+        copy.games = copy.games.concat(response.data.games);
+        setMatchHistory(copy);
+        console.log("getMatchHistory() response");
+        console.log(response);
+      } catch (error) {
+        console.log("Error occured in getMatchHistory()");
+        console.log(error);
+      }
     }, 500);
   };
 

@@ -41,51 +41,55 @@ const Game: React.FC<{
     avatar: "",
   });
 
+  const apiUrl = "http://localhost:8080/";
   const [isWin, setIsWin] = useState(true);
   const [result, setResult] = useState("승" || "패");
 
   useEffect(() => {
     handleResult();
-  }, []);
+  });
 
   const handleResult = () => {
     console.log("handleResult()");
     console.log(game.game.winner.id);
     console.log(userId);
-    if (game.game.winner.id === 1) {
+    if (game.game.winner.id == userId) {
       setUser1({
         id: game.game.winner.id,
         nickName: game.game.winner.nickName,
         intraName: game.game.winner.intraName,
         score: game.game.winnerScore,
-        avatar: game.game.winner.avatar,
+        avatar: apiUrl + game.game.winner.avatar,
       });
       setUser2({
         id: game.game.loser.id,
         nickName: game.game.loser.nickName,
         intraName: game.game.loser.intraName,
         score: game.game.loserScore,
-        avatar: game.game.loser.avatar,
+        avatar: apiUrl + game.game.loser.avatar,
       });
       setIsWin(true);
       setResult("승");
+      console.log("승");
+      console.log(userId, game.game.winner.id);
     } else {
       setUser1({
         id: game.game.loser.id,
         nickName: game.game.loser.nickName,
         intraName: game.game.loser.intraName,
         score: game.game.loserScore,
-        avatar: game.game.loser.avatar,
+        avatar: apiUrl + game.game.loser.avatar,
       });
       setUser2({
         id: game.game.winner.id,
         nickName: game.game.winner.nickName,
         intraName: game.game.winner.intraName,
         score: game.game.winnerScore,
-        avatar: game.game.winner.avatar,
+        avatar: apiUrl + game.game.winner.avatar,
       });
       setIsWin(false);
       setResult("패");
+      console.log("패");
       console.log(userId, game.game.winner.id);
     }
   };
