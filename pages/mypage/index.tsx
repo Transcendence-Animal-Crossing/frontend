@@ -73,7 +73,7 @@ const MyPage = () => {
 
   const getUserInfo = async () => {
     try {
-      const userId = session?.user.user_id;
+      const userId = session?.user.id;
       const response = await axiosInstance.get("/users/detail", {
         params: { id: userId },
       });
@@ -88,7 +88,7 @@ const MyPage = () => {
     }
 
     try {
-      const userId = session?.user.user_id;
+      const userId = session?.user.id;
       const response = await axiosInstance.get("/record", {
         params: {
           id: userId,

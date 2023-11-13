@@ -78,7 +78,7 @@ const Paging = () => {
 
   const handleAchieveList = async () => {
     try {
-      const userId = session?.user.user_id;
+      const userId = session?.user.id;
       const response = await axiosInstance.get("/users/detail", {
         params: { id: userId },
       });

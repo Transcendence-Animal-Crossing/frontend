@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import Container from '../../components/rowLayout';
-import InfoContainer from './components/info';
-import PreviewContainer from './components/preview';
+import InfoContainer from '../../components/join/info';
+import PreviewContainer from '../../components/join/preview';
 import axiosInstance from '../../utils/axiosInstance';
 
 const JoinPage: React.FC = () => {
@@ -13,6 +14,7 @@ const JoinPage: React.FC = () => {
   const [profilePath, setProfilePath] = useState('profile2.png');
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const router = useRouter();
+  const { data: session, update } = useSession();
 
   const handleNicknameChange = (newNickname: string) => {
     setNickname(newNickname);
@@ -59,18 +61,30 @@ const JoinPage: React.FC = () => {
   };
 
   const handleComplete = async (newNickname: string, profile: number) => {
+    let response;
     try {
       if (profile === 0) {
         if (uploadedImage) {
           const formData = new FormData();
           formData.append('avatar', uploadedImage);
           formData.append('nickName', newNickname);
-          await axiosInstance.patch('/users/profile', formData);
+          response = await axiosInstance.patch('/users/profile', formData);
         }
       } else {
-        const response = await axiosInstance.patch('/users/profileWithUrl', {
+        response = await axiosInstance.patch('/users/profileWithUrl', {
           nickName: newNickname,
           avatar: profilePath,
+        });
+      }
+      if (response) {
+        console.log(response);
+        await update({
+          ...session,
+          user: {
+            ...session?.user,
+            nickName: response.data.nickName,
+            avatar: response.data.filepath,
+          },
         });
       }
       router.push('http://localhost:3000/');

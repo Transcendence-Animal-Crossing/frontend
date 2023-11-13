@@ -4,12 +4,33 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
 import Container from '../../components/columnNevLayout';
-import Header from './components/lobbyHeader';
+import Header from '../../components/chat/lobbyHeader';
+import JoinRoomModal from '../../components/chat/joinRoomModal';
+import NoticeModal from '../../components/noticeModal';
 import Lock from '../../public/Chat/lock_gold.png';
 
-const Chat = () => {
+interface RoomOwnerData {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
+}
+
+interface RoomListData {
+  id: string;
+  title: string;
+  owner: RoomOwnerData;
+  headCount: number;
+  mode: string;
+}
+
+const ChatLobby = () => {
   const { socket } = useSocket();
-  const [roomlist, setRoomlist] = useState([]);
+  const [roomlist, setRoomlist] = useState<RoomListData[]>([]);
+  const [openJoinModal, setOpenJoinModal] = useState<boolean>(false);
+  const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
+  const [noticeMessage, setNoticeMessage] = useState('');
+  const [joinRoomId, setJoinRoomId] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -28,22 +49,42 @@ const Chat = () => {
 
   const handleRoomJoin = async (roomId: string) => {
     if (socket) {
-      await socket
-        .emitWithAck('room-join', {
-          roomId: roomId,
-          password: '0',
-        })
-        .then((response) => {
-          if (response.status === 200) {
-            console.log('room-join : Success', response);
-            const responseRoomId = response.body.id;
-            router.push(`chat/${responseRoomId}`);
-          } else {
-            console.log('room-join : Failed', response);
-            // Join 실패 모달
-          }
-        });
+      const room = roomlist.find((room) => room.id === roomId);
+      if (room?.mode == 'PROTECTED') {
+        setJoinRoomId(roomId);
+        setOpenJoinModal(true);
+      } else {
+        await socket
+          .emitWithAck('room-join', {
+            roomId: roomId,
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              console.log('room-join : Success', response);
+              const responseRoomId = response.body.id;
+              router.push(`chat/${responseRoomId}`);
+            } else {
+              console.log('room-join : Failed', response);
+              setNoticeMessage('채팅방에 입장하실 수 없어요!');
+              setOpenNotice(true);
+            }
+          });
+      }
     }
+  };
+
+  const handleFailModal = () => {
+    setOpenJoinModal(false);
+    setNoticeMessage('비밀번호를 틀리셨어요!');
+    setOpenNotice(true);
+  };
+
+  const handleCloseJoinModal = () => {
+    setOpenJoinModal(false);
+  };
+
+  const handleCloseNotice = () => {
+    setOpenNotice(false);
   };
 
   return (
@@ -56,26 +97,34 @@ const Chat = () => {
               {room.title}
               <>{room.mode === 'PROTECTED' && <LockImage src={Lock} alt="Lock" />}</>
             </RoomTitle>
-
             <RoomInfo>
               <RoomInfoText>
-                <ColoredText color="brown">방장:</ColoredText>
-                <ColoredText color="Emerald">{room.owner.nickName}</ColoredText>
+                <ColoredText textColor="0">방장:</ColoredText>
+                <ColoredText textColor="1">{room.owner.nickName}</ColoredText>
               </RoomInfoText>
               <RoomInfoText>
-                <ColoredText color="brown">참여인원:</ColoredText>
-                <ColoredText color="orange">{room.headCount}명</ColoredText>
+                <ColoredText textColor="0">참여인원:</ColoredText>
+                <ColoredText textColor="2">{room.headCount}명</ColoredText>
               </RoomInfoText>
-              {/* <p>Mode: {room.mode}</p> */}
             </RoomInfo>
           </Room>
         ))}
       </RoomListFrame>
+      {openJoinModal && (
+        <JoinRoomModal
+          handleCloseModal={handleCloseJoinModal}
+          handleFailModal={handleFailModal}
+          roomId={joinRoomId}
+        />
+      )}
+      {isOpenNotice && (
+        <NoticeModal handleCloseModal={handleCloseNotice} noticeMessage={noticeMessage} />
+      )}
     </Container>
   );
 };
 
-export default Chat;
+export default ChatLobby;
 
 const RoomListFrame = styled.div`
   width: 70%;
@@ -127,8 +176,17 @@ const RoomInfoText = styled.div`
   justify-content: space-between;
 `;
 
-const ColoredText = styled.p`
-  color: ${(props) => props.theme.colors[props.color]};
+const ColoredText = styled.p<{ textColor: string }>`
+  color: ${(props) => {
+    switch (props.textColor) {
+      case '1':
+        return props.theme.colors.Emerald;
+      case '2':
+        return props.theme.colors.orange;
+      default:
+        return props.theme.colors.brown;
+    }
+  }};
   font-family: 'GiantsLight';
 `;
 

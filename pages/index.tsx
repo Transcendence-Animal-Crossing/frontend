@@ -14,9 +14,13 @@ const Home: NextPage = () => {
       {/* 테스트용 */}
       {session ? (
         <>
-          Sign in as {session.user.email} <br />
-          Sign in as {session.user.login} <br />
+          Sign in id : {session.user.id} <br />
+          nickName : {session.user.nickName} <br />
+          intraName : {session.user.intraName} <br />
+          avatar : {session.user.avatar} <br />
           accessToken : {session.accessToken} <br />
+          refreshToken : {session.refreshToken} <br />
+          responseCode : {session.responseCode} <br />
           <button onClick={() => signOut()}>Sign out</button>
         </>
       ) : null}

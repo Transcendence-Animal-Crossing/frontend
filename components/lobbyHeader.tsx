@@ -1,54 +1,31 @@
-import styled from 'styled-components';
-import Image from 'next/image';
-import React, { useState, useRef } from 'react';
-import { useRouter } from 'next/router';
-import CreateRoomModal from './createRoomModal';
-import info from '../../../public/Icon/info.png';
-import plus from '../../../public/Icon/plus.png';
-import home from '../../../public/Icon/home.png';
+import styled from "styled-components";
+import Image from "next/image";
+import React, { useState, useRef } from "react";
+import { useRouter } from "next/router";
+import info from "../public/Icon/info.png";
+import home from "../public/Icon/home.png";
 
-const Header = () => {
-  const [isOpenModal, setOpenModal] = useState<boolean>(false);
-  const [createButtonRect, setCreateButtonRect] = useState<DOMRect | null>(null);
-  const CreateButtonRef = useRef<HTMLDivElement | null>(null);
+const Header = (props: { title: string; text: string }) => {
   const router = useRouter();
 
-  const handleOpenCreate = () => {
-    if (CreateButtonRef.current) {
-      const createButtonRect = CreateButtonRef.current.getBoundingClientRect();
-      setCreateButtonRect(createButtonRect);
-    }
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
   const handleRouteLobby = async () => {
-    router.push('/');
+    router.push("/");
   };
 
   return (
     <>
       <HeaderFrame>
         <InfoFrame>
-          <TitleFrame>Chatting Room</TitleFrame>
-          <SubText> 단체채팅 </SubText>
+          <TitleFrame>{props.title}</TitleFrame>
+          <SubText>{props.text}</SubText>
           <InfoImage src={info} alt="info" />
         </InfoFrame>
         <ButtonFrame>
-          <Button onClick={handleOpenCreate} ref={CreateButtonRef}>
-            <InfoImage src={plus} alt="plus" />
-          </Button>
           <Button onClick={handleRouteLobby}>
             <InfoImage src={home} alt="home" />
           </Button>
         </ButtonFrame>
       </HeaderFrame>
-      {isOpenModal && (
-        <CreateRoomModal handleCloseModal={handleCloseModal} createButtonRect={createButtonRect} />
-      )}
     </>
   );
 };
@@ -56,8 +33,8 @@ const Header = () => {
 export default Header;
 
 const HeaderFrame = styled.div`
-  width: 70%;
-  height: auto;
+  width: 100%;
+  height: 10%;
   display: flex;
   flex-direction: row;
   margin-bottom: 2vh;
@@ -81,13 +58,13 @@ const TitleFrame = styled.div`
   padding-right: 1.5vw;
   align-items: center;
   color: ${(props) => props.theme.colors.ivory};
-  font-family: 'Giants';
-  font-size: 3vh;
+  font-family: "Giants";
+  font-size: 2.5vh;
 `;
 
 const SubText = styled.p`
   color: ${(props) => props.theme.colors.brown05};
-  font-family: 'GiantsLight';
+  font-family: "GiantsLight";
   font-size: 2vh;
 `;
 

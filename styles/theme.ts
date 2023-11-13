@@ -13,10 +13,12 @@ declare module "styled-components" {
       beige: string;
       cream: string;
       gold: string;
+      gold02: string;
       lightgold: string;
       lightbrown: string;
       green: string;
       red: string;
+      indigo: string;
     };
   }
 }
@@ -33,9 +35,11 @@ export const theme: DefaultTheme = {
     beige: "rgba(255, 251, 231, 0.5);",
     cream: "#FFFBE7",
     gold: "#BEA745",
+    gold02: "rgba(190, 167, 69, 0.2)",
     lightgold: "#C1B175",
     lightbrown: "#e9e2c7",
     green: "#8AC68A",
     red: "#FC736D",
+    indigo: "#253B52",
   },
 };
