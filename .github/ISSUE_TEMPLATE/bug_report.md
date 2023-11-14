@@ -2,7 +2,7 @@
 name: Bug report
 about: 버그 신고
 title: "\U0001F41E [Bug] - 00에 대한 오류"
-labels: "\U0001F41E Bug"
+labels: "\U0001F41E Bug, \U0001F3A8 Refactor"
 assignees: ''
 
 ---
