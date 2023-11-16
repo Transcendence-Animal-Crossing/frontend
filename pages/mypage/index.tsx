@@ -105,12 +105,20 @@ const MyPage = () => {
       });
       console.log("getMatchHistory() response first", isRank, mode);
       console.log(response);
-      await setOffset(matchPerPage);
-      await setMatchHistory(response.data);
+      await afterMatchHistory(response.data);
     } catch (error) {
       console.log("Error occured in getMatchHistory()");
       console.log(error);
     }
+  };
+
+  const afterMatchHistory = async (data: any) => {
+    if (data.games.length == 0) {
+      setHasMore(false);
+      return;
+    }
+    setOffset(matchPerPage);
+    setMatchHistory(data);
   };
 
   const handleRecord = async (data: any) => {
@@ -142,9 +150,6 @@ const MyPage = () => {
 
   const fetchMoreData = () => {
     console.log("fetchMoreData() start");
-    console.log("offset", offset);
-    console.log("totalCount", totalCount);
-    console.log("matchHistory.games.length", matchHistory.games.length);
     if (offset >= totalCount) {
       setHasMore(false);
       console.log("fetchMoreData() end");
