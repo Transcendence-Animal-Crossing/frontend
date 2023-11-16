@@ -72,7 +72,6 @@ const MyPage = () => {
   const getRecord = async () => {
     try {
       const userId = await getUserId();
-      await getIsRank();
       const response = await axiosInstance.get("/record", {
         params: {
           id: userId,
@@ -80,9 +79,14 @@ const MyPage = () => {
         },
       });
       await handleRecord(response.data);
+      await printRecord(response.data);
     } catch (error) {
       console.log("Error occured in getRecord()", error);
     }
+  };
+
+  const printRecord = async (data: any) => {
+    console.log("getRecord() response", isRank, mode, data);
   };
 
   const getMatchHistory = async () => {
@@ -93,7 +97,6 @@ const MyPage = () => {
       });
       await setHasMore(true);
       await setOffset(0);
-      await getIsRank();
       const response = await axiosInstance.get("/games/" + mode, {
         params: {
           id: userId,
@@ -104,20 +107,10 @@ const MyPage = () => {
       console.log(response);
       await setOffset(matchPerPage);
       await setMatchHistory(response.data);
-      // console.log("getMatchHistory() response", offset);
     } catch (error) {
       console.log("Error occured in getMatchHistory()");
       console.log(error);
     }
-  };
-
-  const getIsRank = () => {
-    if (mode === "rank") {
-      setIsRank(true);
-    } else if (mode === "general") {
-      setIsRank(false);
-    }
-    console.log("offset", offset);
   };
 
   const handleRecord = async (data: any) => {
@@ -130,12 +123,6 @@ const MyPage = () => {
       setWinCount(data.generalWinCount);
       setWinRate(data.generalWinRate);
     }
-    await console.log(
-      "getRecord() response",
-      isRank,
-      mode,
-      data.rankTotalCount
-    );
   };
 
   const handleRank = async (rankScore: number) => {
@@ -165,16 +152,6 @@ const MyPage = () => {
     }
     setTimeout(async () => {
       const userId = await getUserId();
-      // console.log(
-      //   "fetchMoreData() called",
-      //   offset,
-      //   "isRank, mode ",
-      //   isRank,
-      //   mode,
-      //   "totalCount",
-      //   totalCount
-      // );
-      await getIsRank();
       try {
         const response = await axiosInstance.get("/games/" + mode, {
           params: {
@@ -194,6 +171,15 @@ const MyPage = () => {
     }, 500);
   };
 
+  const handleMode = async (mode: string) => {
+    if (mode === "rank") {
+      setIsRank(true);
+    } else if (mode === "general") {
+      setIsRank(false);
+    }
+    setMode(mode);
+  };
+
   return (
     <Container>
       <MyPageFrame>
@@ -209,14 +195,14 @@ const MyPage = () => {
           <MatchHistoryFrame>
             <MatchHistoryHeader>
               <Mode>
-                <ModeButton onClick={() => setMode("general")}>
+                <ModeButton onClick={() => handleMode("general")}>
                   <div
                     className={`${mode === "general" ? "select" : "unselect"}`}
                   >
                     일반
                   </div>
                 </ModeButton>
-                <ModeButton onClick={() => setMode("rank")}>
+                <ModeButton onClick={() => handleMode("rank")}>
                   <div className={`${mode === "rank" ? "select" : "unselect"}`}>
                     랭크
                   </div>
