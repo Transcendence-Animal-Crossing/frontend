@@ -33,7 +33,7 @@ const MyPage = () => {
   const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
-    getAll();
+    // getAll();
     getUserInfo();
     getRecord();
     getMatchHistory();
@@ -45,9 +45,9 @@ const MyPage = () => {
   }, [mode]);
 
   // const getAll = async () => {
-    // const response = await axiosInstance.post("/games/0");
-    // const response = await axiosInstance.get("/games/all");
-    // console.log("getAll() response", response.data);
+  // const response = await axiosInstance.post("/games/0");
+  // const response = await axiosInstance.get("/games/all");
+  // console.log("getAll() response", response.data);
   // };
 
   const handleRouteLobby = async () => {

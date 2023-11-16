@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import UserInfo from "./userInfo";
-import { useSession, getSession } from "next-auth/react";
+import UserInfo from "../userInfo";
+import { getSession } from "next-auth/react";
 
 const Game: React.FC<{
   game: {
@@ -23,7 +23,6 @@ const Game: React.FC<{
     };
   };
 }> = (game) => {
-  // const [session, setSession] = useState(null);
   const [user1, setUser1] = useState({
     id: 0,
     nickName: "",
@@ -106,6 +105,8 @@ const Game: React.FC<{
           avatar={user1.avatar}
           nickName={user1.nickName}
           intraName={user1.intraName}
+          width={30}
+          height={4.5}
         />
         <ResultText result={isWin}>{user1.score}</ResultText>
         <VSText>VS</VSText>
@@ -114,6 +115,8 @@ const Game: React.FC<{
           avatar={user2.avatar}
           nickName={user2.nickName}
           intraName={user2.intraName}
+          width={40}
+          height={4.5}
         />
       </GameBody>
     </GameFrame>
@@ -133,18 +136,21 @@ const GameFrame = styled.div`
   background-color: #fbf3e6;
   border-radius: 5px;
   margin-bottom: 1%;
+  gap: 5%;
   // overflow: "auto";
 `;
 
 const GameResult = styled.div<{ result: boolean }>`
-  width: 10%;
+  width: 9%;
   height: 100%;
   display: flex;
   flex-direction: col;
   align-items: center;
   justify-content: center;
-  color: ${(props) =>
+  border-radius: 5px 0 0 5px;
+  background-color: ${(props) =>
     props.result ? props.theme.colors.green : props.theme.colors.red};
+  color: ${(props) => props.theme.colors.white};
 `;
 
 const GameBody = styled.div`
@@ -154,7 +160,7 @@ const GameBody = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 5%;
+  gap: 7%;
   background-color: #fbf3e6;
   border-radius: 5px;
   margin: 0 3%;
