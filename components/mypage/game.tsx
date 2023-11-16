@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import UserInfo from "./userInfo";
-import { useSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 
 const Game: React.FC<{
   game: {
@@ -23,7 +23,7 @@ const Game: React.FC<{
     };
   };
 }> = (game) => {
-  const { data: session } = useSession();
+  // const [session, setSession] = useState(null);
   const [user1, setUser1] = useState({
     id: 0,
     nickName: "",
@@ -45,7 +45,9 @@ const Game: React.FC<{
   const [result, setResult] = useState("승" || "패");
 
   const getUserId = async () => {
+    const session = await getSession();
     const userId = session?.user.id;
+    // console.log("getUserId() userId", userId);
     return userId;
   };
 
@@ -56,8 +58,6 @@ const Game: React.FC<{
   const handleResult = async () => {
     const userId = (await getUserId()) || 0;
     await handleWinner(userId);
-    // console.log("handleResult()");
-    // console.log(game.game.winner.id);
   };
 
   const handleWinner = async (userId: number) => {
@@ -78,8 +78,6 @@ const Game: React.FC<{
       });
       setIsWin(true);
       setResult("승");
-      console.log("승");
-      console.log(userId, game.game.winner.id);
     } else {
       setUser1({
         id: game.game.loser.id,
@@ -97,8 +95,6 @@ const Game: React.FC<{
       });
       setIsWin(false);
       setResult("패");
-      console.log("패");
-      console.log(userId, game.game.winner.id);
     }
   };
 

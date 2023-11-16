@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import UserContainer from "../../components/mypage/user";
-import { useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import axiosInstance from "../../utils/axiosInstance";
 import AchievementFrame from "../../components/mypage/achievement";
@@ -12,11 +12,8 @@ import Container from "../../components/columnNevLayout";
 import Game from "../../components/mypage/game";
 
 const MyPage = () => {
-  const { data: session } = useSession();
-  console.log(session);
   const apiUrl = "http://localhost:8080/";
   const [nickname, setNickname] = useState("nickname");
-  const [rankScore, setRankScore] = useState(0);
   const [tierIndex, setTierIndex] = useState(0);
   const [totalCount, setTotalCount] = useState(1);
   const [winCount, setWinCount] = useState(1);
@@ -24,26 +21,24 @@ const MyPage = () => {
   const [avatarPath, setAvatarPath] = useState(
     "http://localhost:8080/original/profile2.png"
   );
-  const [isRank, setIsRank] = useState(false);
   const router = useRouter();
+  const [isRank, setIsRank] = useState(true);
   const [mode, setMode] = useState("rank");
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
-  const matchPerPage = 10;
+  const matchPerPage = 8;
   const [matchHistory, setMatchHistory] = useState({
     games: [],
   });
 
   useEffect(() => {
     getUserInfo();
+    getRecord();
     getMatchHistory();
   }, []);
 
   useEffect(() => {
-    getUserInfo();
-  });
-
-  useEffect(() => {
+    getRecord();
     getMatchHistory();
   }, [mode]);
 
@@ -52,6 +47,7 @@ const MyPage = () => {
   };
 
   const getUserId = async () => {
+    const session = await getSession();
     const userId = session?.user.id;
     return userId;
   };
@@ -59,44 +55,44 @@ const MyPage = () => {
   const getUserInfo = async () => {
     try {
       const userId = await getUserId();
-      // const userId = session?.user.id;
       const response = await axiosInstance.get("/users/detail", {
         params: { id: userId },
       });
       console.log("getUserInfo() response");
       console.log(response);
-      setNickname(response.data.nickName);
-      setAvatarPath(apiUrl + response.data.avatar);
-      handleRank(response.data.rankScore);
+      await setNickname(response.data.nickName);
+      await setAvatarPath(apiUrl + response.data.avatar);
+      await handleRank(response.data.rankScore);
     } catch (error) {
       console.log("Error occured in getUserInfo()");
       console.log(error);
     }
+  };
 
+  const getRecord = async () => {
     try {
       const userId = await getUserId();
-      // const userId = session?.user.id;
+      await getIsRank();
       const response = await axiosInstance.get("/record", {
         params: {
           id: userId,
           isRank: isRank,
         },
       });
-      console.log("getRecord() response");
-      console.log(response);
-      handleRecord(response.data);
+      await handleRecord(response.data);
     } catch (error) {
-      console.log("Error occured in getRecord()");
-      console.log(error);
+      console.log("Error occured in getRecord()", error);
     }
   };
 
   const getMatchHistory = async () => {
     try {
       const userId = await getUserId();
-      // const userId = session?.user.id;
-      console.log("getMatchHistory() userId");
-      console.log(userId);
+      await setMatchHistory({
+        games: [],
+      });
+      await setHasMore(true);
+      await setOffset(0);
       await getIsRank();
       const response = await axiosInstance.get("/games/" + mode, {
         params: {
@@ -104,9 +100,11 @@ const MyPage = () => {
           offset: 0,
         },
       });
-      console.log("getMatchHistory() response");
+      console.log("getMatchHistory() response first", isRank, mode);
       console.log(response);
-      setMatchHistory(response.data);
+      await setOffset(matchPerPage);
+      await setMatchHistory(response.data);
+      // console.log("getMatchHistory() response", offset);
     } catch (error) {
       console.log("Error occured in getMatchHistory()");
       console.log(error);
@@ -119,23 +117,28 @@ const MyPage = () => {
     } else if (mode === "general") {
       setIsRank(false);
     }
+    console.log("offset", offset);
   };
 
   const handleRecord = async (data: any) => {
     if (isRank) {
-      setTotalCount(data.rankTotalCount);
+      await setTotalCount(data.rankTotalCount);
       setWinCount(data.rankWinCount);
       setWinRate(data.rankWinRate);
     } else if (!isRank) {
       setTotalCount(data.generalTotalCount);
       setWinCount(data.generalWinCount);
       setWinRate(data.generalWinRate);
-      return;
     }
+    await console.log(
+      "getRecord() response",
+      isRank,
+      mode,
+      data.rankTotalCount
+    );
   };
 
   const handleRank = async (rankScore: number) => {
-    setRankScore(rankScore);
     if (rankScore < 1000) {
       setTierIndex(0);
     } else {
@@ -143,19 +146,34 @@ const MyPage = () => {
     }
   };
 
+  const handelMatchHistory = async (response: any) => {
+    const copy = { ...matchHistory };
+    copy.games = copy.games.concat(response.data.games);
+    console.log("offset", offset);
+    return copy;
+  };
+
   const fetchMoreData = () => {
-    if (matchHistory.games.length >= totalCount) {
+    console.log("fetchMoreData() start");
+    console.log("offset", offset);
+    console.log("totalCount", totalCount);
+    console.log("matchHistory.games.length", matchHistory.games.length);
+    if (offset >= totalCount) {
       setHasMore(false);
-      console.log("fetchMoreData() matchHistory.games.length");
+      console.log("fetchMoreData() end");
       return;
     }
     setTimeout(async () => {
       const userId = await getUserId();
-      // const userId = session?.user.id;
-      const copy = { ...matchHistory };
-      console.log("getMatchHistory() userId");
-      console.log(userId);
-      setOffset(offset + matchPerPage);
+      // console.log(
+      //   "fetchMoreData() called",
+      //   offset,
+      //   "isRank, mode ",
+      //   isRank,
+      //   mode,
+      //   "totalCount",
+      //   totalCount
+      // );
       await getIsRank();
       try {
         const response = await axiosInstance.get("/games/" + mode, {
@@ -164,9 +182,10 @@ const MyPage = () => {
             offset: offset,
           },
         });
-        copy.games = copy.games.concat(response.data.games);
-        setMatchHistory(copy);
-        console.log("getMatchHistory() response");
+        console.log("getMatchHistory() response", isRank, mode, offset);
+        const copy = await handelMatchHistory(response);
+        await setMatchHistory(copy);
+        await setOffset(offset + matchPerPage);
         console.log(response);
       } catch (error) {
         console.log("Error occured in getMatchHistory()");

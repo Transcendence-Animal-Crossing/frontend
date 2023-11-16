@@ -8,7 +8,12 @@ const UserInfo: React.FC<{
 }> = ({ nickName, intraName, avatar }) => {
   return (
     <UserInfoFrame>
-      <ProfileImage src={avatar} alt="Profle Image" width={100} height={100} />
+      <ProfileImage
+        src={avatar ? avatar : "http://localhost:8080/original/profile2.png"}
+        alt="Profle Image"
+        width={100}
+        height={100}
+      />
       <NameFrame>
         <NickNameFrame> {nickName} </NickNameFrame>
         <IntraNameFrame> {intraName} </IntraNameFrame>

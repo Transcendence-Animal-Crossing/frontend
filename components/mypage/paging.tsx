@@ -1,6 +1,6 @@
 import Pagination from "react-js-pagination";
 import React, { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, getSession } from "next-auth/react";
 import axiosInstance from "../../utils/axiosInstance";
 import Cards from "./cards";
 import styled from "styled-components";
@@ -24,7 +24,8 @@ import {
 } from "./achieveLight";
 
 const Paging = () => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
+  // const session = await getSession();
 
   const achieveDark = [
     achieveDark1,
@@ -56,8 +57,8 @@ const Paging = () => {
     achieveDark7,
   ]);
 
-  console.log("achievements first");
-  console.log(achievements);
+  // console.log("achievements first");
+  // console.log(achievements);
 
   const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
   const [page, setPage] = useState(1);
@@ -76,9 +77,17 @@ const Paging = () => {
     handleAchieveList();
   }, [page]);
 
+  const getUserId = async () => {
+    const session = await getSession();
+    const userId = session?.user.id;
+    console.log("getUserId() userId", userId);
+    return userId;
+  };
+
   const handleAchieveList = async () => {
     try {
-      const userId = session?.user.id;
+      const userId = await getUserId();
+      // const userId = session?.user.id;
       const response = await axiosInstance.get("/users/detail", {
         params: { id: userId },
       });
@@ -87,7 +96,7 @@ const Paging = () => {
 
       await handleAchievements(response.data.achievements);
 
-      console.log(achieveList);
+      // console.log(achieveList);
     } catch (error) {
       console.log("Error occured in handleAchieveList()");
       console.log(error);
