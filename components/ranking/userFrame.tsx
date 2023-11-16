@@ -54,7 +54,8 @@ const UserFrame: React.FC<{
           nickName={nickName}
           intraName={intraName}
           avatar={avatar}
-          size={50}
+          width={50}
+          height={5}
         />
       </LeftFrame>
       <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
