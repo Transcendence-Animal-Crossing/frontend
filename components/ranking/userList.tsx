@@ -1,9 +1,10 @@
-import React from "react";
-import styled from "styled-components";
-import UserFrame from "./userFrame";
+import React from 'react';
+import styled from 'styled-components';
+import UserFrame from './userFrame';
 
 const UserList: React.FC<{
   userList: {
+    id: number;
     ranking: number;
     nickName: string;
     intraName: string;
@@ -17,6 +18,7 @@ const UserList: React.FC<{
       {userList.map((user) => {
         return (
           <UserFrame
+            id={user.id}
             ranking={user.ranking}
             nickName={user.nickName}
             intraName={user.intraName}
