@@ -17,8 +17,8 @@ const myProfile = () => {
         <ProfileInfoFrame>
           <ProfileImage src={handleSetUserAvatar()} alt="Uploaded Image" width={300} height={300} />
           <ProfileTextFrame>
-            <Text textSize="1.1vw"> {session?.user?.nickName} </Text>
-            <Text textSize="0.7vw"> {session?.user?.intraName} </Text>
+            <Text textsize="1.1vw"> {session?.user?.nickName} </Text>
+            <Text textsize="0.7vw"> {session?.user?.intraName} </Text>
           </ProfileTextFrame>
         </ProfileInfoFrame>
         <IconImage src={setting} alt="setting" width={300} height={300} />
@@ -63,13 +63,13 @@ const ProfileTextFrame = styled.div`
   gap: 0.5vw;
 `;
 
-const Text = styled.div<{ textSize: string }>`
+const Text = styled.div<{ textsize: string }>`
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: 'GiantsLight';
   color: ${(props) => props.theme.colors.brown};
-  font-size: ${(props) => props.textSize};
+  font-size: ${(props) => props.textsize};
 `;
 
 const IconImage = styled(Image)`
