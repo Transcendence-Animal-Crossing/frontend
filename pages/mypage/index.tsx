@@ -12,7 +12,6 @@ import Container from "../../components/columnNevLayout";
 import Game from "../../components/mypage/game";
 
 const MyPage = () => {
-  const temp = 0;
   const { data: session } = useSession();
   console.log(session);
   const apiUrl = "http://localhost:8080/";
@@ -52,9 +51,15 @@ const MyPage = () => {
     router.push("/");
   };
 
+  const getUserId = async () => {
+    const userId = session?.user.id;
+    return userId;
+  };
+
   const getUserInfo = async () => {
     try {
-      const userId = session?.user.id;
+      const userId = await getUserId();
+      // const userId = session?.user.id;
       const response = await axiosInstance.get("/users/detail", {
         params: { id: userId },
       });
@@ -69,7 +74,8 @@ const MyPage = () => {
     }
 
     try {
-      const userId = session?.user.id;
+      const userId = await getUserId();
+      // const userId = session?.user.id;
       const response = await axiosInstance.get("/record", {
         params: {
           id: userId,
@@ -87,8 +93,8 @@ const MyPage = () => {
 
   const getMatchHistory = async () => {
     try {
-      // const userId = session?.user.user_id;
-      const userId = temp;
+      const userId = await getUserId();
+      // const userId = session?.user.id;
       console.log("getMatchHistory() userId");
       console.log(userId);
       await getIsRank();
@@ -129,7 +135,6 @@ const MyPage = () => {
   };
 
   const handleRank = async (rankScore: number) => {
-    console.log(rankScore);
     setRankScore(rankScore);
     if (rankScore < 1000) {
       setTierIndex(0);
@@ -139,13 +144,14 @@ const MyPage = () => {
   };
 
   const fetchMoreData = () => {
-    // if (matchHistory.games.length >= ) {
-    //   setHasMore(false);
-    //   console.log("fetchMoreData() matchHistory.games.length");
-    //   return;
-    // }
+    if (matchHistory.games.length >= totalCount) {
+      setHasMore(false);
+      console.log("fetchMoreData() matchHistory.games.length");
+      return;
+    }
     setTimeout(async () => {
-      const userId = temp;
+      const userId = await getUserId();
+      // const userId = session?.user.id;
       const copy = { ...matchHistory };
       console.log("getMatchHistory() userId");
       console.log(userId);
@@ -210,7 +216,7 @@ const MyPage = () => {
                 height={300}
               >
                 {matchHistory.games.map((game) => (
-                  <Game game={game} userId={temp} />
+                  <Game game={game} />
                 ))}
               </InfiniteScroll>
             </MatchHistory>

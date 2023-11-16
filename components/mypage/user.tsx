@@ -28,7 +28,7 @@ const UserContainer: React.FC<{
             <NicknameText> NickName </NicknameText>
           )}
         </NicknameFrame>
-        {session ? <IntraText> {session.user.login} </IntraText> : null}
+        {session ? <IntraText> {session.user.intraName} </IntraText> : null}
       </NameFrame>
       <DivisionBar />
       <TierFrame>

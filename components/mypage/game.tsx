@@ -22,8 +22,7 @@ const Game: React.FC<{
       avatar: string;
     };
   };
-  userId: number;
-}> = (game, userId) => {
+}> = (game) => {
   const { data: session } = useSession();
   const [user1, setUser1] = useState({
     id: 0,
@@ -45,14 +44,23 @@ const Game: React.FC<{
   const [isWin, setIsWin] = useState(true);
   const [result, setResult] = useState("승" || "패");
 
+  const getUserId = async () => {
+    const userId = session?.user.id;
+    return userId;
+  };
+
   useEffect(() => {
     handleResult();
-  });
+  }, []);
 
-  const handleResult = () => {
-    console.log("handleResult()");
-    console.log(game.game.winner.id);
-    console.log(userId);
+  const handleResult = async () => {
+    const userId = (await getUserId()) || 0;
+    await handleWinner(userId);
+    // console.log("handleResult()");
+    // console.log(game.game.winner.id);
+  };
+
+  const handleWinner = async (userId: number) => {
     if (game.game.winner.id == userId) {
       setUser1({
         id: game.game.winner.id,
