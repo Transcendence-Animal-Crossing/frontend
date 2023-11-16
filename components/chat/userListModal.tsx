@@ -10,6 +10,7 @@ import mute from '../../public/Chat/mute.png';
 import unmute from '../../public/Chat/unmute.png';
 import slider from '../../public/Chat/slider.png';
 import users from '../../public/Icon/users.png';
+import crown from '../../public/Icon/crown.png';
 
 interface ParticipantData {
   id: number;
@@ -203,7 +204,12 @@ const userListModal: React.FC<{
                     width={100}
                     height={100}
                   />
-                  <Text fontSize="2vh">{user.nickName}</Text>
+                  <OwnerFrame>
+                    <Text fontSize="2vh">{user.nickName}</Text>
+                    {isOwner && user.id == session?.user.id && (
+                      <OwnerImage src={crown} alt="crown" />
+                    )}
+                  </OwnerFrame>
                   <Text fontSize="1.2vh">{user.intraName}</Text>
                   {isAdmin && (
                     <AdminFrame>
@@ -343,6 +349,20 @@ const UserImage = styled(Image)`
   width: 5vw;
   height: auto;
   border-radius: 50px;
+`;
+
+const OwnerFrame = styled.div`
+  width: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3vw;
+`;
+
+const OwnerImage = styled(Image)`
+  width: 1.2vw;
+  height: auto;
 `;
 
 const Text = styled.div<{ fontSize: string }>`
