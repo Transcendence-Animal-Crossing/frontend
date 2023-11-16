@@ -211,6 +211,10 @@ const Chat = () => {
         }
       };
 
+      const handleRoomMode = (response: { mode: string } & object) => {
+        setRoomMode(response.mode);
+      };
+
       socket.on('room-message', handleRoomMessage);
       socket.on('room-join', handleRoomJoin);
       socket.on('room-leave', handleRoomLeave);
@@ -221,6 +225,7 @@ const Chat = () => {
       socket.on('room-unmute', handleRoomUnmute);
       socket.on('add-admin', handleAddAdmin);
       socket.on('remove-admin', handleRemoveAdmin);
+      socket.on('room-mode', handleRoomMode);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
@@ -233,6 +238,7 @@ const Chat = () => {
         socket.off('room-unmute', handleRoomUnmute);
         socket.off('add-admin', handleAddAdmin);
         socket.off('remove-admin', handleRemoveAdmin);
+        socket.off('room-mode', handleRoomMode);
       };
     } else {
       router.push('http://localhost:3000/chat/');
