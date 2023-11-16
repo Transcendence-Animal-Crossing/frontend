@@ -35,17 +35,43 @@ const ChatLobby = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.emitWithAck('room-list').then((response) => {
+      socket.emitWithAck('room-lobby').then((response) => {
         console.log(response);
         setRoomlist(response.body);
       });
-
-      socket.on('room-list', (response) => {
-        console.log(response);
-        setRoomlist(response);
-      });
     }
   }, [socket]);
+
+  useEffect(() => {
+    if (socket) {
+      const handleRoomCreate = (response: RoomListData) => {
+        setRoomlist((prevRoomList) => [...prevRoomList, response]);
+      };
+
+      const handleRoomUpdate = (response: RoomListData) => {
+        const targetRoom = roomlist.find((room) => room.id === response.id);
+        if (targetRoom) {
+          setRoomlist((prevRoomList) => {
+            const updatedRoomlist = prevRoomList.map((room) => {
+              if (room.id === response.id) {
+                return response;
+              }
+              return room;
+            });
+            return updatedRoomlist;
+          });
+        }
+      };
+
+      socket.on('room-create', handleRoomCreate);
+      socket.on('room-update', handleRoomUpdate);
+
+      return () => {
+        socket.off('room-create', handleRoomCreate);
+        socket.off('room-update', handleRoomUpdate);
+      };
+    }
+  }, [socket, roomlist]);
 
   const handleRoomJoin = async (roomId: string) => {
     if (socket) {
