@@ -215,6 +215,22 @@ const Chat = () => {
         setRoomMode(response.mode);
       };
 
+      const handleChangeOwner = (response: { id: number } & object) => {
+        const targetUser = userlist.find((user) => user.id === response.id);
+        if (targetUser) {
+          setUserlist((prevUserlist) => {
+            const updatedUserlist = prevUserlist.map((user) => {
+              if (user.id === response.id) {
+                return { ...user, grade: 2 };
+              }
+              return user;
+            });
+            return updatedUserlist;
+          });
+          handleUserActionMessage(`${targetUser.nickName}님이 방장 권한을 얻었습니다.`);
+        }
+      };
+
       socket.on('room-message', handleRoomMessage);
       socket.on('room-join', handleRoomJoin);
       socket.on('room-leave', handleRoomLeave);
@@ -226,6 +242,7 @@ const Chat = () => {
       socket.on('add-admin', handleAddAdmin);
       socket.on('remove-admin', handleRemoveAdmin);
       socket.on('room-mode', handleRoomMode);
+      socket.on('change-owner', handleChangeOwner);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
@@ -239,6 +256,7 @@ const Chat = () => {
         socket.off('add-admin', handleAddAdmin);
         socket.off('remove-admin', handleRemoveAdmin);
         socket.off('room-mode', handleRoomMode);
+        socket.off('change-owner', handleChangeOwner);
       };
     } else {
       router.push('http://localhost:3000/chat/');
