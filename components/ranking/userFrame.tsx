@@ -55,7 +55,7 @@ const UserFrame: React.FC<{
           intraName={intraName}
           avatar={avatar}
           width={50}
-          height={5}
+          height={4.5}
         />
       </LeftFrame>
       <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
@@ -87,7 +87,7 @@ const LeftFrame = styled.div`
 const RankingFrame = styled.div`
   width: 15%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: 10px 0px 0px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
