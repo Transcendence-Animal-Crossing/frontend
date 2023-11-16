@@ -27,6 +27,7 @@ const UserInfoFrame = styled.div<{ size: number }>`
   flex-direction: row;
   align-items: center;
   gap: 7%;
+  font-size: ${(props) => props.size}%;
 `;
 
 const ProfileImage = styled(Image)`
@@ -43,16 +44,17 @@ const NameFrame = styled.div`
   align-items: center;
   justify-content: center;
   font-family: "GiantsLight";
+  font-size: 150%;
+  gap: 10%;
   color: ${(props) => props.theme.colors.brown};
 `;
 
 const NickNameFrame = styled.div`
   width: 100%;
-  font-size: 0.8vw;
+  font-size: 100%;
 `;
 
 const IntraNameFrame = styled.div`
   width: 100%;
-  font-size: 0.6vw;
-  margin-top: 3%;
+  font-size: 70%;
 `;
