@@ -30,8 +30,10 @@ const MyPage = () => {
   const [matchHistory, setMatchHistory] = useState({
     games: [],
   });
+  const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
+    getAll();
     getUserInfo();
     getRecord();
     getMatchHistory();
@@ -41,6 +43,12 @@ const MyPage = () => {
     getRecord();
     getMatchHistory();
   }, [mode]);
+
+  // const getAll = async () => {
+    // const response = await axiosInstance.post("/games/0");
+    // const response = await axiosInstance.get("/games/all");
+    // console.log("getAll() response", response.data);
+  // };
 
   const handleRouteLobby = async () => {
     router.push("/");
@@ -62,6 +70,7 @@ const MyPage = () => {
       console.log(response);
       await setNickname(response.data.nickName);
       await setAvatarPath(apiUrl + response.data.avatar);
+      await setAchieveList(response.data.achievements);
       await handleRank(response.data.rankScore);
     } catch (error) {
       console.log("Error occured in getUserInfo()");
@@ -232,7 +241,7 @@ const MyPage = () => {
             </MatchHistory>
           </MatchHistoryFrame>
           <DivisionBar />
-          <AchievementFrame></AchievementFrame>
+          <AchievementFrame achieveList={achieveList} />
         </InfoContainer>
       </MyPageFrame>
     </Container>
