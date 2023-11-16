@@ -41,8 +41,9 @@ const Ranking = () => {
       console.log(response.data);
       await printResponse(response.data);
       await setUserList(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      handleError(error);
     }
   };
 
@@ -62,8 +63,20 @@ const Ranking = () => {
         user.avatar = apiUrl + user.avatar;
       });
       await setUserList(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      handleError(error);
+    }
+  };
+
+  const handleError = (error: any) => {
+    if (error.response.status == 400) {
+      console.log("handleSearch() error.response.data.message");
+      if (error.response.data.message == "더이상 돌려줄 데이터 없음") {
+        setOffset(offset - userPerPage);
+      } else if (error.response.data.message == "offset은 양수만 가능") {
+        setOffset(0);
+      }
     }
   };
 
