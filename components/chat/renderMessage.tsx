@@ -175,7 +175,7 @@ const Message = styled.div<{ senderId: number; currentUser?: number }>`
   word-wrap: break-word;
   height: auto;
   background-color: ${(props) =>
-    props.senderId === props.currentUser ? props.theme.colors.brown : props.theme.colors.ivory};
+    props.senderId === props.currentUser ? props.theme.colors.brown08 : props.theme.colors.ivory};
   color: ${(props) =>
     props.senderId === props.currentUser ? props.theme.colors.ivory : props.theme.colors.brown};
   font-family: 'GiantsLight';
