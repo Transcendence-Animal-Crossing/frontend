@@ -206,9 +206,7 @@ const userListModal: React.FC<{
                   />
                   <OwnerFrame>
                     <Text fontSize="2vh">{user.nickName}</Text>
-                    {isOwner && user.id == session?.user.id && (
-                      <OwnerImage src={crown} alt="crown" />
-                    )}
+                    {user.grade === 2 && <OwnerImage src={crown} alt="crown" />}
                   </OwnerFrame>
                   <Text fontSize="1.2vh">{user.intraName}</Text>
                   {isAdmin && (
