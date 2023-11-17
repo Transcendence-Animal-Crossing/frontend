@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+import { useSocket } from '../utils/SocketProvider';
 import axiosInstance from '../utils/axiosInstance';
 import DmModal from './dm/dmModal';
 
@@ -9,6 +10,7 @@ const UserModal: React.FC<{
   userId: number;
   userRect: { top: number; left: number; width: number };
 }> = ({ handleCloseModal, userId, userRect }) => {
+  const { socket } = useSocket();
   const [followStatus, setFollowStatus] = useState<number>(0);
   const [blockStatus, setBlockStatus] = useState<number>(0);
   const [IsOpenDm, setIsOpenDm] = useState<boolean>(false);
@@ -37,11 +39,28 @@ const UserModal: React.FC<{
 
   const handleOpenDM = async () => {
     setIsOpenDm(true);
-    // handleCloseModal();
+    if (socket) {
+      socket
+        .emitWithAck('dm-focus', {
+          targetId: userId,
+        })
+        .then((response) => {
+          console.log(response);
+        });
+    }
   };
 
   const handleCloseDM = async () => {
     setIsOpenDm(false);
+    if (socket) {
+      socket
+        .emitWithAck('dm-focus', {
+          targetId: null,
+        })
+        .then((response) => {
+          console.log(response);
+        });
+    }
   };
 
   const handleAddFriend = async () => {

@@ -99,13 +99,15 @@ const DmModal: React.FC<{
             </UserInfo>
             <HeaderImage src={exit} alt="exit" onClick={handleOverlayClick} />
           </Header>
-          <DMContainer messages={messages} />
-          <InputDmContainer
-            messageText={messageText}
-            setMessageText={handleMessageTextChange}
-            handleKeyPress={handleKeyPress}
-            sendMessage={sendMessage}
-          />
+          <DmFrame>
+            <DMContainer messages={messages} />
+            <InputDmContainer
+              messageText={messageText}
+              setMessageText={handleMessageTextChange}
+              handleKeyPress={handleKeyPress}
+              sendMessage={sendMessage}
+            />
+          </DmFrame>
         </Content>
       </Container>
     </>
@@ -132,7 +134,7 @@ const Content = styled.div`
   width: 20%;
   height: 50%;
   background-color: ${(props) => props.theme.colors.cream};
-  padding: 2vh;
+  padding: 2vh 2vh 3vh 2vh;
   border-radius: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   display: flex;
@@ -144,6 +146,7 @@ const Content = styled.div`
 
 const Header = styled.div`
   width: 100%;
+  height: 10%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -173,4 +176,14 @@ const UserImage = styled(Image)`
   height: auto;
   cursor: pointer;
   border-radius: 20px;
+`;
+
+const DmFrame = styled.div`
+  width: 100%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2vh;
 `;
