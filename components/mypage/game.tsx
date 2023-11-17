@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import UserInfo from "../userInfo";
 import { getSession } from "next-auth/react";
 
-const Game: React.FC<{
+interface GameProps {
   game: {
     id: number;
     winnerScore: number;
@@ -22,7 +22,12 @@ const Game: React.FC<{
       avatar: string;
     };
   };
-}> = (game) => {
+}
+
+const Game = (game: GameProps) => {
+  const apiUrl = "http://localhost:8080/";
+  const [isWin, setIsWin] = useState(true);
+  const [result, setResult] = useState("승" || "패");
   const [user1, setUser1] = useState({
     id: 0,
     nickName: "",
@@ -39,20 +44,15 @@ const Game: React.FC<{
     avatar: "",
   });
 
-  const apiUrl = "http://localhost:8080/";
-  const [isWin, setIsWin] = useState(true);
-  const [result, setResult] = useState("승" || "패");
+  useEffect(() => {
+    handleResult();
+  }, []);
 
   const getUserId = async () => {
     const session = await getSession();
     const userId = session?.user.id;
-    // console.log("getUserId() userId", userId);
     return userId;
   };
-
-  useEffect(() => {
-    handleResult();
-  }, []);
 
   const handleResult = async () => {
     const userId = (await getUserId()) || 0;
@@ -137,7 +137,6 @@ const GameFrame = styled.div`
   border-radius: 5px;
   margin-bottom: 1%;
   gap: 5%;
-  // overflow: "auto";
 `;
 
 const GameResult = styled.div<{ result: boolean }>`

@@ -19,7 +19,7 @@ const UserContainer: React.FC<{
 
   return (
     <UserProfile>
-      <ProfileImage src={avatar} alt="Profle Image" width={100} height={100} />
+      <ProfileImage src={avatar} alt="Profile Image" width={100} height={100} />
       <NameFrame>
         <NicknameFrame>
           {nickname ? (

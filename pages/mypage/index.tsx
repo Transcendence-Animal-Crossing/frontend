@@ -13,15 +13,24 @@ import Game from "../../components/mypage/game";
 
 const MyPage = () => {
   const apiUrl = "http://localhost:8080/";
+  const router = useRouter();
+
+  // userInfo
   const [nickname, setNickname] = useState("nickname");
+  const [avatarPath, setAvatarPath] = useState(
+    apiUrl + "original/profile2.png"
+  );
   const [tierIndex, setTierIndex] = useState(0);
+
+  // achievement
+  const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
+
+  // record
   const [totalCount, setTotalCount] = useState(1);
   const [winCount, setWinCount] = useState(1);
   const [winRate, setWinRate] = useState(100);
-  const [avatarPath, setAvatarPath] = useState(
-    "http://localhost:8080/original/profile2.png"
-  );
-  const router = useRouter();
+
+  // matchHistory
   const [isRank, setIsRank] = useState(true);
   const [mode, setMode] = useState("rank");
   const [hasMore, setHasMore] = useState(true);
@@ -30,25 +39,15 @@ const MyPage = () => {
   const [matchHistory, setMatchHistory] = useState({
     games: [],
   });
-  const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
 
   useEffect(() => {
-    // getAll();
     getUserInfo();
-    getRecord();
-    getMatchHistory();
   }, []);
 
   useEffect(() => {
     getRecord();
     getMatchHistory();
   }, [mode]);
-
-  // const getAll = async () => {
-  // const response = await axiosInstance.post("/games/0");
-  // const response = await axiosInstance.get("/games/all");
-  // console.log("getAll() response", response.data);
-  // };
 
   const handleRouteLobby = async () => {
     router.push("/");
@@ -88,24 +87,27 @@ const MyPage = () => {
         },
       });
       await handleRecord(response.data);
-      await printRecord(response.data);
     } catch (error) {
       console.log("Error occured in getRecord()", error);
     }
   };
 
-  const printRecord = async (data: any) => {
-    console.log("getRecord() response", isRank, mode, data);
+  const handleRecord = async (data: any) => {
+    if (isRank) {
+      setTotalCount(data.rankTotalCount);
+      setWinCount(data.rankWinCount);
+      setWinRate(data.rankWinRate);
+    } else if (!isRank) {
+      setTotalCount(data.generalTotalCount);
+      setWinCount(data.generalWinCount);
+      setWinRate(data.generalWinRate);
+    }
   };
 
   const getMatchHistory = async () => {
     try {
       const userId = await getUserId();
-      await setMatchHistory({
-        games: [],
-      });
-      await setHasMore(true);
-      await setOffset(0);
+      await initMatchHistory();
       const response = await axiosInstance.get("/games/" + mode, {
         params: {
           id: userId,
@@ -114,32 +116,28 @@ const MyPage = () => {
       });
       console.log("getMatchHistory() response first", isRank, mode);
       console.log(response);
-      await afterMatchHistory(response.data);
+      await afterMatchHistory(response.data, 0);
     } catch (error) {
       console.log("Error occured in getMatchHistory()");
       console.log(error);
     }
   };
 
-  const afterMatchHistory = async (data: any) => {
+  const initMatchHistory = async () => {
+    await setMatchHistory({
+      games: [],
+    });
+    await setOffset(0);
+    await setHasMore(true);
+  };
+
+  const afterMatchHistory = async (data: any, offset: number) => {
     if (data.games.length == 0) {
       setHasMore(false);
       return;
     }
-    setOffset(matchPerPage);
+    setOffset(offset + matchPerPage);
     setMatchHistory(data);
-  };
-
-  const handleRecord = async (data: any) => {
-    if (isRank) {
-      await setTotalCount(data.rankTotalCount);
-      setWinCount(data.rankWinCount);
-      setWinRate(data.rankWinRate);
-    } else if (!isRank) {
-      setTotalCount(data.generalTotalCount);
-      setWinCount(data.generalWinCount);
-      setWinRate(data.generalWinRate);
-    }
   };
 
   const handleRank = async (rankScore: number) => {
@@ -175,8 +173,7 @@ const MyPage = () => {
         });
         console.log("getMatchHistory() response", isRank, mode, offset);
         const copy = await handelMatchHistory(response);
-        await setMatchHistory(copy);
-        await setOffset(offset + matchPerPage);
+        await afterMatchHistory(copy, offset);
         console.log(response);
       } catch (error) {
         console.log("Error occured in getMatchHistory()");
@@ -340,12 +337,10 @@ const InfoImage = styled(Image)`
 const MatchHistory = styled.div`
   height: 90%;
   width: 100%;
-  // background-color: skyblue;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1%;
-  // overflow: "auto";
   .infinite-scroll-component__outerdiv {
     height: 100%;
     width: 80%;

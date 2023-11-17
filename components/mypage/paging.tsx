@@ -65,6 +65,7 @@ const Paging = ({ achieveList }: { achieveList: number[] }) => {
   };
 
   useEffect(() => {
+    console.log("useEffect() page", page);
     handleAchievements();
   }, [page]);
 
