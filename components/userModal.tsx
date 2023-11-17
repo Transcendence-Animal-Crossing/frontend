@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../utils/axiosInstance';
+import DmModal from './dm/dmModal';
 
 const UserModal: React.FC<{
   handleCloseModal: () => void;
@@ -10,6 +11,7 @@ const UserModal: React.FC<{
 }> = ({ handleCloseModal, userId, userRect }) => {
   const [followStatus, setFollowStatus] = useState<number>(0);
   const [blockStatus, setBlockStatus] = useState<number>(0);
+  const [IsOpenDm, setIsOpenDm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const overlayLeft = `${userRect.left + userRect.width * 0.4}px`;
   const overlayTop = `${userRect.top}px`;
@@ -31,6 +33,15 @@ const UserModal: React.FC<{
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOpenDM = async () => {
+    setIsOpenDm(true);
+    // handleCloseModal();
+  };
+
+  const handleCloseDM = async () => {
+    setIsOpenDm(false);
   };
 
   const handleAddFriend = async () => {
@@ -78,7 +89,8 @@ const UserModal: React.FC<{
           ) : (
             <>
               <Item>프로필 보기</Item>
-              <Item>DM</Item>
+              {followStatus === 2 && <Item onClick={handleOpenDM}>DM</Item>}
+              {followStatus !== 2 && <NonItem>DM</NonItem>}
               <Item>게임 초대</Item>
               {followStatus === 0 && <Item onClick={handleAddFriend}>친구 추가</Item>}
               {followStatus === 1 && <Item onClick={handleFriendRequest}>친구요청 취소</Item>}
@@ -89,6 +101,7 @@ const UserModal: React.FC<{
           )}
         </Content>
       </Container>
+      {IsOpenDm && <DmModal handleCloseModal={handleCloseDM} targetId={userId} />}
     </>
   );
 };
@@ -129,10 +142,19 @@ const Item = styled.div`
   align-items: center;
   justify-content: center;
   color: #725d42;
-  /* color: ${(props) => props.theme.colors.brown05}; */
   font-size: 1.5vh;
   font-family: 'GiantsLight';
   &:hover {
     color: #988368;
   }
+`;
+
+const NonItem = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${(props) => props.theme.colors.brown05};
+  font-size: 1.5vh;
+  font-family: 'GiantsLight';
 `;
