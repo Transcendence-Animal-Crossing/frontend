@@ -188,7 +188,8 @@ const Navigation = () => {
                 nickName={friend.nickName}
                 intraName={friend.intraName}
                 avatar={handleAvatarPath(friend.avatar)}
-                size={100}
+                width={50}
+                height={5}
               />
               <Status textColor={handleStatus(friend.status)}> ⦁&nbsp;{friend.status} </Status>
             </UserInfoFrame>
