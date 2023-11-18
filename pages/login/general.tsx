@@ -1,8 +1,6 @@
 import { useRef } from 'react';
-// import { signIn } from 'next-auth/react';
 import styled from 'styled-components';
 import Logo from '../../public/Login/TimmyNook.png';
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Container from '../../components/columnLayout';
 
@@ -13,6 +11,12 @@ const general = () => {
   const handleSubmit = async () => {
     console.log(idRef.current);
     console.log(passwordRef.current);
+    // const result = await signIn('credentials', {
+    //   username: idRef.current,
+    //   password: passwordRef.current,
+    //   redirect: false,
+    //   // callbackUrl: '/',
+    // });
   };
 
   return (
@@ -28,10 +32,9 @@ const general = () => {
             autoFocus={true}
           />
           <InputBox
-            type='text'
+            type='password'
             placeholder='비밀번호'
             onChange={(e: any) => (passwordRef.current = e.target.value)}
-            autoFocus={true}
           />
           <DivisionBar />
           <Button onClick={handleSubmit}>입력 완료</Button>
@@ -82,11 +85,12 @@ const LoginInput = styled.div`
 const InputBox = styled.input.attrs({ required: true })`
   width: 90%;
   height: 20%;
-  cursor: pointer;
   color: ${(props) => props.theme.colors.brown};
   background-color: ${(props) => props.theme.colors.ivory};
   border-radius: 10px;
-  font-family: 'BMHANNAAir';
+  &::placeholder {
+    font-family: 'BMHANNAAir';
+  }
   font-size: 2vmin;
   padding: 0 1vw;
   border: none;
@@ -105,6 +109,7 @@ const Button = styled.div`
   cursor: pointer;
   font-family: 'GiantsLight';
   font-size: 2vmin;
+  padding: 0 1vw;
   border-radius: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   color: ${(props) => props.theme.colors.brown};
