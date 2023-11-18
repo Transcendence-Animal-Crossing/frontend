@@ -7,7 +7,7 @@ import Tommy from '../../public/Login/Tommy.png';
 import Image from 'next/image';
 import Container from '../../components/columnLayout';
 
-const general = () => {
+const General = () => {
   const [onPassword, setOnPassword] = useState<boolean>(false);
   const idRef = useRef(null);
   const passwordRef = useRef(null);
@@ -40,10 +40,19 @@ const general = () => {
   return (
     <Container>
       <GeneralLogin>
-        {onPassword ? <LogoImage src={Tommy} alt='Login' /> : <LogoImage src={Timmy} alt='Login' />}
+        {onPassword ? (
+          <LogoImage src={Tommy} alt='Login' />
+        ) : (
+          <LogoImage src={Timmy} alt='Login' />
+        )}
         <Text>로그인을 부탁드려요 -!</Text>
         <LoginInput>
-          <InputBox type='text' placeholder='아이디' onChange={handleIdChange} autoFocus={true} />
+          <InputBox
+            type='text'
+            placeholder='아이디'
+            onChange={handleIdChange}
+            autoFocus={true}
+          />
           <InputBox
             type='password'
             placeholder='비밀번호'
@@ -58,7 +67,7 @@ const general = () => {
   );
 };
 
-export default general;
+export default General;
 
 const GeneralLogin = styled.div`
   width: 20%;
