@@ -1,12 +1,14 @@
 'use client';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 import { signIn } from 'next-auth/react';
 import styled from 'styled-components';
-import Logo from '../../public/Login/TimmyNook.png';
+import Timmy from '../../public/Login/Timmy.png';
+import Tommy from '../../public/Login/Tommy.png';
 import Image from 'next/image';
 import Container from '../../components/columnLayout';
 
 const general = () => {
+  const [onPassword, setOnPassword] = useState<boolean>(false);
   const idRef = useRef(null);
   const passwordRef = useRef(null);
 
@@ -19,6 +21,16 @@ const general = () => {
     });
   };
 
+  const handleIdChange = (e: any) => {
+    idRef.current = e.target.value;
+    setOnPassword(false);
+  };
+
+  const handlePasswordChange = (e: any) => {
+    passwordRef.current = e.target.value;
+    setOnPassword(true);
+  };
+
   const handleKeyDown = (e: any) => {
     if (e.key === 'Enter') {
       handleSubmit();
@@ -28,19 +40,14 @@ const general = () => {
   return (
     <Container>
       <GeneralLogin>
-        <LogoImage src={Logo} alt='Login' />
+        {onPassword ? <LogoImage src={Tommy} alt='Login' /> : <LogoImage src={Timmy} alt='Login' />}
         <Text>로그인을 부탁드려요 -!</Text>
         <LoginInput>
-          <InputBox
-            type='text'
-            placeholder='아이디'
-            onChange={(e: any) => (idRef.current = e.target.value)}
-            autoFocus={true}
-          />
+          <InputBox type='text' placeholder='아이디' onChange={handleIdChange} autoFocus={true} />
           <InputBox
             type='password'
             placeholder='비밀번호'
-            onChange={(e: any) => (passwordRef.current = e.target.value)}
+            onChange={handlePasswordChange}
             onKeyDown={(e) => handleKeyDown(e)}
           />
           <DivisionBar />
