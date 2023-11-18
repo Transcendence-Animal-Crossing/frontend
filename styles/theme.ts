@@ -16,6 +16,9 @@ declare module 'styled-components' {
       gold: string;
       gold02: string;
       lightgold: string;
+      lightbrown: string;
+      green: string;
+      red: string;
       indigo: string;
       green: string;
       red: string;
@@ -38,8 +41,9 @@ export const theme: DefaultTheme = {
     gold: '#BEA745',
     gold02: 'rgba(190, 167, 69, 0.2)',
     lightgold: '#C1B175',
+    lightbrown: "#e9e2c7",
+    green: "#8AC68A",
+    red: "#FC736D",
     indigo: '#253B52',
-    green: '#8AC68A',
-    red: '#FC736D',
   },
 };

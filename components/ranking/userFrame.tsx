@@ -62,10 +62,19 @@ const UserFrame: React.FC<{
     <UserRankFrame>
       <LeftFrame>
         <RankingFrame> {ranking} </RankingFrame>
-        <TierImage src={tierImages[tierIndex]} alt="Tier Image" width={30} height={30} />
-        <UserTouchFrame onClick={handleClickUser} ref={userRef}>
-          <UserInfo nickName={nickName} intraName={intraName} avatar={avatar} size={100} />
-        </UserTouchFrame>
+        <TierImage
+          src={tierImages[tierIndex]}
+          alt='Tier Image'
+          width={30}
+          height={30}
+        />
+        <UserInfo
+          nickName={nickName}
+          intraName={intraName}
+          avatar={avatar}
+          width={50}
+          height={4.5}
+        />
       </LeftFrame>
       <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
       {isOpenModal ? (
@@ -84,7 +93,7 @@ const UserRankFrame = styled.div`
   flex-direction: row;
   border-radius: 10px;
   background-color: ${(props) => props.theme.colors.cream};
-  font-family: 'GiantsLight';
+  font-family: "GiantsLight";
 `;
 
 const LeftFrame = styled.div`
@@ -103,7 +112,7 @@ const UserTouchFrame = styled.div`
 const RankingFrame = styled.div`
   width: 15%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: 10px 0px 0px 10px;
   display: flex;
   align-items: center;
   justify-content: center;

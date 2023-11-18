@@ -1,9 +1,7 @@
-import Pagination from "react-js-pagination";
-import React, { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import axiosInstance from "../../../utils/axiosInstance";
-import Cards from "./cards";
-import styled from "styled-components";
+import Pagination from 'react-js-pagination';
+import React, { useState, useEffect } from 'react';
+import Cards from './cards';
+import styled from 'styled-components';
 import {
   achieveDark1,
   achieveDark2,
@@ -12,7 +10,7 @@ import {
   achieveDark5,
   achieveDark6,
   achieveDark7,
-} from "./achieveDark";
+} from './achieveDark';
 import {
   achieveLight1,
   achieveLight2,
@@ -21,10 +19,28 @@ import {
   achieveLight5,
   achieveLight6,
   achieveLight7,
-} from "./achieveLight";
+} from './achieveLight';
 
-const Paging = () => {
-  const { data: session } = useSession();
+const Paging = ({ achieveList }: { achieveList: number[] }) => {
+  const achieveDark = [
+    achieveDark1,
+    achieveDark2,
+    achieveDark3,
+    achieveDark4,
+    achieveDark5,
+    achieveDark6,
+    achieveDark7,
+  ];
+
+  const achieveLight = [
+    achieveLight1,
+    achieveLight2,
+    achieveLight3,
+    achieveLight4,
+    achieveLight5,
+    achieveLight6,
+    achieveLight7,
+  ];
 
   const [achievements, setAchievements] = useState([
     achieveDark1,
@@ -36,9 +52,6 @@ const Paging = () => {
     achieveDark7,
   ]);
 
-  // 달성 목록
-  const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
-  // 현재 페이지
   const [page, setPage] = useState(1);
 
   const cardPerPage = 3;
@@ -52,25 +65,21 @@ const Paging = () => {
   };
 
   useEffect(() => {
-    handleAchieveList();
+    console.log('useEffect() page', page);
+    handleAchievements();
   }, [page]);
 
-  const handleAchieveList = async () => {
-    try {
-      const userId = session?.user.id;
-      const response = await axiosInstance.get("/users/detail", {
-        params: { id: userId },
-      });
-      console.log("handleAchieveList() response");
-      console.log(response);
-
-      await setAchieveList(response.data.achievements);
-
-      console.log(achieveList);
-    } catch (error) {
-      console.log("Error occured in handleAchieveList()");
-      console.log(error);
-    }
+  const handleAchievements = () => {
+    console.log('handleAchievements() achieveList', achieveList);
+    let newAchievements = [...achievements];
+    achieveList.map((achieve, index) => {
+      if (achieve === 1) {
+        newAchievements[index] = achieveLight[index];
+      } else {
+        newAchievements[index] = achieveDark[index];
+      }
+    });
+    setAchievements(newAchievements);
   };
 
   return (
@@ -81,8 +90,8 @@ const Paging = () => {
           activePage={page}
           itemsCountPerPage={cardPerPage}
           totalItemsCount={totalItemsCount}
-          prevPageText={"‹"}
-          nextPageText={"›"}
+          prevPageText={'‹'}
+          nextPageText={'›'}
           onChange={handlePageChange}
           hideFirstLastPages={true}
         />
