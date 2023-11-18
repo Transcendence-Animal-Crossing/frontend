@@ -9,19 +9,16 @@ interface GameProps {
     winnerScore: number;
     loserScore: number;
     playTime: number;
-    loser: {
-      id: number;
-      nickName: string;
-      intraName: string;
-      avatar: string;
-    };
-    winner: {
-      id: number;
-      nickName: string;
-      intraName: string;
-      avatar: string;
-    };
+    loser: UserProps;
+    winner: UserProps;
   };
+}
+
+interface UserProps {
+  id: number;
+  nickName: string;
+  intraName: string;
+  avatar: string;
 }
 
 const Game = (game: GameProps) => {
