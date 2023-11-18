@@ -5,7 +5,9 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
 
 const invalidPrimaryCampus = (profile: any) => {
-  const campusId = profile.campus_users.find((cu: any) => cu.is_primary)?.campus_id;
+  const campusId = profile.campus_users.find(
+    (cu: any) => cu.is_primary
+  )?.campus_id;
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
 
@@ -34,9 +36,14 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           });
           if (response.status === 200) {
-            const accessToken = response.headers.authorization.replace('Bearer ', '');
+            const accessToken = response.headers.authorization.replace(
+              'Bearer ',
+              ''
+            );
             const refreshToken =
-              response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
+              response.headers['set-cookie']?.[0]?.match(
+                /refreshToken=([^;]+)/
+              )?.[1];
             return {
               id: response.data.id,
               nickName: response.data.nickName,
@@ -86,9 +93,14 @@ export const authOptions: NextAuthOptions = {
           const response = await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
-          token.accessToken = response.headers.authorization.replace('Bearer ', '');
+          token.accessToken = response.headers.authorization.replace(
+            'Bearer ',
+            ''
+          );
           token.refreshToken =
-            response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
+            response.headers['set-cookie']?.[0]?.match(
+              /refreshToken=([^;]+)/
+            )?.[1];
           token.id = response.data.id;
           token.nickName = response.data.nickName;
           token.intraName = response.data.intraName;
@@ -112,6 +124,9 @@ export const authOptions: NextAuthOptions = {
       console.log(session);
       return session;
     },
+  },
+  pages: {
+    signIn: '/login/general',
   },
 };
 
