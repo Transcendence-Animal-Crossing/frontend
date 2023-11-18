@@ -1,4 +1,6 @@
+'use client';
 import { useRef } from 'react';
+import { signIn } from 'next-auth/react';
 import styled from 'styled-components';
 import Logo from '../../public/Login/TimmyNook.png';
 import Image from 'next/image';
@@ -9,14 +11,12 @@ const general = () => {
   const passwordRef = useRef(null);
 
   const handleSubmit = async () => {
-    console.log(idRef.current);
-    console.log(passwordRef.current);
-    // const result = await signIn('credentials', {
-    //   username: idRef.current,
-    //   password: passwordRef.current,
-    //   redirect: false,
-    //   // callbackUrl: '/',
-    // });
+    const result = await signIn('credentials', {
+      intraname: idRef.current,
+      password: passwordRef.current,
+      redirect: true,
+      callbackUrl: '/',
+    });
   };
 
   return (
