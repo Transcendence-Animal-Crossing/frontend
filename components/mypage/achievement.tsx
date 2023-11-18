@@ -1,15 +1,12 @@
-import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import Paging from "./paging";
+import styled from 'styled-components';
+import Paging from './paging';
 
-const AchievementContainer = () => {
+const AchievementContainer = ({ achieveList }: { achieveList: number[] }) => {
   return (
     <AchievementFrame>
       <AchievementHeader>Achievements</AchievementHeader>
       <AchievementBody>
-        <Paging />
+        <Paging achieveList={achieveList} />
       </AchievementBody>
     </AchievementFrame>
   );
@@ -33,7 +30,7 @@ const AchievementHeader = styled.div`
   height: 15%;
   text-align: center;
   color: ${(props) => props.theme.colors.brown};
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   font-size: large;
   flex-direction: row;
   align-items: center;

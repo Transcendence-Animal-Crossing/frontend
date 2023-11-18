@@ -1,28 +1,25 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { profile12 } from './profile';
 import { bronze, silver, gold, platinum, diamond } from './tier';
-import info from '../../../public/Icon/info.png';
+import info from '../../public/Icon/info.png';
 
 const UserContainer: React.FC<{
   nickname: string;
   tierIndex: number;
-  totalGames: number;
-  totalWins: number;
+  totalCount: number;
+  winCount: number;
   winRate: number;
   avatar: string;
-}> = ({ nickname, tierIndex, totalGames, totalWins, winRate, avatar }) => {
+}> = ({ nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
   const { data: session } = useSession();
-  // console.log(session.user.id);
 
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const tierTexts = ['브론즈', '실버', '골드', '플래티넘', '다이아몬드'];
 
   return (
     <UserProfile>
-      <ProfileImage src={avatar} alt="Profle Image" width={100} height={100} />
+      <ProfileImage src={avatar} alt='Profile Image' width={100} height={100} />
       <NameFrame>
         <NicknameFrame>
           {nickname ? (
@@ -31,27 +28,32 @@ const UserContainer: React.FC<{
             <NicknameText> NickName </NicknameText>
           )}
         </NicknameFrame>
-        {session ? <IntraText> {session.user.login} </IntraText> : null}
+        {session ? <IntraText> {session.user.intraName} </IntraText> : null}
       </NameFrame>
       <DivisionBar />
       <TierFrame>
         {session ? (
-          <TierImage src={tierImages[tierIndex]} alt="Tier Image" width={30} height={30} />
+          <TierImage
+            src={tierImages[tierIndex]}
+            alt='Tier Image'
+            width={30}
+            height={30}
+          />
         ) : (
-          <TierImage src={tierImages[tierIndex]} alt="default Image" />
+          <TierImage src={tierImages[tierIndex]} alt='default Image' />
         )}
         <TierText> {tierTexts[tierIndex]} </TierText>
-        <InfoImage src={info} alt="info" />
+        <InfoImage src={info} alt='info' />
       </TierFrame>
       <DivisionBar />
       <MatchStatFrame>
         <MatchStatText>
           <MatchStatName> 경기 수 </MatchStatName>
-          <MatchStatNumber> {totalGames} </MatchStatNumber>
+          <MatchStatNumber> {totalCount} </MatchStatNumber>
         </MatchStatText>
         <MatchStatText>
           <MatchStatName> 승리 </MatchStatName>
-          <MatchStatNumber> {totalWins} </MatchStatNumber>
+          <MatchStatNumber> {winCount} </MatchStatNumber>
         </MatchStatText>
         <MatchStatText>
           <MatchStatName> 승률 </MatchStatName>

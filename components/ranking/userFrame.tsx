@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { bronze, silver, gold, platinum, diamond } from "./tier";
-import UserInfo from "../userInfo";
+import styled from 'styled-components';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { bronze, silver, gold, platinum, diamond } from './tier';
+import UserInfo from '../userInfo';
 
 const UserFrame: React.FC<{
   ranking: number;
@@ -46,7 +46,7 @@ const UserFrame: React.FC<{
         <RankingFrame> {ranking} </RankingFrame>
         <TierImage
           src={tierImages[tierIndex]}
-          alt="Tier Image"
+          alt='Tier Image'
           width={30}
           height={30}
         />
@@ -54,7 +54,8 @@ const UserFrame: React.FC<{
           nickName={nickName}
           intraName={intraName}
           avatar={avatar}
-          size={50}
+          width={50}
+          height={4.5}
         />
       </LeftFrame>
       <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
@@ -71,7 +72,7 @@ const UserRankFrame = styled.div`
   flex-direction: row;
   border-radius: 10px;
   background-color: ${(props) => props.theme.colors.cream};
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
 `;
 
 const LeftFrame = styled.div`
@@ -86,7 +87,7 @@ const LeftFrame = styled.div`
 const RankingFrame = styled.div`
   width: 15%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: 10px 0px 0px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
