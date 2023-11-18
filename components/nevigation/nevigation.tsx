@@ -2,11 +2,20 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useSocket } from '../../utils/SocketProvider';
+import axiosInstance from '../../utils/axiosInstance';
 import ProfileContainer from './myProfile';
 import SearchBarContainer from './searchBar';
-import { useSocket } from '../../utils/SocketProvider';
 import UserInfo from '../userInfo';
 import UserModal from '../userModal';
+import AlarmModal from './alarmModal';
+
+interface dmData {
+  id: number;
+  senderId: number;
+  date: Date;
+  text: string;
+}
 
 interface friendData {
   id: number;
@@ -14,13 +23,36 @@ interface friendData {
   intraName: string;
   avatar: string;
   status: string;
+  unReadMessages: dmData[];
+}
+
+interface RequestData {
+  sendBy: number;
+  nickName: string;
+  intraName: string;
 }
 
 const Navigation = () => {
   const { data: session } = useSession();
   const { socket } = useSocket();
+  const [socketFlag, setSocketFlag] = useState<boolean>(true);
   const [friendsList, setFriendsList] = useState<friendData[]>([]);
-  const [userInfo, setUserInfo] = useState<friendData>(friendsList[0]);
+  const [requestList, setRequestList] = useState<RequestData[]>([]);
+  const [requestListLen, setRequestListLen] = useState<number>(0);
+  const [userInfo, setUserInfo] = useState<friendData>({
+    id: 0,
+    nickName: '',
+    intraName: '',
+    avatar: '',
+    status: '',
+    unReadMessages: [],
+  });
+  const [isOpenRequest, setOpenRequest] = useState<boolean>(false);
+  const [requestRect, setRequestRect] = useState<{
+    top: number;
+    left: number;
+    height: number;
+  }>({ top: 0, left: 0, height: 0 });
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [userRect, setUserRect] = useState<{
     top: number;
@@ -30,16 +62,59 @@ const Navigation = () => {
   const userRefs: React.MutableRefObject<HTMLDivElement | null>[] = [];
 
   useEffect(() => {
-    if (socket && friendsList.length === 0) {
+    if (socket && socketFlag) {
       socket.emitWithAck('friend-list').then((response) => {
-        setFriendsList(response.body);
+        console.log('response', response);
+        if (response.status === 200) {
+          setFriendsList(response.body);
+          setRequestListLen(requestList.length);
+          setSocketFlag(false);
+        }
       });
     }
   });
 
   useEffect(() => {
-    console.log('userRefs', userRefs);
+    if (socket) {
+      const handleFriendUpdate = (response: friendData) => {
+        console.log('friend update');
+        const targetUser = friendsList.find((user) => user.id === response.id);
+        if (targetUser) {
+          setFriendsList((preFriendslist) => {
+            const updatedUserlist = preFriendslist.map((user) => {
+              if (user.id === response.id) {
+                return {
+                  ...user,
+                  nickName: response.nickName,
+                  avatar: response.avatar,
+                  status: response.status,
+                };
+              }
+              return user;
+            });
+            return updatedUserlist;
+          });
+        }
+      };
+
+      socket.on('friend-update', handleFriendUpdate);
+
+      return () => {
+        socket.off('friend-update', handleFriendUpdate);
+      };
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    handleRequest();
   }, []);
+
+  const handleRequest = async () => {
+    await axiosInstance.get(`/follow/request`).then((response) => {
+      setRequestList(response.data);
+      console.log('requestList', requestList);
+    });
+  };
 
   const updateUserRect = (index: number) => {
     const clickedUserRef = userRefs[index];
@@ -55,6 +130,14 @@ const Navigation = () => {
         width: buttonRect.width,
       });
     }
+  };
+
+  const handleClickBell = () => {
+    setOpenRequest(true);
+  };
+
+  const handleCloseBell = () => {
+    setOpenRequest(false);
   };
 
   const handleClickUser = (userInfo: friendData, index: number) => {
@@ -87,7 +170,11 @@ const Navigation = () => {
     <Container>
       <ProfileContainer />
       <DivisionBar />
-      <SearchBarContainer />
+      <SearchBarContainer
+        handleClickBell={handleClickBell}
+        setRequestRect={setRequestRect}
+        requestListLen={requestListLen}
+      />
       <UserList>
         {friendsList.map((friend, index) => {
           userRefs[index] = userRefs[index] || React.createRef<HTMLDivElement>();
@@ -120,6 +207,14 @@ const Navigation = () => {
       </>
       {isOpenModal ? (
         <UserModal handleCloseModal={handleCloseModal} userId={userInfo.id} userRect={userRect} />
+      ) : null}
+      {isOpenRequest ? (
+        <AlarmModal
+          handleCloseModal={handleCloseBell}
+          requestList={requestList}
+          setRequestList={setRequestList}
+          requestRect={requestRect}
+        />
       ) : null}
     </Container>
   );

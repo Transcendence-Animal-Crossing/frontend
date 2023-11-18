@@ -1,11 +1,29 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import react, { useEffect, useState } from 'react';
+import react, { useEffect, useState, useRef } from 'react';
 import bell from '../../public/Icon/bell.png';
+import bellon from '../../public/Icon/bellon.png';
 import search from '../../public/Icon/search.png';
+import React from 'react';
 
-const searchBar = () => {
+const searchBar: React.FC<{
+  handleClickBell: () => void;
+  setRequestRect: (rect: { top: number; left: number; height: number }) => void;
+  requestListLen: number;
+}> = ({ handleClickBell, setRequestRect, requestListLen }) => {
   const [searchText, setSearchText] = useState('');
+  const requestRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (requestRef.current) {
+      const requestRect = requestRef.current.getBoundingClientRect();
+      setRequestRect({
+        top: requestRect.top,
+        left: requestRect.left,
+        height: requestRect.height,
+      });
+    }
+  }, []);
 
   const handleKeyDown = (e: any) => {
     if (e.key === 'Enter') {
@@ -15,8 +33,12 @@ const searchBar = () => {
 
   return (
     <SearchBarFrame>
-      <BellFrame>
-        <ImageFrame src={bell} alt="bell" />
+      <BellFrame onClick={handleClickBell} ref={requestRef}>
+        {requestListLen == 0 ? (
+          <ImageFrame src={bell} alt="bell" />
+        ) : (
+          <ImageFrame src={bellon} alt="bell" />
+        )}
       </BellFrame>
       <SearchFrame>
         <Input

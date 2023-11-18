@@ -39,58 +39,63 @@ const UserModal: React.FC<{
 
   const handleOpenDM = async () => {
     setIsOpenDm(true);
-    if (socket) {
-      socket
-        .emitWithAck('dm-focus', {
-          targetId: userId,
-        })
-        .then((response) => {
-          console.log(response);
-        });
-    }
+    // if (socket) {
+    //   socket
+    //     .emitWithAck('dm-focus', {
+    //       targetId: userId,
+    //     })
+    //     .then((response) => {
+    //       console.log(response);
+    //     });
+    // }
   };
 
   const handleCloseDM = async () => {
     setIsOpenDm(false);
-    if (socket) {
-      socket
-        .emitWithAck('dm-focus', {
-          targetId: null,
-        })
-        .then((response) => {
-          console.log(response);
-        });
-    }
+    // if (socket) {
+    //   socket
+    //     .emitWithAck('dm-focus', {
+    //       targetId: null,
+    //     })
+    //     .then((response) => {
+    //       console.log(response);
+    //     });
+    // }
   };
 
   const handleAddFriend = async () => {
     await axiosInstance.post(`/follow/request`, {
       sendTo: userId,
     });
+    setFollowStatus(1);
   };
 
   const handleFriendRequest = async () => {
     await axiosInstance.delete(`/follow/request`, {
       data: { sendTo: userId },
     });
+    setFollowStatus(0);
   };
 
   const handleRemoveFriend = async () => {
     await axiosInstance.delete(`/follow`, {
       data: { sendTo: userId },
     });
+    setFollowStatus(0);
   };
 
   const handleBlock = async () => {
     await axiosInstance.patch(`/users/block`, {
       id: userId,
     });
+    setBlockStatus(1);
   };
 
   const handleUnblock = async () => {
     await axiosInstance.patch(`/users/unblock`, {
       id: userId,
     });
+    setBlockStatus(0);
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
