@@ -19,6 +19,12 @@ const general = () => {
     });
   };
 
+  const handleKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
     <Container>
       <GeneralLogin>
@@ -35,6 +41,7 @@ const general = () => {
             type='password'
             placeholder='비밀번호'
             onChange={(e: any) => (passwordRef.current = e.target.value)}
+            onKeyDown={(e) => handleKeyDown(e)}
           />
           <DivisionBar />
           <Button onClick={handleSubmit}>입력 완료</Button>
