@@ -1,23 +1,23 @@
-import Container from "../../components/columnNevLayout";
-import styled from "styled-components";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { useSession } from "next-auth/react";
-import axiosInstance from "../../utils/axiosInstance";
-import Header from "../../components/lobbyHeader";
-import UserList from "../../components/ranking/userList";
-import search from "../../public/Icon/search.png";
-import prev from "../../public/Icon/prev.png";
-import next from "../../public/Icon/next.png";
+import Container from '../../components/columnNevLayout';
+import styled from 'styled-components';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import axiosInstance from '../../utils/axiosInstance';
+import Header from '../../components/lobbyHeader';
+import UserList from '../../components/ranking/userList';
+import search from '../../public/Icon/search.png';
+import prev from '../../public/Icon/prev.png';
+import next from '../../public/Icon/next.png';
 
 const Ranking = () => {
-  const apiUrl = "http://localhost:8080/";
+  const apiUrl = 'http://localhost:8080/';
   const userPerPage = 8;
   const { data: session } = useSession();
   console.log(session);
 
   const [offset, setOffset] = useState(0);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
 
   const [userList, setUserList] = useState([]);
 
@@ -31,10 +31,10 @@ const Ranking = () => {
 
   const getRankingList = async () => {
     try {
-      const response = await axiosInstance.get("/record/rank", {
+      const response = await axiosInstance.get('/record/rank', {
         params: { offset: offset },
       });
-      console.log("getRankingList() response");
+      console.log('getRankingList() response');
       response.data.map((user: any) => {
         user.avatar = apiUrl + user.avatar;
       });
@@ -48,16 +48,16 @@ const Ranking = () => {
   };
 
   const printResponse = async (data: any) => {
-    console.log("printResponse() data");
+    console.log('printResponse() data');
     console.log(data);
   };
 
   const handleSearch = async () => {
     try {
-      const response = await axiosInstance.post("/users/search", {
+      const response = await axiosInstance.post('/users/search', {
         name: searchText,
       });
-      console.log("handleSearch() response");
+      console.log('handleSearch() response');
       console.log(response.data);
       response.data.map((user: any) => {
         user.avatar = apiUrl + user.avatar;
@@ -71,10 +71,10 @@ const Ranking = () => {
 
   const handleError = (error: any) => {
     if (error.response.status == 400) {
-      console.log("handleSearch() error.response.data.message");
-      if (error.response.data.message == "더이상 돌려줄 데이터 없음") {
+      console.log('handleSearch() error.response.data.message');
+      if (error.response.data.message == '더이상 돌려줄 데이터 없음') {
         setOffset(offset - userPerPage);
-      } else if (error.response.data.message == "offset은 양수만 가능") {
+      } else if (error.response.data.message == 'offset은 양수만 가능') {
         setOffset(0);
       }
     }
@@ -89,7 +89,7 @@ const Ranking = () => {
   };
 
   const handleKeyDown = (e: any) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       handleSearch();
     }
   };
@@ -97,14 +97,14 @@ const Ranking = () => {
   return (
     <Container>
       <RankingFrame>
-        <Header title="Ranking" text="전체 랭킹" />
+        <Header title='Ranking' text='전체 랭킹' />
         <SearchFrame>
           <Button onClick={handleSearch}>
-            <InfoImage src={search} alt="Search Button" />
+            <InfoImage src={search} alt='Search Button' />
           </Button>
           <Input
-            type="text"
-            placeholder="검색할 유저 이름을 입력해주세요"
+            type='text'
+            placeholder='검색할 유저 이름을 입력해주세요'
             onChange={(e) => setSearchText(e.target.value)}
             onKeyDown={(e) => handleKeyDown(e)}
             maxLength={10}
@@ -116,12 +116,12 @@ const Ranking = () => {
           <PageButton>
             <PageMoveImage
               src={prev}
-              alt="Prev Button"
+              alt='Prev Button'
               onClick={handlePrevButton}
             />
             <PageMoveImage
               src={next}
-              alt="Next Button"
+              alt='Next Button'
               onClick={handlerNextButton}
             />
           </PageButton>
@@ -174,7 +174,7 @@ const PageButton = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
 `;
 
 const PageMoveImage = styled(Image)`
@@ -198,7 +198,7 @@ const Input = styled.input.attrs({ required: true })`
   border: none;
   cursor: pointer;
   color: ${(props) => props.theme.colors.brown};
-  font-family: "BMHANNAAir";
+  font-family: 'BMHANNAAir';
   font-size: 2vh;
   &:focus {
     outline: none;

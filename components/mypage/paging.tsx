@@ -1,7 +1,7 @@
-import Pagination from "react-js-pagination";
-import React, { useState, useEffect } from "react";
-import Cards from "./cards";
-import styled from "styled-components";
+import Pagination from 'react-js-pagination';
+import React, { useState, useEffect } from 'react';
+import Cards from './cards';
+import styled from 'styled-components';
 import {
   achieveDark1,
   achieveDark2,
@@ -10,7 +10,7 @@ import {
   achieveDark5,
   achieveDark6,
   achieveDark7,
-} from "./achieveDark";
+} from './achieveDark';
 import {
   achieveLight1,
   achieveLight2,
@@ -19,7 +19,7 @@ import {
   achieveLight5,
   achieveLight6,
   achieveLight7,
-} from "./achieveLight";
+} from './achieveLight';
 
 const Paging = ({ achieveList }: { achieveList: number[] }) => {
   const achieveDark = [
@@ -65,12 +65,12 @@ const Paging = ({ achieveList }: { achieveList: number[] }) => {
   };
 
   useEffect(() => {
-    console.log("useEffect() page", page);
+    console.log('useEffect() page', page);
     handleAchievements();
   }, [page]);
 
   const handleAchievements = () => {
-    console.log("handleAchievements() achieveList", achieveList);
+    console.log('handleAchievements() achieveList', achieveList);
     let newAchievements = [...achievements];
     achieveList.map((achieve, index) => {
       if (achieve === 1) {
@@ -90,8 +90,8 @@ const Paging = ({ achieveList }: { achieveList: number[] }) => {
           activePage={page}
           itemsCountPerPage={cardPerPage}
           totalItemsCount={totalItemsCount}
-          prevPageText={"‹"}
-          nextPageText={"›"}
+          prevPageText={'‹'}
+          nextPageText={'›'}
           onChange={handlePageChange}
           hideFirstLastPages={true}
         />

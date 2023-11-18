@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import Paging from "./paging";
+import styled from 'styled-components';
+import Paging from './paging';
 
 const AchievementContainer = ({ achieveList }: { achieveList: number[] }) => {
   return (
@@ -30,7 +30,7 @@ const AchievementHeader = styled.div`
   height: 15%;
   text-align: center;
   color: ${(props) => props.theme.colors.brown};
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   font-size: large;
   flex-direction: row;
   align-items: center;

@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { useState, useEffect } from "react";
-import UserInfo from "../userInfo";
-import { getSession } from "next-auth/react";
+import styled from 'styled-components';
+import { useState, useEffect } from 'react';
+import UserInfo from '../userInfo';
+import { getSession } from 'next-auth/react';
 
 interface GameProps {
   game: {
@@ -25,23 +25,23 @@ interface GameProps {
 }
 
 const Game = (game: GameProps) => {
-  const apiUrl = "http://localhost:8080/";
+  const apiUrl = 'http://localhost:8080/';
   const [isWin, setIsWin] = useState(true);
-  const [result, setResult] = useState("승" || "패");
+  const [result, setResult] = useState('승' || '패');
   const [user1, setUser1] = useState({
     id: 0,
-    nickName: "",
-    intraName: "",
+    nickName: '',
+    intraName: '',
     score: 0,
-    avatar: "",
+    avatar: '',
   });
 
   const [user2, setUser2] = useState({
     id: 0,
-    nickName: "",
-    intraName: "",
+    nickName: '',
+    intraName: '',
     score: 0,
-    avatar: "",
+    avatar: '',
   });
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const Game = (game: GameProps) => {
         avatar: apiUrl + game.game.loser.avatar,
       });
       setIsWin(true);
-      setResult("승");
+      setResult('승');
     } else {
       setUser1({
         id: game.game.loser.id,
@@ -93,7 +93,7 @@ const Game = (game: GameProps) => {
         avatar: apiUrl + game.game.winner.avatar,
       });
       setIsWin(false);
-      setResult("패");
+      setResult('패');
     }
   };
 
@@ -132,7 +132,7 @@ const GameFrame = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   background-color: #fbf3e6;
   border-radius: 5px;
   margin-bottom: 1%;

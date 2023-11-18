@@ -1,15 +1,15 @@
-import styled from "styled-components";
-import Image from "next/image";
-import React, { useState, useRef } from "react";
-import { useRouter } from "next/router";
-import info from "../public/Icon/info.png";
-import home from "../public/Icon/home.png";
+import styled from 'styled-components';
+import Image from 'next/image';
+import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/router';
+import info from '../public/Icon/info.png';
+import home from '../public/Icon/home.png';
 
 const Header = (props: { title: string; text: string }) => {
   const router = useRouter();
 
   const handleRouteLobby = async () => {
-    router.push("/");
+    router.push('/');
   };
 
   return (
@@ -18,11 +18,11 @@ const Header = (props: { title: string; text: string }) => {
         <InfoFrame>
           <TitleFrame>{props.title}</TitleFrame>
           <SubText>{props.text}</SubText>
-          <InfoImage src={info} alt="info" />
+          <InfoImage src={info} alt='info' />
         </InfoFrame>
         <ButtonFrame>
           <Button onClick={handleRouteLobby}>
-            <InfoImage src={home} alt="home" />
+            <InfoImage src={home} alt='home' />
           </Button>
         </ButtonFrame>
       </HeaderFrame>
@@ -58,13 +58,13 @@ const TitleFrame = styled.div`
   padding-right: 1.5vw;
   align-items: center;
   color: ${(props) => props.theme.colors.ivory};
-  font-family: "Giants";
+  font-family: 'Giants';
   font-size: 2.5vh;
 `;
 
 const SubText = styled.p`
   color: ${(props) => props.theme.colors.brown05};
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   font-size: 2vh;
 `;
 

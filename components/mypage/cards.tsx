@@ -1,12 +1,12 @@
-import React from "react";
-import styled from "styled-components";
-import Image from "next/image";
+import React from 'react';
+import styled from 'styled-components';
+import Image from 'next/image';
 
 const Cards = ({ cards }) => {
   return (
     <CardsFrame>
       {cards.map((card) => (
-        <CardImage src={card} alt="Card Image" width={100} height={100} />
+        <CardImage src={card} alt='Card Image' width={100} height={100} />
       ))}
     </CardsFrame>
   );

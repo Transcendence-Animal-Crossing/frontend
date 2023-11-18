@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { bronze, silver, gold, platinum, diamond } from "./tier";
-import UserInfo from "../userInfo";
+import styled from 'styled-components';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { bronze, silver, gold, platinum, diamond } from './tier';
+import UserInfo from '../userInfo';
 
 const UserFrame: React.FC<{
   ranking: number;
@@ -46,7 +46,7 @@ const UserFrame: React.FC<{
         <RankingFrame> {ranking} </RankingFrame>
         <TierImage
           src={tierImages[tierIndex]}
-          alt="Tier Image"
+          alt='Tier Image'
           width={30}
           height={30}
         />
@@ -72,7 +72,7 @@ const UserRankFrame = styled.div`
   flex-direction: row;
   border-radius: 10px;
   background-color: ${(props) => props.theme.colors.cream};
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
 `;
 
 const LeftFrame = styled.div`

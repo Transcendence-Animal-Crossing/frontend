@@ -1,24 +1,24 @@
-import styled from "styled-components";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import UserContainer from "../../components/mypage/user";
-import { getSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import axiosInstance from "../../utils/axiosInstance";
-import AchievementFrame from "../../components/mypage/achievement";
-import home from "../../public/Icon/home.png";
-import InfiniteScroll from "react-infinite-scroll-component";
-import Container from "../../components/columnNevLayout";
-import Game from "../../components/mypage/game";
+import styled from 'styled-components';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import UserContainer from '../../components/mypage/user';
+import { getSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import axiosInstance from '../../utils/axiosInstance';
+import AchievementFrame from '../../components/mypage/achievement';
+import home from '../../public/Icon/home.png';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import Container from '../../components/columnNevLayout';
+import Game from '../../components/mypage/game';
 
 const MyPage = () => {
-  const apiUrl = "http://localhost:8080/";
+  const apiUrl = 'http://localhost:8080/';
   const router = useRouter();
 
   // userInfo
-  const [nickname, setNickname] = useState("nickname");
+  const [nickname, setNickname] = useState('nickname');
   const [avatarPath, setAvatarPath] = useState(
-    apiUrl + "original/profile2.png"
+    apiUrl + 'original/profile2.png'
   );
   const [tierIndex, setTierIndex] = useState(0);
 
@@ -32,7 +32,7 @@ const MyPage = () => {
 
   // matchHistory
   const [isRank, setIsRank] = useState(true);
-  const [mode, setMode] = useState("rank");
+  const [mode, setMode] = useState('rank');
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
   const matchPerPage = 8;
@@ -50,7 +50,7 @@ const MyPage = () => {
   }, [mode]);
 
   const handleRouteLobby = async () => {
-    router.push("/");
+    router.push('/');
   };
 
   const getUserId = async () => {
@@ -62,17 +62,17 @@ const MyPage = () => {
   const getUserInfo = async () => {
     try {
       const userId = await getUserId();
-      const response = await axiosInstance.get("/users/detail", {
+      const response = await axiosInstance.get('/users/detail', {
         params: { id: userId },
       });
-      console.log("getUserInfo() response");
+      console.log('getUserInfo() response');
       console.log(response);
       await setNickname(response.data.nickName);
       await setAvatarPath(apiUrl + response.data.avatar);
       await setAchieveList(response.data.achievements);
       await handleRank(response.data.rankScore);
     } catch (error) {
-      console.log("Error occured in getUserInfo()");
+      console.log('Error occured in getUserInfo()');
       console.log(error);
     }
   };
@@ -80,7 +80,7 @@ const MyPage = () => {
   const getRecord = async () => {
     try {
       const userId = await getUserId();
-      const response = await axiosInstance.get("/record", {
+      const response = await axiosInstance.get('/record', {
         params: {
           id: userId,
           isRank: isRank,
@@ -88,7 +88,7 @@ const MyPage = () => {
       });
       await handleRecord(response.data);
     } catch (error) {
-      console.log("Error occured in getRecord()", error);
+      console.log('Error occured in getRecord()', error);
     }
   };
 
@@ -108,17 +108,17 @@ const MyPage = () => {
     try {
       const userId = await getUserId();
       await initMatchHistory();
-      const response = await axiosInstance.get("/games/" + mode, {
+      const response = await axiosInstance.get('/games/' + mode, {
         params: {
           id: userId,
           offset: 0,
         },
       });
-      console.log("getMatchHistory() response first", isRank, mode);
+      console.log('getMatchHistory() response first', isRank, mode);
       console.log(response);
       await afterMatchHistory(response.data, 0);
     } catch (error) {
-      console.log("Error occured in getMatchHistory()");
+      console.log('Error occured in getMatchHistory()');
       console.log(error);
     }
   };
@@ -151,41 +151,41 @@ const MyPage = () => {
   const handelMatchHistory = async (response: any) => {
     const copy = { ...matchHistory };
     copy.games = copy.games.concat(response.data.games);
-    console.log("offset", offset);
+    console.log('offset', offset);
     return copy;
   };
 
   const fetchMoreData = () => {
-    console.log("fetchMoreData() start");
+    console.log('fetchMoreData() start');
     if (offset >= totalCount) {
       setHasMore(false);
-      console.log("fetchMoreData() end");
+      console.log('fetchMoreData() end');
       return;
     }
     setTimeout(async () => {
       const userId = await getUserId();
       try {
-        const response = await axiosInstance.get("/games/" + mode, {
+        const response = await axiosInstance.get('/games/' + mode, {
           params: {
             id: userId,
             offset: offset,
           },
         });
-        console.log("getMatchHistory() response", isRank, mode, offset);
+        console.log('getMatchHistory() response', isRank, mode, offset);
         const copy = await handelMatchHistory(response);
         await afterMatchHistory(copy, offset);
         console.log(response);
       } catch (error) {
-        console.log("Error occured in getMatchHistory()");
+        console.log('Error occured in getMatchHistory()');
         console.log(error);
       }
     }, 500);
   };
 
   const handleMode = async (mode: string) => {
-    if (mode === "rank") {
+    if (mode === 'rank') {
       setIsRank(true);
-    } else if (mode === "general") {
+    } else if (mode === 'general') {
       setIsRank(false);
     }
     setMode(mode);
@@ -206,21 +206,21 @@ const MyPage = () => {
           <MatchHistoryFrame>
             <MatchHistoryHeader>
               <Mode>
-                <ModeButton onClick={() => handleMode("general")}>
+                <ModeButton onClick={() => handleMode('general')}>
                   <div
-                    className={`${mode === "general" ? "select" : "unselect"}`}
+                    className={`${mode === 'general' ? 'select' : 'unselect'}`}
                   >
                     일반
                   </div>
                 </ModeButton>
-                <ModeButton onClick={() => handleMode("rank")}>
-                  <div className={`${mode === "rank" ? "select" : "unselect"}`}>
+                <ModeButton onClick={() => handleMode('rank')}>
+                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>
                     랭크
                   </div>
                 </ModeButton>
               </Mode>
               <Button onClick={handleRouteLobby}>
-                <InfoImage src={home} alt="home" />
+                <InfoImage src={home} alt='home' />
               </Button>
             </MatchHistoryHeader>
             <MatchHistory>
@@ -228,7 +228,7 @@ const MyPage = () => {
                 dataLength={matchHistory.games.length}
                 next={fetchMoreData}
                 hasMore={hasMore}
-                loader={<div className="loader">Loading...</div>}
+                loader={<div className='loader'>Loading...</div>}
                 height={300}
               >
                 {matchHistory.games.map((game) => (
@@ -300,7 +300,7 @@ const ModeButton = styled.button`
   width: 100%;
   height: 100%;
   background-color: ${(props) => props.theme.colors.lightbrown};
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   border-radius: 15px;
   border: none;
   cursor: pointer;
@@ -348,7 +348,7 @@ const MatchHistory = styled.div`
 
   .loader {
     color: ${(props) => props.theme.colors.brown};
-    font-family: "GiantsLight";
+    font-family: 'GiantsLight';
     font-size: small;
     display: flex;
     align-items: center;

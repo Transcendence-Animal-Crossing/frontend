@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import Image from "next/image";
+import styled from 'styled-components';
+import Image from 'next/image';
 
 const UserInfo: React.FC<{
   nickName: string;
@@ -10,7 +10,7 @@ const UserInfo: React.FC<{
 }> = ({ nickName, intraName, avatar, width, height }) => {
   return (
     <UserInfoFrame width={width} height={height}>
-      <ProfileImage src={avatar} alt="Profile Image" width={100} height={100} />
+      <ProfileImage src={avatar} alt='Profile Image' width={100} height={100} />
       <NameFrame>
         <NickNameFrame> {nickName} </NickNameFrame>
         <IntraNameFrame> {intraName} </IntraNameFrame>
@@ -44,7 +44,7 @@ const NameFrame = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: "GiantsLight";
+  font-family: 'GiantsLight';
   font-size: 100%;
   gap: 15%;
   color: ${(props) => props.theme.colors.brown};
