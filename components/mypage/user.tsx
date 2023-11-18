@@ -5,13 +5,14 @@ import { bronze, silver, gold, platinum, diamond } from './tier';
 import info from '../../public/Icon/info.png';
 
 const UserContainer: React.FC<{
+  intraname: string;
   nickname: string;
   tierIndex: number;
   totalCount: number;
   winCount: number;
   winRate: number;
   avatar: string;
-}> = ({ nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
+}> = ({ intraname, nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
   const { data: session } = useSession();
 
   const tierImages = [bronze, silver, gold, platinum, diamond];
@@ -28,17 +29,12 @@ const UserContainer: React.FC<{
             <NicknameText> NickName </NicknameText>
           )}
         </NicknameFrame>
-        {session ? <IntraText> {session.user.intraName} </IntraText> : null}
+        <IntraText> {intraname} </IntraText>
       </NameFrame>
       <DivisionBar />
       <TierFrame>
         {session ? (
-          <TierImage
-            src={tierImages[tierIndex]}
-            alt='Tier Image'
-            width={30}
-            height={30}
-          />
+          <TierImage src={tierImages[tierIndex]} alt='Tier Image' width={30} height={30} />
         ) : (
           <TierImage src={tierImages[tierIndex]} alt='default Image' />
         )}

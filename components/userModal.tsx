@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useSocket } from '../utils/SocketProvider';
 import axiosInstance from '../utils/axiosInstance';
 import DmModal from './dm/dmModal';
@@ -15,6 +16,7 @@ const UserModal: React.FC<{
   const [blockStatus, setBlockStatus] = useState<number>(0);
   const [IsOpenDm, setIsOpenDm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
   const overlayLeft = `${userRect.left + userRect.width * 0.4}px`;
   const overlayTop = `${userRect.top}px`;
 
@@ -35,6 +37,10 @@ const UserModal: React.FC<{
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUserPage = () => {
+    router.push(`http://localhost:3000/mypage/${userId}`);
   };
 
   const handleOpenDM = async () => {
@@ -112,7 +118,7 @@ const UserModal: React.FC<{
             <Item> Loading... </Item>
           ) : (
             <>
-              <Item>프로필 보기</Item>
+              <Item onClick={handleUserPage}>프로필 보기</Item>
               {followStatus === 2 && <Item onClick={handleOpenDM}>DM</Item>}
               {followStatus !== 2 && <NonItem>DM</NonItem>}
               <Item>게임 초대</Item>

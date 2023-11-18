@@ -11,12 +11,12 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Container from '../../components/columnNevLayout';
 import Game from '../../components/mypage/game';
 
-const MyPage = () => {
+const UserPage = () => {
   const apiUrl = 'http://localhost:8080/';
   const router = useRouter();
+  const { userId } = router.query as { userId: string };
 
   // userInfo
-  const [userId, setUserId] = useState<number>(0);
   const [intraname, setIntraname] = useState('intraname');
   const [nickname, setNickname] = useState('nickname');
   const [avatarPath, setAvatarPath] = useState(apiUrl + 'original/profile2.png');
@@ -41,37 +41,31 @@ const MyPage = () => {
   });
 
   useEffect(() => {
-    getUserInfo();
-  }, []);
+    if (userId) {
+      getUserInfo();
+    }
+  }, [userId]);
 
   useEffect(() => {
     getRecord();
     getMatchHistory();
-  }, [mode]);
+  }, [userId, mode]);
 
   const handleRouteLobby = async () => {
     router.push('/');
   };
 
-  const getUserId = async () => {
-    const session = await getSession();
-    const userId = session?.user.id;
-    return userId;
-  };
-
   const getUserInfo = async () => {
     try {
-      const userId = await getUserId();
-      setUserId(Number(userId));
       const response = await axiosInstance.get('/users/detail', {
         params: { id: userId },
       });
       console.log('getUserInfo() response');
       console.log(response);
+      await setIntraname(response.data.intraName);
       await setNickname(response.data.nickName);
       await setAvatarPath(apiUrl + response.data.avatar);
       await setAchieveList(response.data.achievements);
-      await setIntraname(response.data.intraName);
       await handleRank(response.data.rankScore);
     } catch (error) {
       console.log('Error occured in getUserInfo()');
@@ -141,7 +135,6 @@ const MyPage = () => {
   };
 
   const handleRank = async (rankScore: number) => {
-    console.log('rankScorerankScorerankScore', rankScore);
     if (rankScore < 1000) {
       setTierIndex(0);
     } else if (rankScore < 3000) {
@@ -233,7 +226,7 @@ const MyPage = () => {
                 height={300}
               >
                 {matchHistory.games.map((game) => (
-                  <Game game={game} userId={userId} />
+                  <Game game={game} userId={Number(userId)} />
                 ))}
               </InfiniteScroll>
             </MatchHistory>
@@ -246,7 +239,7 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default UserPage;
 
 const MyPageFrame = styled.div`
   width: 70%;
