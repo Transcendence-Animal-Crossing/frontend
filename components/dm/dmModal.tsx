@@ -30,21 +30,6 @@ const DmModal: React.FC<{
     getUserDetail();
   }, []);
 
-  useEffect(() => {
-    if (socket) {
-      const handleDM = (response: DirectMessageDto) => {
-        console.log('handleDM response : ' + response.text);
-        setMessages((prevMessages) => [...prevMessages, response]);
-      };
-
-      socket.on('dm', handleDM);
-
-      return () => {
-        socket.off('dm', handleDM);
-      };
-    }
-  }, [socket]);
-
   const sendMessage = () => {
     if (socket && messageText) {
       socket

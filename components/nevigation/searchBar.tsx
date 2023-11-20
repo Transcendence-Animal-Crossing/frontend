@@ -35,21 +35,21 @@ const searchBar: React.FC<{
     <SearchBarFrame>
       <BellFrame onClick={handleClickBell} ref={requestRef}>
         {requestListLen == 0 ? (
-          <ImageFrame src={bell} alt="bell" />
+          <ImageFrame src={bell} alt='bell' />
         ) : (
-          <ImageFrame src={bellon} alt="bell" />
+          <ImageFrame src={bellon} alt='bell' />
         )}
       </BellFrame>
       <SearchFrame>
         <Input
-          type="text"
-          placeholder=""
+          type='text'
+          placeholder=''
           onChange={(e) => setSearchText(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e)}
           maxLength={10}
           required
         />
-        <ImageFrame src={search} alt="search" />
+        <ImageFrame src={search} alt='search' />
       </SearchFrame>
     </SearchBarFrame>
   );
@@ -72,7 +72,7 @@ const SearchBarFrame = styled.div`
 const BellFrame = styled.div`
   width: 15%;
   height: auto;
-  background-color: #e9e2c7;
+  background-color: ${(props) => props.theme.colors.lightbrown};
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -84,7 +84,7 @@ const BellFrame = styled.div`
 const SearchFrame = styled.div`
   width: 85%;
   height: auto;
-  background-color: #e9e2c7;
+  background-color: ${(props) => props.theme.colors.lightbrown};
   border-radius: 5px;
   display: flex;
   align-items: center;

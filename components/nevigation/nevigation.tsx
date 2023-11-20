@@ -97,10 +97,17 @@ const Navigation = () => {
         }
       };
 
+      const handleDM = (response: dmData) => {
+        console.log('handleDM response : ' + response.text);
+        // setMessages((prevMessages) => [...prevMessages, response]);
+      };
+
       socket.on('friend-update', handleFriendUpdate);
+      socket.on('dm', handleDM);
 
       return () => {
         socket.off('friend-update', handleFriendUpdate);
+        socket.off('dm', handleDM);
       };
     }
   }, [socket]);
@@ -156,6 +163,13 @@ const Navigation = () => {
     return apiUrl + avatar;
   };
 
+  const handlerTranslation = (status: string) => {
+    if (status === 'OFFLINE') return '오프라인';
+    if (status === 'ONLINE') return '온라인';
+    if (status === 'IN_GAME') return '게임중';
+    if (status === 'WATCHING') return '관전중';
+  };
+
   return (
     <Container>
       <ProfileContainer />
@@ -178,10 +192,16 @@ const Navigation = () => {
                 nickName={friend.nickName}
                 intraName={friend.intraName}
                 avatar={handleAvatarPath(friend.avatar)}
-                width={50}
+                width={40}
                 height={5}
               />
-              <Status textColor={friend.status}> ⦁&nbsp;{friend.status} </Status>
+              {friend.unReadMessages.length !== 0 && (
+                <DmCount> {friend.unReadMessages.length} </DmCount>
+              )}
+              <Status textColor={friend.status}>
+                <p>⦁</p>
+                <p>&nbsp;{handlerTranslation(friend.status)}</p>
+              </Status>
             </UserInfoFrame>
           );
         })}
@@ -251,17 +271,37 @@ const UserInfoFrame = styled.div`
   box-sizing: border-box;
 `;
 
-const Status = styled.div<{ textColor: string }>`
+const DmCount = styled.div`
+  width: auto;
+  height: auto;
+  color: ${(props) => props.theme.colors.brown};
+  background-color: ${(props) => props.theme.colors.gold02};
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  padding: 2% 3%;
+  font-size: 0.8vw;
+  font-family: 'GiantsBold';
+`;
+
+const Status = styled.div<{ textColor: string }>`
+  width: 24%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   font-size: 0.8vw;
   font-family: 'GiantsLight';
   color: ${(props) => {
     switch (props.textColor) {
       case 'OFFLINE':
-        return props.theme.colors.red;
+        return props.theme.colors.gray;
       case 'ONLINE':
         return props.theme.colors.green;
+      case 'IN_GAME':
+        return props.theme.colors.red;
+      case 'WATCHING':
+        return props.theme.colors.purple;
       default:
         return props.theme.colors.brown;
     }
