@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import UserContainer from '../../components/mypage/user';
 import { getSession } from 'next-auth/react';
@@ -23,7 +23,7 @@ const UserPage = () => {
   const [tierIndex, setTierIndex] = useState(0);
 
   // achievement
-  const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
+  const [achieveList, setAchieveList] = useState([1, 0, 0, 0, 0, 0, 0]);
 
   // record
   const [totalCount, setTotalCount] = useState(1);
@@ -47,8 +47,10 @@ const UserPage = () => {
   }, [userId]);
 
   useEffect(() => {
-    getRecord();
-    getMatchHistory();
+    if (userId) {
+      getRecord();
+      getMatchHistory();
+    }
   }, [userId, mode]);
 
   const handleRouteLobby = async () => {
@@ -223,7 +225,7 @@ const UserPage = () => {
                 next={fetchMoreData}
                 hasMore={hasMore}
                 loader={<div className='loader'>Loading...</div>}
-                height={300}
+                height={'100%'}
               >
                 {matchHistory.games.map((game) => (
                   <Game game={game} userId={Number(userId)} />
@@ -243,7 +245,7 @@ export default UserPage;
 
 const MyPageFrame = styled.div`
   width: 70%;
-  height: 70%;
+  height: 80%;
   display: flex;
   flex-direction: row;
 `;
@@ -254,6 +256,7 @@ const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
 `;
 
 const DivisionBar = styled.div`
@@ -270,6 +273,7 @@ const MatchHistoryFrame = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1%;
+  box-sizing: border-box;
 `;
 
 const MatchHistoryHeader = styled.div`
@@ -294,6 +298,7 @@ const ModeButton = styled.button`
   width: 100%;
   height: 100%;
   background-color: ${(props) => props.theme.colors.lightbrown};
+  font-size: 1.7vh;
   font-family: 'GiantsLight';
   border-radius: 15px;
   border: none;
@@ -311,7 +316,7 @@ const ModeButton = styled.button`
 `;
 
 const Button = styled.div`
-  height: 30%;
+  height: 40%;
   width: auto;
   padding: 0.5vh 1.5vh;
   background-color: ${(props) => props.theme.colors.beige};

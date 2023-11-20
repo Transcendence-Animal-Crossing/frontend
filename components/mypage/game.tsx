@@ -118,7 +118,8 @@ export default Game;
 
 const GameFrame = styled.div`
   width: 100%;
-  height: 20%;
+  height: 15%;
+  max-height: 50px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -141,6 +142,7 @@ const GameResult = styled.div<{ result: boolean }>`
   background-color: ${(props) =>
     props.result ? props.theme.colors.green : props.theme.colors.red};
   color: ${(props) => props.theme.colors.white};
+  font-size: 2vh;
 `;
 
 const GameBody = styled.div`
@@ -158,7 +160,7 @@ const GameBody = styled.div`
 const ResultText = styled.div<{ result: boolean }>`
   width: 5%;
   height: 100%;
-  font-size: medium;
+  font-size: 2vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,7 +170,7 @@ const ResultText = styled.div<{ result: boolean }>`
 const VSText = styled.div`
   width: 5%;
   height: 100%;
-  font-size: small;
+  font-size: 2vh;
   display: flex;
   align-items: center;
   justify-content: center;

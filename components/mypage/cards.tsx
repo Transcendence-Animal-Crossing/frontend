@@ -26,5 +26,5 @@ const CardsFrame = styled.div`
 
 const CardImage = styled(Image)`
   width: 20%;
-  height: 100%;
+  height: auto;
 `;
