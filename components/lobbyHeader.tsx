@@ -33,8 +33,8 @@ const Header = (props: { title: string; text: string }) => {
 export default Header;
 
 const HeaderFrame = styled.div`
-  width: 100%;
-  height: 10%;
+  width: 70%;
+  height: auto;
   display: flex;
   flex-direction: row;
   margin-bottom: 2vh;
