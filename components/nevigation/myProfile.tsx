@@ -14,7 +14,7 @@ const myProfile = () => {
   };
 
   const handleUserPage = () => {
-    router.push(`http://localhost:3000/mypage/${session?.user?.id}`);
+    router.push(`http://localhost:3000/profile/${session?.user?.id}`);
   };
 
   return (

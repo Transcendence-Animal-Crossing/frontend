@@ -40,7 +40,7 @@ const UserModal: React.FC<{
   };
 
   const handleUserPage = () => {
-    router.push(`http://localhost:3000/mypage/${userId}`);
+    router.push(`http://localhost:3000/profile/${userId}`);
   };
 
   const handleOpenDM = async () => {
