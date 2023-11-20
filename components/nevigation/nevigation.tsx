@@ -156,16 +156,6 @@ const Navigation = () => {
     return apiUrl + avatar;
   };
 
-  const handleStatus = (status: string) => {
-    if (status === 'OFFLINE') {
-      return '0';
-    } else if (status === 'ONLINE') {
-      return '1';
-    } else {
-      return '2';
-    }
-  };
-
   return (
     <Container>
       <ProfileContainer />
@@ -191,7 +181,7 @@ const Navigation = () => {
                 width={50}
                 height={5}
               />
-              <Status textColor={handleStatus(friend.status)}> ⦁&nbsp;{friend.status} </Status>
+              <Status textColor={friend.status}> ⦁&nbsp;{friend.status} </Status>
             </UserInfoFrame>
           );
         })}
@@ -268,9 +258,9 @@ const Status = styled.div<{ textColor: string }>`
   font-family: 'GiantsLight';
   color: ${(props) => {
     switch (props.textColor) {
-      case '0':
+      case 'OFFLINE':
         return props.theme.colors.red;
-      case '1':
+      case 'ONLINE':
         return props.theme.colors.green;
       default:
         return props.theme.colors.brown;

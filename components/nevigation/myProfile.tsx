@@ -1,27 +1,33 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import setting from '../../public/Icon/setting.png';
 
 const myProfile = () => {
   const { data: session } = useSession();
+  const router = useRouter();
 
   const handleSetUserAvatar = () => {
     const apiUrl = 'http://localhost:8080/';
     return apiUrl + session?.user.avatar;
   };
 
+  const handleUserPage = () => {
+    router.push(`http://localhost:3000/mypage/${session?.user?.id}`);
+  };
+
   return (
     <>
       <ProfileFrame>
-        <ProfileInfoFrame>
-          <ProfileImage src={handleSetUserAvatar()} alt="Uploaded Image" width={300} height={300} />
+        <ProfileInfoFrame onClick={handleUserPage}>
+          <ProfileImage src={handleSetUserAvatar()} alt='Uploaded Image' width={300} height={300} />
           <ProfileTextFrame>
-            <Text textsize="1.1vw"> {session?.user?.nickName} </Text>
-            <Text textsize="0.7vw"> {session?.user?.intraName} </Text>
+            <Text textsize='1.1vw'> {session?.user?.nickName} </Text>
+            <Text textsize='0.7vw'> {session?.user?.intraName} </Text>
           </ProfileTextFrame>
         </ProfileInfoFrame>
-        <IconImage src={setting} alt="setting" width={300} height={300} />
+        <IconImage src={setting} alt='setting' width={300} height={300} />
       </ProfileFrame>
     </>
   );
@@ -47,6 +53,7 @@ const ProfileInfoFrame = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 1vw;
+  cursor: pointer;
 `;
 
 const ProfileImage = styled(Image)`
