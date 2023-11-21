@@ -45,7 +45,7 @@ const General = () => {
         ) : (
           <LogoImage src={Timmy} alt='Login' />
         )}
-        <Text>로그인을 부탁드려요 -!</Text>
+        <Text>로그인을 부탁드려요-!</Text>
         <LoginInput>
           <InputBox
             type='text'
@@ -142,5 +142,6 @@ const Button = styled.div`
 const DivisionBar = styled.div`
   width: 90%;
   height: 1.5px;
+  padding: 0 1vw;
   background-color: ${(props) => props.theme.colors.brown};
 `;

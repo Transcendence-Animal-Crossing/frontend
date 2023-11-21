@@ -157,7 +157,6 @@ const GameBody = styled.div`
   align-items: center;
   justify-content: center;
   gap: 7%;
-  background-color: #fbf3e6;
   border-radius: 5px;
   margin: 0 3%;
 `;
