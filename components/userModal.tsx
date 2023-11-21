@@ -45,28 +45,28 @@ const UserModal: React.FC<{
 
   const handleOpenDM = async () => {
     setIsOpenDm(true);
-    // if (socket) {
-    //   socket
-    //     .emitWithAck('dm-focus', {
-    //       targetId: userId,
-    //     })
-    //     .then((response) => {
-    //       console.log(response);
-    //     });
-    // }
+    if (socket) {
+      socket
+        .emitWithAck('dm-focus', {
+          targetId: userId,
+        })
+        .then((response) => {
+          console.log(response);
+        });
+    }
   };
 
   const handleCloseDM = async () => {
     setIsOpenDm(false);
-    // if (socket) {
-    //   socket
-    //     .emitWithAck('dm-focus', {
-    //       targetId: null,
-    //     })
-    //     .then((response) => {
-    //       console.log(response);
-    //     });
-    // }
+    if (socket) {
+      socket
+        .emitWithAck('dm-focus', {
+          targetId: null,
+        })
+        .then((response) => {
+          console.log(response);
+        });
+    }
   };
 
   const handleAddFriend = async () => {

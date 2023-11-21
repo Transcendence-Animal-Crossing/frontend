@@ -2,13 +2,15 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { useSocket } from '../../utils/SocketProvider';
+import { useEventEmitter } from '../../utils/EventEmitterProvider';
 import { useSession } from 'next-auth/react';
 import axiosInstance from '../../utils/axiosInstance';
+import EventEmitter from 'events';
 import exit from '../../public/Icon/exit.png';
 import DMContainer from './renderDM';
 import InputDmContainer from './inputDM';
 
-interface DirectMessageDto {
+interface dmData {
   id: number;
   senderId: number;
   date: Date;
@@ -21,14 +23,29 @@ const DmModal: React.FC<{
 }> = ({ handleCloseModal, targetId }) => {
   const { socket } = useSocket();
   const { data: session } = useSession();
+  const emitter = useEventEmitter();
   const [nickName, setNickName] = useState<string>('');
   const [avatar, setAvatar] = useState<string>('');
-  const [messages, setMessages] = useState<DirectMessageDto[]>([]);
+  const [messages, setMessages] = useState<dmData[]>([]);
   const [messageText, setMessageText] = useState('');
 
   useEffect(() => {
     getUserDetail();
   }, []);
+
+  useEffect(() => {
+    const handleUnReadMessages = (unReadMessages: dmData[]) => {
+      console.log('unReadMessages', unReadMessages);
+      setMessages(unReadMessages);
+    };
+
+    emitter.on('unReadMessages', handleUnReadMessages);
+    emitter.emit('openDM', targetId);
+
+    return () => {
+      emitter.removeListener('unReadMessages', handleUnReadMessages);
+    };
+  }, [emitter]);
 
   const sendMessage = () => {
     if (socket && messageText) {
@@ -38,7 +55,7 @@ const DmModal: React.FC<{
           receiverId: targetId,
           senderId: session?.user.id,
         })
-        .then((response: DirectMessageDto) => {
+        .then((response: dmData) => {
           console.log(response);
           setMessageText('');
         });
@@ -79,10 +96,10 @@ const DmModal: React.FC<{
         <Content>
           <Header>
             <UserInfo>
-              <UserImage src={avatar} alt="profile" width={100} height={100} />
+              <UserImage src={avatar} alt='profile' width={100} height={100} />
               {nickName}
             </UserInfo>
-            <HeaderImage src={exit} alt="exit" onClick={handleOverlayClick} />
+            <HeaderImage src={exit} alt='exit' onClick={handleOverlayClick} />
           </Header>
           <DmFrame>
             <DMContainer messages={messages} />

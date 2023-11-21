@@ -3,7 +3,9 @@ import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useSocket } from '../../utils/SocketProvider';
+import { useEventEmitter } from '../../utils/EventEmitterProvider';
 import axiosInstance from '../../utils/axiosInstance';
+import EventEmitter from 'events';
 import ProfileContainer from './myProfile';
 import SearchBarContainer from './searchBar';
 import UserInfo from '../userInfo';
@@ -35,6 +37,7 @@ interface RequestData {
 const Navigation = () => {
   const { data: session } = useSession();
   const { socket } = useSocket();
+  const emitter = useEventEmitter();
   const [socketFlag, setSocketFlag] = useState<boolean>(true);
   const [friendsList, setFriendsList] = useState<friendData[]>([]);
   const [requestList, setRequestList] = useState<RequestData[]>([]);
@@ -77,29 +80,39 @@ const Navigation = () => {
   useEffect(() => {
     if (socket) {
       const handleFriendUpdate = (response: friendData) => {
-        console.log('friend update');
-        const targetUser = friendsList.find((user) => user.id === response.id);
-        if (targetUser) {
-          setFriendsList((preFriendslist) => {
-            const updatedUserlist = preFriendslist.map((user) => {
-              if (user.id === response.id) {
-                return {
-                  ...user,
-                  nickName: response.nickName,
-                  avatar: response.avatar,
-                  status: response.status,
-                };
-              }
-              return user;
-            });
-            return updatedUserlist;
+        console.log('friend update', response);
+        setFriendsList((preFriendslist) => {
+          const updatedUserlist = preFriendslist.map((user) => {
+            if (user.id === response.id) {
+              return {
+                ...user,
+                nickName: response.nickName,
+                avatar: response.avatar,
+                status: response.status,
+              };
+            }
+            return user;
           });
-        }
+          return updatedUserlist;
+        });
       };
 
       const handleDM = (response: dmData) => {
         console.log('handleDM response : ' + response.text);
-        // setMessages((prevMessages) => [...prevMessages, response]);
+        const targetId = response.senderId;
+        // targetId 의 DM창이 닫혀있을때
+        setFriendsList((prevFriendsList) => {
+          return prevFriendsList.map((friend) => {
+            if (friend.id === targetId) {
+              const updatedFriend = {
+                ...friend,
+                unReadMessages: [...friend.unReadMessages, response],
+              };
+              return updatedFriend;
+            }
+            return friend;
+          });
+        });
       };
 
       socket.on('friend-update', handleFriendUpdate);
@@ -111,6 +124,24 @@ const Navigation = () => {
       };
     }
   }, [socket]);
+
+  useEffect(() => {
+    const handleOpenDM = (targetId: number) => {
+      setFriendsList((prevFriendsList) => {
+        const targetFriend = prevFriendsList.find((friend) => friend.id === targetId);
+        if (targetFriend) {
+          emitter.emit('unReadMessages', targetFriend.unReadMessages);
+        }
+        return prevFriendsList;
+      });
+    };
+
+    emitter.on('openDM', handleOpenDM);
+
+    return () => {
+      emitter.removeListener('openDM', handleOpenDM);
+    };
+  }, [emitter]);
 
   useEffect(() => {
     handleRequest();
