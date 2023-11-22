@@ -92,15 +92,15 @@ const Chat = () => {
       };
 
       const handleRoomJoin = (response: ParticipantData) => {
-        console.log(response);
+        console.log('handleRoomJoin', response);
         const existingUser = userlist.find((user) => user.id === response.id);
         let updatedUserlist;
         if (existingUser) {
-          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== response.id));
-          updatedUserlist = [...userlist, { ...response, status: 1 }];
+          updatedUserlist = userlist.filter((user) => user.id !== response.id);
         } else {
-          updatedUserlist = [...userlist, { ...response, status: 1 }];
+          updatedUserlist = [...userlist];
         }
+        updatedUserlist.push({ ...response, status: 1 });
         updatedUserlist.sort((a, b) => b.grade - a.grade);
         setUserlist(updatedUserlist);
         handleUserActionMessage(`${response.nickName}님이 들어왔습니다.`);
