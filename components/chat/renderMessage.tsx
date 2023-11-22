@@ -19,6 +19,7 @@ interface ParticipantData {
   mute: boolean;
   joinTime: Date;
   adminTime: Date;
+  status: number;
 }
 
 const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: ParticipantData[] }> = ({

@@ -24,6 +24,7 @@ interface ParticipantData {
   mute: boolean;
   joinTime: Date;
   adminTime: Date;
+  status: number;
 }
 
 interface UserData {
@@ -62,7 +63,9 @@ const Chat = () => {
           .then((response) => {
             if (response.status === 200) {
               console.log(response);
-              setUserlist(response.body.participants);
+              setUserlist(
+                response.body.participants.map((user: ParticipantData) => ({ ...user, status: 1 }))
+              );
               setRoomTitle(response.body.title);
               setRoomMode(response.body.mode);
             } else {
@@ -90,14 +93,23 @@ const Chat = () => {
 
       const handleRoomJoin = (response: ParticipantData) => {
         console.log(response);
-        setUserlist((prevMessages) => [...prevMessages, response]);
+        const existingUser = userlist.find((user) => user.id === response.id);
+        if (existingUser) {
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === response.id ? { ...user, status: 1 } : user))
+          );
+        } else {
+          setUserlist((prevUserlist) => [...prevUserlist, { ...response, status: 1 }]);
+        }
         handleUserActionMessage(`${response.nickName}님이 들어왔습니다.`);
       };
 
       const handleRoomLeave = (response: ParticipantData) => {
         const targetId = response.id;
         console.log(targetId);
-        setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+        setUserlist((prevUserlist) =>
+          prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
+        );
         handleUserActionMessage(`${response.nickName}님이 나갔습니다.`);
       };
 
@@ -109,7 +121,9 @@ const Chat = () => {
           if (targetId == userId) {
             router.push('http://localhost:3000/chat/');
           }
-          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
+          );
           handleUserActionMessage(`${targetUser.nickName}님이 추방당했습니다.`);
         }
       };
@@ -122,7 +136,9 @@ const Chat = () => {
           if (targetId == userId) {
             router.push('http://localhost:3000/chat/');
           }
-          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
+          );
           const banUserData: UserData = {
             id: targetUser.id,
             nickName: targetUser.nickName,

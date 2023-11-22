@@ -21,6 +21,7 @@ interface ParticipantData {
   mute: boolean;
   joinTime: Date;
   adminTime: Date;
+  status: number;
 }
 
 interface UserData {
@@ -60,6 +61,10 @@ const userListModal: React.FC<{
       setIsAdmin(false);
     }
   }, [userlist]);
+
+  useEffect(() => {
+    console.log(userlist);
+  });
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -163,12 +168,12 @@ const userListModal: React.FC<{
             {headerText}
             <HeaderImageFrame>
               {isAdmin && !showBan && (
-                <HeaderImage src={slider} alt="slider" onClick={handlShowBanList} />
+                <HeaderImage src={slider} alt='slider' onClick={handlShowBanList} />
               )}
               {isAdmin && showBan && (
-                <HeaderImage src={users} alt="users" onClick={handlShowBanList} />
+                <HeaderImage src={users} alt='users' onClick={handlShowBanList} />
               )}
-              <HeaderImage src={exit} alt="exit" onClick={handleOverlayClick} />
+              <HeaderImage src={exit} alt='exit' onClick={handleOverlayClick} />
             </HeaderImageFrame>
           </Header>
           {showBan && (
@@ -177,12 +182,12 @@ const userListModal: React.FC<{
                 <UserFrame key={index}>
                   <UserImage
                     src={handleSetUserAvatar(user.avatar)}
-                    alt="Profle Image"
+                    alt='Profle Image'
                     width={100}
                     height={100}
                   />
-                  <Text fontSize="2vh">{user.nickName}</Text>
-                  <Text fontSize="1.2vh">{user.intraName}</Text>
+                  <Text fontSize='2vh'>{user.nickName}</Text>
+                  <Text fontSize='1.2vh'>{user.intraName}</Text>
                   <SetAdmin
                     onClick={() => {
                       handleUserUnban(user.id);
@@ -196,66 +201,68 @@ const userListModal: React.FC<{
           )}
           {!showBan && (
             <UsersFrame userCount={userlist.length}>
-              {userlist.map((user, index) => (
-                <UserFrame key={index}>
-                  <UserImage
-                    src={handleSetUserAvatar(user.avatar)}
-                    alt="Profle Image"
-                    width={100}
-                    height={100}
-                  />
-                  <OwnerFrame>
-                    <Text fontSize="2vh">{user.nickName}</Text>
-                    {user.grade === 2 && <OwnerImage src={crown} alt="crown" />}
-                  </OwnerFrame>
-                  <Text fontSize="1.2vh">{user.intraName}</Text>
-                  {isAdmin && (
-                    <AdminFrame>
-                      <AdminImage
-                        src={kick}
-                        alt="kick"
-                        onClick={() => {
-                          handleUserKick(user.id);
-                        }}
-                      />
-                      <AdminImage
-                        src={ban}
-                        alt="ban"
-                        onClick={() => {
-                          handleUserBan(user.id);
-                        }}
-                      />
-                      {user.mute && (
+              {userlist
+                .filter((user) => user.status === 1)
+                .map((user, index) => (
+                  <UserFrame key={index}>
+                    <UserImage
+                      src={handleSetUserAvatar(user.avatar)}
+                      alt='Profle Image'
+                      width={100}
+                      height={100}
+                    />
+                    <OwnerFrame>
+                      <Text fontSize='2vh'>{user.nickName}</Text>
+                      {user.grade === 2 && <OwnerImage src={crown} alt='crown' />}
+                    </OwnerFrame>
+                    <Text fontSize='1.2vh'>{user.intraName}</Text>
+                    {isAdmin && (
+                      <AdminFrame>
                         <AdminImage
-                          src={unmute}
-                          alt="unmute"
+                          src={kick}
+                          alt='kick'
                           onClick={() => {
-                            handleUserUnmute(user.id);
+                            handleUserKick(user.id);
                           }}
                         />
-                      )}
-                      {!user.mute && (
                         <AdminImage
-                          src={mute}
-                          alt="mute"
+                          src={ban}
+                          alt='ban'
                           onClick={() => {
-                            handleUserMute(user.id);
+                            handleUserBan(user.id);
                           }}
                         />
-                      )}
-                    </AdminFrame>
-                  )}
-                  {isOwner && (
-                    <SetAdmin
-                      onClick={() => {
-                        handleUserAdmin(user.id);
-                      }}
-                    >
-                      {handleUserAdminText(user.id)}
-                    </SetAdmin>
-                  )}
-                </UserFrame>
-              ))}
+                        {user.mute && (
+                          <AdminImage
+                            src={unmute}
+                            alt='unmute'
+                            onClick={() => {
+                              handleUserUnmute(user.id);
+                            }}
+                          />
+                        )}
+                        {!user.mute && (
+                          <AdminImage
+                            src={mute}
+                            alt='mute'
+                            onClick={() => {
+                              handleUserMute(user.id);
+                            }}
+                          />
+                        )}
+                      </AdminFrame>
+                    )}
+                    {isOwner && (
+                      <SetAdmin
+                        onClick={() => {
+                          handleUserAdmin(user.id);
+                        }}
+                      >
+                        {handleUserAdminText(user.id)}
+                      </SetAdmin>
+                    )}
+                  </UserFrame>
+                ))}
             </UsersFrame>
           )}
         </Content>
