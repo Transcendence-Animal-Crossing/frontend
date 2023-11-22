@@ -115,12 +115,19 @@ const Navigation = () => {
         });
       };
 
+      const handleNewFriend = (response: friendData) => {
+        console.log('new friend', response);
+        setFriendsList((prevFriendsList) => [...prevFriendsList, response]);
+      };
+
       socket.on('friend-update', handleFriendUpdate);
       socket.on('dm', handleDM);
+      socket.on('new-friend', handleNewFriend);
 
       return () => {
         socket.off('friend-update', handleFriendUpdate);
         socket.off('dm', handleDM);
+        socket.off('new-friend', handleNewFriend);
       };
     }
   }, [socket]);
@@ -131,6 +138,7 @@ const Navigation = () => {
         const targetFriend = prevFriendsList.find((friend) => friend.id === targetId);
         if (targetFriend) {
           emitter.emit('unReadMessages', targetFriend.unReadMessages);
+          targetFriend.unReadMessages = [];
         }
         return prevFriendsList;
       });
@@ -211,6 +219,7 @@ const Navigation = () => {
         requestListLen={requestListLen}
       />
       <UserList>
+        {socketFlag && <p> loading... </p>}
         {friendsList.map((friend, index) => {
           userRefs[index] = userRefs[index] || React.createRef<HTMLDivElement>();
           return (
@@ -289,6 +298,7 @@ const UserList = styled.div`
   align-items: center;
   justify-content: flex-start;
   overflow-y: auto;
+  color: ${(props) => props.theme.colors.brown};
 `;
 
 const UserInfoFrame = styled.div`

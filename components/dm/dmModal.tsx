@@ -36,7 +36,17 @@ const DmModal: React.FC<{
   useEffect(() => {
     const handleUnReadMessages = (unReadMessages: dmData[]) => {
       console.log('unReadMessages', unReadMessages);
-      setMessages(unReadMessages);
+      if (unReadMessages.length >= 1) {
+        console.log('unReadMessages cursor id', unReadMessages[0].id);
+        handleDmLoad(unReadMessages[0].id);
+
+        setMessages((prevMessages) => {
+          const updatedMessages = prevMessages.concat(unReadMessages);
+          return updatedMessages;
+        });
+      } else {
+        handleDmLoadFirst();
+      }
     };
 
     emitter.on('unReadMessages', handleUnReadMessages);
@@ -46,6 +56,35 @@ const DmModal: React.FC<{
       emitter.removeListener('unReadMessages', handleUnReadMessages);
     };
   }, [emitter]);
+
+  const handleDmLoad = (cursorId: number) => {
+    if (socket) {
+      socket
+        .emitWithAck('dm-load', {
+          targetId: targetId,
+          cursorId: cursorId,
+        })
+        .then((response) => {
+          console.log('handleDmLoad', response);
+          const sortedMessages = response.body.sort((a: dmData, b: dmData) => a.id - b.id);
+          setMessages(sortedMessages);
+        });
+    }
+  };
+
+  const handleDmLoadFirst = () => {
+    if (socket) {
+      socket
+        .emitWithAck('dm-load', {
+          targetId: targetId,
+        })
+        .then((response) => {
+          console.log('handleDmLoadFirst', response);
+          const sortedMessages = response.body.sort((a: dmData, b: dmData) => a.id - b.id);
+          setMessages(sortedMessages);
+        });
+    }
+  };
 
   const sendMessage = () => {
     if (socket && messageText) {
