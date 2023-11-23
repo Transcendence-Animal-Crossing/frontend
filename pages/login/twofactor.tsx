@@ -4,7 +4,7 @@ import Timmy from '../../public/Login/Timmy.png';
 import Image from 'next/image';
 import router from 'next/router';
 import Container from '../../components/columnLayout';
-import TwoFactAuth from '../../components/login/twoFactAuth';
+import TwoFactAuth from '../../components/login/twofactorInput';
 
 const Twofactor = () => {
   const [totpCode, setTotpCode] = useState('');
