@@ -18,7 +18,12 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
     }
   }
 
-  if (pathname === '/chat') {
+  if (
+    pathname === '/chat' ||
+    pathname === '/mypage' ||
+    pathname === '/ranking' ||
+    pathname === '/join'
+  ) {
     if (!session) {
       return NextResponse.redirect(new URL('/login', req.url));
     }
@@ -26,5 +31,5 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/chat'],
+  matcher: ['/', '/login', '/chat', '/mypage', '/ranking', '/join'],
 };
