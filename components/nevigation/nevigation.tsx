@@ -69,7 +69,16 @@ const Navigation = () => {
       socket.emitWithAck('friend-list').then((response) => {
         console.log('response', response);
         if (response.status === 200) {
-          setFriendsList(response.body);
+          const sortedFriendsList = response.body.sort((a: friendData, b: friendData) => {
+            if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
+              return -1;
+            } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
+              return 1;
+            }
+            return 0;
+          });
+
+          setFriendsList(sortedFriendsList);
           setRequestListLen(requestList.length);
           setSocketFlag(false);
         }
@@ -82,17 +91,26 @@ const Navigation = () => {
       const handleFriendUpdate = (response: friendData) => {
         console.log('friend update', response);
         setFriendsList((preFriendslist) => {
-          const updatedUserlist = preFriendslist.map((user) => {
-            if (user.id === response.id) {
-              return {
-                ...user,
-                nickName: response.nickName,
-                avatar: response.avatar,
-                status: response.status,
-              };
-            }
-            return user;
-          });
+          const updatedUserlist = preFriendslist
+            .map((user) => {
+              if (user.id === response.id) {
+                return {
+                  ...user,
+                  nickName: response.nickName,
+                  avatar: response.avatar,
+                  status: response.status,
+                };
+              }
+              return user;
+            })
+            .sort((a: friendData, b: friendData) => {
+              if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
+                return -1;
+              } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
+                return 1;
+              }
+              return 0;
+            });
           return updatedUserlist;
         });
       };
