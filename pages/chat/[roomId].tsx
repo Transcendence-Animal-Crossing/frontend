@@ -110,7 +110,9 @@ const Chat = () => {
         const targetId = response.id;
         console.log(targetId);
         setUserlist((prevUserlist) =>
-          prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
+          prevUserlist.map((user) =>
+            user.id === targetId ? { ...user, grade: 0, status: 0 } : user
+          )
         );
         handleUserActionMessage(`${response.nickName}님이 나갔습니다.`);
       };
@@ -206,6 +208,7 @@ const Chat = () => {
               }
               return user;
             });
+            sortUserList();
             return updatedUserlist;
           });
           handleUserActionMessage(`${targetUser.nickName}님이 관리자 권한을 얻었습니다.`);
@@ -223,6 +226,7 @@ const Chat = () => {
               }
               return user;
             });
+            sortUserList();
             return updatedUserlist;
           });
           handleUserActionMessage(`${targetUser.nickName}님의 관리자 권한이 해제되었습니다.`);
@@ -243,6 +247,7 @@ const Chat = () => {
               }
               return user;
             });
+            sortUserList();
             return updatedUserlist;
           });
           handleUserActionMessage(`${targetUser.nickName}님이 방장 권한을 얻었습니다.`);
@@ -285,6 +290,12 @@ const Chat = () => {
     if (e.key === 'Enter') {
       sendMessage();
     }
+  };
+
+  const sortUserList = () => {
+    const sortedUserlist = [...userlist].sort((a, b) => b.grade - a.grade);
+    setUserlist(sortedUserlist);
+    console.log('sortUserList', userlist);
   };
 
   const sendMessage = () => {
