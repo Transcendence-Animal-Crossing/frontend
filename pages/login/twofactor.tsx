@@ -7,7 +7,7 @@ import Container from '../../components/columnLayout';
 import TwoFactAuth from '../../components/login/twofactorInput';
 
 const Twofactor = () => {
-  const [totpCode, setTotpCode] = useState('');
+  const [code, setCode] = useState('');
 
   const handleSubmit = async () => {
     console.log('abc');
@@ -32,7 +32,7 @@ const Twofactor = () => {
           이메일로 보내 드린 코드 7자리를 입력해 주세요-!
         </Description>
         <LoginInput>
-          <TwoFactAuth value={totpCode} onChange={(val) => setTotpCode(val)} />
+          <TwoFactAuth value={code} onChange={(val) => setCode(val)} />
           <DivisionBar />
           <ButtonFrame>
             <Button id='cancel' onClick={handleRouteLobby}>
