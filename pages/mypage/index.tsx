@@ -197,8 +197,8 @@ const MyPage = () => {
   const handle2fa = async () => {
     try {
       const userId = await getUserId();
-      if (twofactor == true) {
-        await setTwofactor(false);
+      if (twofactor == false) {
+        await setTwofactor(true);
         const response = await axiosInstance.patch('/users/2fa-setup', {
           params: {
             id: userId,
@@ -206,7 +206,7 @@ const MyPage = () => {
         });
         console.log('2fa setup');
       } else {
-        await setTwofactor(true);
+        await setTwofactor(false);
         const response = await axiosInstance.patch('users/2fa-cancel');
         console.log('2fa cancel');
       }
@@ -228,7 +228,7 @@ const MyPage = () => {
           winRate={winRate}
         />
         <button onClick={handle2fa}>
-          {twofactor == true ? '이중인증 해제' : '이중인증 설정'}
+          {twofactor == false ? '이중인증 설정' : '이중인증 해제'}
         </button>
         <InfoContainer>
           <MatchHistoryFrame>
