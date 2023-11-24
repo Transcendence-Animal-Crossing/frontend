@@ -10,6 +10,7 @@ import home from '../../public/Icon/home.png';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Container from '../../components/columnNevLayout';
 import Game from '../../components/mypage/game';
+import axios from 'axios';
 
 const MyPage = () => {
   const apiUrl = 'http://localhost:8080/';
@@ -21,6 +22,8 @@ const MyPage = () => {
     apiUrl + 'original/profile2.png'
   );
   const [tierIndex, setTierIndex] = useState(0);
+
+  const [twofactor, setTwofactor] = useState(false);
 
   // achievement
   const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
@@ -191,6 +194,28 @@ const MyPage = () => {
     setMode(mode);
   };
 
+  const handle2fa = async () => {
+    try {
+      const userId = await getUserId();
+      if (twofactor == true) {
+        await setTwofactor(false);
+        const response = await axiosInstance.patch('/users/2fa-setup', {
+          params: {
+            id: userId,
+          },
+        });
+        console.log('2fa setup');
+      } else {
+        await setTwofactor(true);
+        const response = await axiosInstance.patch('users/2fa-cancel');
+        console.log('2fa cancel');
+      }
+    } catch (error) {
+      console.log('Error occured in 2fa setup');
+      console.log(error);
+    }
+  };
+
   return (
     <Container>
       <MyPageFrame>
@@ -202,6 +227,9 @@ const MyPage = () => {
           winCount={winCount}
           winRate={winRate}
         />
+        <button onClick={handle2fa}>
+          {twofactor == true ? '이중인증 해제' : '이중인증 설정'}
+        </button>
         <InfoContainer>
           <MatchHistoryFrame>
             <MatchHistoryHeader>
