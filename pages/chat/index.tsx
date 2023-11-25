@@ -45,6 +45,7 @@ const ChatLobby = () => {
   useEffect(() => {
     if (socket) {
       const handleRoomCreate = (response: RoomListData) => {
+        console.log('handleRoomCreate', response);
         setRoomlist((prevRoomList) => [...prevRoomList, response]);
       };
 
@@ -63,12 +64,18 @@ const ChatLobby = () => {
         }
       };
 
+      const handleRoomDelete = (response: { id: string; }) => {
+        setRoomlist((prevRoomlist) => prevRoomlist.filter((room) => room.id !== response.id));
+      };
+
       socket.on('room-create', handleRoomCreate);
       socket.on('room-update', handleRoomUpdate);
+      socket.on('room-delete', handleRoomDelete);
 
       return () => {
         socket.off('room-create', handleRoomCreate);
         socket.off('room-update', handleRoomUpdate);
+        socket.off('room-delete', handleRoomDelete);
       };
     }
   }, [socket, roomlist]);
@@ -121,16 +128,16 @@ const ChatLobby = () => {
           <Room key={index} onClick={() => handleRoomJoin(room.id)}>
             <RoomTitle>
               {room.title}
-              <>{room.mode === 'PROTECTED' && <LockImage src={Lock} alt="Lock" />}</>
+              <>{room.mode === 'PROTECTED' && <LockImage src={Lock} alt='Lock' />}</>
             </RoomTitle>
             <RoomInfo>
               <RoomInfoText>
-                <ColoredText textColor="0">방장:</ColoredText>
-                <ColoredText textColor="1">{room.owner.nickName}</ColoredText>
+                <ColoredText textColor='0'>방장:</ColoredText>
+                <ColoredText textColor='1'>{room.owner.nickName}</ColoredText>
               </RoomInfoText>
               <RoomInfoText>
-                <ColoredText textColor="0">참여인원:</ColoredText>
-                <ColoredText textColor="2">{room.headCount}명</ColoredText>
+                <ColoredText textColor='0'>참여인원:</ColoredText>
+                <ColoredText textColor='2'>{room.headCount}명</ColoredText>
               </RoomInfoText>
             </RoomInfo>
           </Room>
