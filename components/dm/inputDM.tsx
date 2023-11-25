@@ -11,14 +11,14 @@ const InputDmContainer: React.FC<{
   return (
     <InputFrame>
       <Input
-        type="text"
-        placeholder="메세지를 입력하세요"
+        type='text'
+        placeholder='메세지를 입력하세요'
         value={messageText}
         onChange={(e) => setMessageText(e.target.value)}
         onKeyPress={handleKeyPress}
       />
       <ButtonFrame onClick={sendMessage}>
-        <ButtonImage src={send} alt="send" />
+        <ButtonImage src={send} alt='send' />
       </ButtonFrame>
     </InputFrame>
   );
@@ -28,7 +28,7 @@ export default InputDmContainer;
 
 const InputFrame = styled.div`
   width: 100%;
-  height: auto;
+  height: 10%;
   background-color: ${(props) => props.theme.colors.ivory};
   border-radius: 10px;
   padding: 1.5%;
@@ -37,7 +37,7 @@ const InputFrame = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
 `;
 
 const Input = styled.input.attrs({ required: true })`

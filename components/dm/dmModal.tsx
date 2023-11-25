@@ -5,7 +5,6 @@ import { useSocket } from '../../utils/SocketProvider';
 import { useEventEmitter } from '../../utils/EventEmitterProvider';
 import { useSession } from 'next-auth/react';
 import axiosInstance from '../../utils/axiosInstance';
-import EventEmitter from 'events';
 import exit from '../../public/Icon/exit.png';
 import DMContainer from './renderDM';
 import InputDmContainer from './inputDM';
@@ -28,20 +27,40 @@ const DmModal: React.FC<{
   const [avatar, setAvatar] = useState<string>('');
   const [messages, setMessages] = useState<dmData[]>([]);
   const [messageText, setMessageText] = useState('');
+  const [cursorId, setCursorId] = useState<number>(0);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   useEffect(() => {
     getUserDetail();
   }, []);
 
   useEffect(() => {
+    if (socket) {
+      const handleDM = (response: dmData) => {
+        console.log('handleDM response : ' + response.text);
+        setMessages((prevMessages) => [response, ...prevMessages]);
+      };
+
+      socket.on('dm', handleDM);
+
+      return () => {
+        socket.off('dm', handleDM);
+      };
+    }
+  }, [socket]);
+
+  useEffect(() => {
     const handleUnReadMessages = (unReadMessages: dmData[]) => {
       console.log('unReadMessages', unReadMessages);
-      if (unReadMessages.length >= 1) {
+      if (unReadMessages.length >= 20) {
+        setMessages(unReadMessages);
+      } else if (unReadMessages.length >= 1) {
         console.log('unReadMessages cursor id', unReadMessages[0].id);
-        handleDmLoad(unReadMessages[0].id);
-
+        setCursorId(unReadMessages[0].id);
+        handleDmLoad();
         setMessages((prevMessages) => {
           const updatedMessages = prevMessages.concat(unReadMessages);
+          console.log('updatedMessages:', updatedMessages);
           return updatedMessages;
         });
       } else {
@@ -57,19 +76,36 @@ const DmModal: React.FC<{
     };
   }, [emitter]);
 
-  const handleDmLoad = (cursorId: number) => {
-    if (socket) {
-      socket
-        .emitWithAck('dm-load', {
-          targetId: targetId,
-          cursorId: cursorId,
-        })
-        .then((response) => {
-          console.log('handleDmLoad', response);
-          const sortedMessages = response.body.sort((a: dmData, b: dmData) => a.id - b.id);
-          setMessages(sortedMessages);
-        });
-    }
+  const handleDmLoad = () => {
+    console.log('handleDmLoad Debug');
+    setTimeout(async () => {
+      if (socket) {
+        await socket
+          .emitWithAck('dm-load', {
+            targetId: targetId,
+            cursorId: cursorId,
+          })
+          .then((response) => {
+            console.log('handleDmLoad', response);
+            const sortedMessages = response.body.sort((a: dmData, b: dmData) => b.id - a.id);
+            setMessages((prevMessages) => {
+              const updatedMessages = prevMessages.concat(sortedMessages);
+              console.log('updatedMessages:', updatedMessages);
+              return updatedMessages;
+            });
+            if (response.body.length !== 0) {
+              const smallestId = Math.min(...response.body.map((message: dmData) => message.id));
+              setCursorId(smallestId);
+              setHasMore(true);
+            } else {
+              setHasMore(false);
+            }
+          })
+          .catch((error) => {
+            console.log('handleDmLoad error', error);
+          });
+      }
+    }, 500);
   };
 
   const handleDmLoadFirst = () => {
@@ -80,8 +116,15 @@ const DmModal: React.FC<{
         })
         .then((response) => {
           console.log('handleDmLoadFirst', response);
-          const sortedMessages = response.body.sort((a: dmData, b: dmData) => a.id - b.id);
+          const sortedMessages = response.body.sort((a: dmData, b: dmData) => b.id - a.id);
           setMessages(sortedMessages);
+          if (response.body.length !== 0) {
+            const smallestId = Math.min(...response.body.map((message: dmData) => message.id));
+            setCursorId(smallestId);
+            setHasMore(true);
+          } else {
+            setHasMore(false);
+          }
         });
     }
   };
@@ -141,7 +184,7 @@ const DmModal: React.FC<{
             <HeaderImage src={exit} alt='exit' onClick={handleOverlayClick} />
           </Header>
           <DmFrame>
-            <DMContainer messages={messages} />
+            <DMContainer messages={messages} hasMore={hasMore} handleDmLoad={handleDmLoad} />
             <InputDmContainer
               messageText={messageText}
               setMessageText={handleMessageTextChange}
@@ -182,7 +225,6 @@ const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 2vh;
 `;
 
 const Header = styled.div`
