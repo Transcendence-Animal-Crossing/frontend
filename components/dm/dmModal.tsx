@@ -20,7 +20,8 @@ interface dmData {
 const DmModal: React.FC<{
   handleCloseModal: () => void;
   targetId: number;
-}> = ({ handleCloseModal, targetId }) => {
+  setOpenNotice: (value: boolean) => void;
+}> = ({ handleCloseModal, targetId, setOpenNotice }) => {
   const { socket } = useSocket();
   const { data: session } = useSession();
   const emitter = useEventEmitter();
@@ -157,6 +158,10 @@ const DmModal: React.FC<{
           console.log(response);
           setMessages((prevMessages) => [response.body, ...prevMessages]);
           setMessageText('');
+        })
+        .catch((error) => {
+          console.log(error);
+          setOpenNotice(true);
         });
     }
   };

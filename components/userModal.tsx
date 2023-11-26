@@ -159,7 +159,7 @@ const UserModal: React.FC<{
           )}
         </Content>
       </Container>
-      {IsOpenDm && <DmModal handleCloseModal={handleCloseDM} targetId={userId} />}
+      {IsOpenDm && <DmModal handleCloseModal={handleCloseDM} targetId={userId} setOpenNotice={setOpenNotice} />}
       {isOpenNotice && (
         <NoticeModal handleCloseModal={handleCloseNotice} noticeMessage={noticeMessage} />
       )}
