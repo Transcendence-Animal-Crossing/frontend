@@ -79,6 +79,10 @@ const CardFrame = styled.div`
   cursor: pointer;
   box-sizing: border-box;
   gap: 5%;
+
+  &:hover {
+    transform: scale(1.03);
+  }
 `;
 
 const CardImageFrame = styled.div<{ imageUrl: string }>`
