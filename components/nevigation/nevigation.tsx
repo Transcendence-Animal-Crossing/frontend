@@ -5,7 +5,6 @@ import { useSession, signOut } from 'next-auth/react';
 import { useSocket } from '../../utils/SocketProvider';
 import { useEventEmitter } from '../../utils/EventEmitterProvider';
 import axiosInstance from '../../utils/axiosInstance';
-import EventEmitter from 'events';
 import ProfileContainer from './myProfile';
 import SearchBarContainer from './searchBar';
 import UserInfo from '../userInfo';
@@ -134,18 +133,50 @@ const Navigation = () => {
       };
 
       const handleNewFriend = (response: friendData) => {
-        console.log('new friend', response);
-        setFriendsList((prevFriendsList) => [...prevFriendsList, response]);
+        const newFriendData: friendData = { ...response, unReadMessages: [] };
+        setFriendsList((prevFriendsList) => {
+          const updatedFriendsList = [...prevFriendsList, newFriendData].sort((a, b) => {
+            if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
+              return -1;
+            } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
+              return 1;
+            }
+            return 0;
+          });
+          return updatedFriendsList;
+        });
+      };
+
+      const handleDeleteFriend = (response: { id: number }) => {
+        setFriendsList((prevFriendsList) =>
+          prevFriendsList.filter((friend) => friend.id !== response.id)
+        );
+      };
+
+      const handleNewFriendRequest = (response: RequestData) => {
+        setRequestList((prevRequestList) => [...prevRequestList, response]);
+      };
+
+      const handleDeleteFriendRequest = (response: { sendBy: number }) => {
+        setRequestList((prevRequestList) =>
+          prevRequestList.filter((request) => request.sendBy !== response.sendBy)
+        );
       };
 
       socket.on('friend-update', handleFriendUpdate);
       socket.on('dm', handleDM);
       socket.on('new-friend', handleNewFriend);
+      socket.on('delete-friend', handleDeleteFriend);
+      socket.on('new-friend-request', handleNewFriendRequest);
+      socket.on('delete-friend-request', handleDeleteFriendRequest);
 
       return () => {
         socket.off('friend-update', handleFriendUpdate);
         socket.off('dm', handleDM);
         socket.off('new-friend', handleNewFriend);
+        socket.off('delete-friend', handleDeleteFriend);
+        socket.off('new-friend-request', handleNewFriendRequest);
+        socket.off('delete-friend-request', handleDeleteFriendRequest);
       };
     }
   }, [socket]);
@@ -168,6 +199,10 @@ const Navigation = () => {
       emitter.removeListener('openDM', handleOpenDM);
     };
   }, [emitter]);
+
+  useEffect(() => {
+    setRequestListLen(requestList.length);
+  }, [requestList]);
 
   useEffect(() => {
     handleRequest();
