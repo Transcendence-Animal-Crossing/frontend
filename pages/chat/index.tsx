@@ -64,7 +64,7 @@ const ChatLobby = () => {
         }
       };
 
-      const handleRoomDelete = (response: { id: string; }) => {
+      const handleRoomDelete = (response: { id: string }) => {
         setRoomlist((prevRoomlist) => prevRoomlist.filter((room) => room.id !== response.id));
       };
 

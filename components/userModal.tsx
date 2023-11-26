@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useSocket } from '../utils/SocketProvider';
 import axiosInstance from '../utils/axiosInstance';
 import DmModal from './dm/dmModal';
+import NoticeModal from './noticeModal';
 
 const UserModal: React.FC<{
   handleCloseModal: () => void;
@@ -16,6 +17,8 @@ const UserModal: React.FC<{
   const [blockStatus, setBlockStatus] = useState<number>(0);
   const [IsOpenDm, setIsOpenDm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
+  const noticeMessage = '유효하지않은 요청입니다.';
   const router = useRouter();
   const overlayLeft = `${userRect.left + userRect.width * 0.4}px`;
   const overlayTop = `${userRect.top}px`;
@@ -70,38 +73,63 @@ const UserModal: React.FC<{
   };
 
   const handleAddFriend = async () => {
-    await axiosInstance.post(`/follow/request`, {
-      sendTo: userId,
-    });
-    setFollowStatus(1);
+    try {
+      await axiosInstance.post(`/follow/request`, {
+        sendTo: userId,
+      });
+      setFollowStatus(1);
+    } catch (error) {
+      setOpenNotice(true);
+    }
   };
 
   const handleFriendRequest = async () => {
-    await axiosInstance.delete(`/follow/request`, {
-      data: { sendTo: userId },
-    });
-    setFollowStatus(0);
+    try {
+      await axiosInstance.delete(`/follow/request`, {
+        data: { sendTo: userId },
+      });
+      setFollowStatus(0);
+    } catch (error) {
+      setOpenNotice(true);
+    }
   };
 
   const handleRemoveFriend = async () => {
-    await axiosInstance.delete(`/follow`, {
-      data: { sendTo: userId },
-    });
-    setFollowStatus(0);
+    try {
+      await axiosInstance.delete(`/follow`, {
+        data: { sendTo: userId },
+      });
+      setFollowStatus(0);
+    } catch (error) {
+      setOpenNotice(true);
+    }
   };
 
   const handleBlock = async () => {
-    await axiosInstance.patch(`/users/block`, {
-      id: userId,
-    });
-    setBlockStatus(1);
+    try {
+      await axiosInstance.patch(`/users/block`, {
+        id: userId,
+      });
+      setBlockStatus(1);
+    } catch (error) {
+      setOpenNotice(true);
+    }
   };
 
   const handleUnblock = async () => {
-    await axiosInstance.patch(`/users/unblock`, {
-      id: userId,
-    });
-    setBlockStatus(0);
+    try {
+      await axiosInstance.patch(`/users/unblock`, {
+        id: userId,
+      });
+      setBlockStatus(0);
+    } catch (error) {
+      setOpenNotice(true);
+    }
+  };
+
+  const handleCloseNotice = () => {
+    setOpenNotice(false);
+    handleCloseModal();
   };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -132,6 +160,9 @@ const UserModal: React.FC<{
         </Content>
       </Container>
       {IsOpenDm && <DmModal handleCloseModal={handleCloseDM} targetId={userId} />}
+      {isOpenNotice && (
+        <NoticeModal handleCloseModal={handleCloseNotice} noticeMessage={noticeMessage} />
+      )}
     </>
   );
 };

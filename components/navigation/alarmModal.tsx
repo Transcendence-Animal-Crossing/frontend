@@ -48,7 +48,7 @@ const AlarmModal: React.FC<{
   };
 
   const handleDenyRequest = async (sendBy: number) => {
-    await axiosInstance.delete(`/follow/request/other`, {
+    await axiosInstance.delete(`/follow/requested`, {
       data: { sendBy: sendBy },
     });
     setRequestList((prevRequestList) =>
