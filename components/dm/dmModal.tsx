@@ -154,14 +154,15 @@ const DmModal: React.FC<{
           receiverId: targetId,
           senderId: session?.user.id,
         })
-        .then((response: dmData) => {
-          console.log(response);
-          setMessages((prevMessages) => [response.body, ...prevMessages]);
-          setMessageText('');
-        })
-        .catch((error) => {
-          console.log(error);
-          setOpenNotice(true);
+        .then((response) => {
+          if (response.status == 200) {
+            console.log('dm responses', response);
+            setMessages((prevMessages) => [response.body, ...prevMessages]);
+            setMessageText('');
+          } else {
+            console.log('dm error', response);
+            setOpenNotice(true);
+          }
         });
     }
   };
