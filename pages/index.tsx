@@ -102,7 +102,7 @@ const FooterFrame = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
   box-sizing: border-box;
-  gap: 0.5vh;
+  gap: 1vh;
 `;
 
 const TitleText = styled.div`
