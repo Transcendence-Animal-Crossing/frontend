@@ -10,6 +10,7 @@ import DMContainer from './renderDM';
 import InputDmContainer from './inputDM';
 
 interface dmData {
+  body: dmData;
   id: number;
   senderId: number;
   date: Date;
@@ -32,35 +33,22 @@ const DmModal: React.FC<{
 
   useEffect(() => {
     getUserDetail();
+    emitter.emit('openDM', targetId);
   }, []);
-
-  useEffect(() => {
-    if (socket) {
-      const handleDM = (response: dmData) => {
-        console.log('handleDM response : ' + response.text);
-        setMessages((prevMessages) => [response, ...prevMessages]);
-      };
-
-      socket.on('dm', handleDM);
-
-      return () => {
-        socket.off('dm', handleDM);
-      };
-    }
-  }, [socket]);
 
   useEffect(() => {
     const handleUnReadMessages = (unReadMessages: dmData[]) => {
       console.log('unReadMessages', unReadMessages);
       if (unReadMessages.length >= 20) {
-        setMessages(unReadMessages);
+        const sortedMessages = unReadMessages.sort((a, b) => b.id - a.id);
+        setMessages(sortedMessages);
+        const smallestId = Math.min(...unReadMessages.map((message: dmData) => message.id));
+        setCursorId(smallestId);
       } else if (unReadMessages.length >= 1) {
-        console.log('unReadMessages cursor id', unReadMessages[0].id);
-        setCursorId(unReadMessages[0].id);
-        handleDmLoad();
+        const smallestId = Math.min(...unReadMessages.map((message: dmData) => message.id));
+        handleDmLoadConcat(smallestId);
         setMessages((prevMessages) => {
-          const updatedMessages = prevMessages.concat(unReadMessages);
-          console.log('updatedMessages:', updatedMessages);
+          const updatedMessages = [...prevMessages, ...unReadMessages].sort((a, b) => b.id - a.id);
           return updatedMessages;
         });
       } else {
@@ -68,16 +56,20 @@ const DmModal: React.FC<{
       }
     };
 
+    const handleNewMessage = (response: dmData) => {
+      setMessages((prevMessages) => [response, ...prevMessages]);
+    };
+
     emitter.on('unReadMessages', handleUnReadMessages);
-    emitter.emit('openDM', targetId);
+    emitter.on('newMessage', handleNewMessage);
 
     return () => {
       emitter.removeListener('unReadMessages', handleUnReadMessages);
+      emitter.removeListener('newMessage', handleNewMessage);
     };
   }, [emitter]);
 
   const handleDmLoad = () => {
-    console.log('handleDmLoad Debug');
     setTimeout(async () => {
       if (socket) {
         await socket
@@ -86,11 +78,9 @@ const DmModal: React.FC<{
             cursorId: cursorId,
           })
           .then((response) => {
-            console.log('handleDmLoad', response);
             const sortedMessages = response.body.sort((a: dmData, b: dmData) => b.id - a.id);
             setMessages((prevMessages) => {
               const updatedMessages = prevMessages.concat(sortedMessages);
-              console.log('updatedMessages:', updatedMessages);
               return updatedMessages;
             });
             if (response.body.length !== 0) {
@@ -115,7 +105,6 @@ const DmModal: React.FC<{
           targetId: targetId,
         })
         .then((response) => {
-          console.log('handleDmLoadFirst', response);
           const sortedMessages = response.body.sort((a: dmData, b: dmData) => b.id - a.id);
           setMessages(sortedMessages);
           if (response.body.length !== 0) {
@@ -125,6 +114,33 @@ const DmModal: React.FC<{
           } else {
             setHasMore(false);
           }
+        });
+    }
+  };
+
+  const handleDmLoadConcat = (smallestId: number) => {
+    if (socket) {
+      socket
+        .emitWithAck('dm-load', {
+          targetId: targetId,
+          cursorId: smallestId,
+        })
+        .then((response) => {
+          const sortedMessages = response.body.sort((a: dmData, b: dmData) => b.id - a.id);
+          setMessages((prevMessages) => {
+            const updatedMessages = prevMessages.concat(sortedMessages);
+            return updatedMessages;
+          });
+          if (response.body.length !== 0) {
+            const smallestId = Math.min(...response.body.map((message: dmData) => message.id));
+            setCursorId(smallestId);
+            setHasMore(true);
+          } else {
+            setHasMore(false);
+          }
+        })
+        .catch((error) => {
+          console.log('handleDmLoad error', error);
         });
     }
   };
@@ -139,6 +155,7 @@ const DmModal: React.FC<{
         })
         .then((response: dmData) => {
           console.log(response);
+          setMessages((prevMessages) => [response.body, ...prevMessages]);
           setMessageText('');
         });
     }
@@ -168,6 +185,7 @@ const DmModal: React.FC<{
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
+      emitter.emit('closeDM');
       handleCloseModal();
     }
   };

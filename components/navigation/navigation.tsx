@@ -41,6 +41,7 @@ const Navigation = () => {
   const [friendsList, setFriendsList] = useState<friendData[]>([]);
   const [requestList, setRequestList] = useState<RequestData[]>([]);
   const [requestListLen, setRequestListLen] = useState<number>(0);
+  const [openDmId, setOpenDmId] = useState<number>(-1);
   const [userInfo, setUserInfo] = useState<friendData>({
     id: 0,
     nickName: '',
@@ -115,21 +116,23 @@ const Navigation = () => {
       };
 
       const handleDM = (response: dmData) => {
-        console.log('handleDM response : ' + response.text);
         const targetId = response.senderId;
-        // targetId 의 DM창이 닫혀있을때
-        setFriendsList((prevFriendsList) => {
-          return prevFriendsList.map((friend) => {
-            if (friend.id === targetId) {
-              const updatedFriend = {
-                ...friend,
-                unReadMessages: [...friend.unReadMessages, response],
-              };
-              return updatedFriend;
-            }
-            return friend;
+        if (openDmId === targetId) {
+          emitter.emit('newMessage', response);
+        } else if (targetId !== session?.user.id) {
+          setFriendsList((prevFriendsList) => {
+            return prevFriendsList.map((friend) => {
+              if (friend.id === targetId) {
+                const updatedFriend = {
+                  ...friend,
+                  unReadMessages: [...friend.unReadMessages, response],
+                };
+                return updatedFriend;
+              }
+              return friend;
+            });
           });
-        });
+        }
       };
 
       const handleNewFriend = (response: friendData) => {
@@ -179,24 +182,33 @@ const Navigation = () => {
         socket.off('delete-friend-request', handleDeleteFriendRequest);
       };
     }
-  }, [socket]);
+  }, [socket, openDmId]);
 
   useEffect(() => {
     const handleOpenDM = (targetId: number) => {
+      setOpenDmId(targetId);
       setFriendsList((prevFriendsList) => {
         const targetFriend = prevFriendsList.find((friend) => friend.id === targetId);
         if (targetFriend) {
-          emitter.emit('unReadMessages', targetFriend.unReadMessages);
-          targetFriend.unReadMessages = [];
+          process.nextTick(() => {
+            emitter.emit('unReadMessages', targetFriend.unReadMessages);
+            targetFriend.unReadMessages = [];
+          });
         }
         return prevFriendsList;
       });
     };
 
+    const handleCloseDM = () => {
+      setOpenDmId(-1);
+    };
+
     emitter.on('openDM', handleOpenDM);
+    emitter.on('closeDM', handleCloseDM);
 
     return () => {
       emitter.removeListener('openDM', handleOpenDM);
+      emitter.removeListener('closeDM', handleCloseDM);
     };
   }, [emitter]);
 
@@ -211,17 +223,12 @@ const Navigation = () => {
   const handleRequest = async () => {
     await axiosInstance.get(`/follow/request`).then((response) => {
       setRequestList(response.data);
-      console.log('requestList', requestList);
     });
   };
 
   const updateUserRect = (index: number) => {
     const clickedUserRef = userRefs[index];
-    console.log('updateUserRect', userRefs);
-    console.log(userRefs[index]);
-
     if (clickedUserRef && clickedUserRef.current) {
-      console.log('test');
       const buttonRect = clickedUserRef.current.getBoundingClientRect();
       setUserRect({
         top: buttonRect.top,
@@ -240,7 +247,6 @@ const Navigation = () => {
   };
 
   const handleClickUser = (userInfo: friendData, index: number) => {
-    console.log('handleClickUser', userInfo.nickName, index);
     setUserInfo(userInfo);
     updateUserRect(index);
     setOpenModal(true);
