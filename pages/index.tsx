@@ -1,7 +1,6 @@
 import type { NextPage } from 'next';
 import styled from 'styled-components';
-import Image from 'next/image';
-import { useSession, signIn, signOut } from 'next-auth/react'; // 테스트용
+import { useRouter } from 'next/router';
 import Container from '../components/columnNevLayout';
 import General from '../public/Main/generalgame.jpg';
 import Rank from '../public/Main/rankgame.jpg';
@@ -9,18 +8,23 @@ import Chat from '../public/Main/chat.jpg';
 import Ranking from '../public/Main/ranking.jpg';
 
 const Home: NextPage = () => {
-  const { data: session } = useSession(); // 테스트용
+  const router = useRouter();
+
+  const handleRoute = (route: string) => {
+    router.push(route);
+  };
+
   return (
     <Container>
       <RowFrame>
-        <CardFrame>
+        <CardFrame onClick={() => handleRoute('/generalLobby')}>
           <CardImageFrame imageUrl={General.src} />
           <FooterFrame>
             <TitleText> General Game </TitleText>
             <InfoText> 일반게임 시작하기 </InfoText>
           </FooterFrame>
         </CardFrame>
-        <CardFrame>
+        <CardFrame onClick={() => handleRoute('/rankLobby')}>
           <CardImageFrame imageUrl={Rank.src} />
           <FooterFrame>
             <TitleText> Rank Game </TitleText>
@@ -29,14 +33,14 @@ const Home: NextPage = () => {
         </CardFrame>
       </RowFrame>
       <RowFrame>
-        <CardFrame>
+        <CardFrame onClick={() => handleRoute('/chat')}>
           <CardImageFrame imageUrl={Chat.src} />
           <FooterFrame>
             <TitleText> Chatting Room </TitleText>
             <InfoText> 단체채팅 참여하기 </InfoText>
           </FooterFrame>
         </CardFrame>
-        <CardFrame>
+        <CardFrame onClick={() => handleRoute('/ranking')}>
           <CardImageFrame imageUrl={Ranking.src} />
           <FooterFrame>
             <TitleText> Top Ranking </TitleText>
