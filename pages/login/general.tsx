@@ -13,10 +13,10 @@ const General = () => {
   const passwordRef = useRef(null);
 
   const handleSubmit = async () => {
-    const result = await signIn('general', {
+    await signIn('general', {
       intraname: idRef.current,
       password: passwordRef.current,
-      redirect: false,
+      redirect: true,
       callbackUrl: '/',
     });
   };
@@ -31,7 +31,7 @@ const General = () => {
     setOnPassword(true);
   };
 
-  const handleKeyDown = (e: any) => {
+  const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {
       handleSubmit();
     }
@@ -57,7 +57,7 @@ const General = () => {
             type='password'
             placeholder='비밀번호'
             onChange={handlePasswordChange}
-            onKeyDown={(e) => handleKeyDown(e)}
+            onKeyDown={(e) => handleKeyPress(e)}
           />
           <DivisionBar />
           <Button onClick={handleSubmit}>입력 완료</Button>
