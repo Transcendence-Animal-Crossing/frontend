@@ -75,11 +75,19 @@ const Navigation = () => {
         console.log('response', response);
         if (response.status === 200) {
           const sortedFriendsList = response.body.sort((a: friendData, b: friendData) => {
-            if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
-              return -1;
-            } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
-              return 1;
+            const statusOrder: Record<string, number> = {
+              ONLINE: 0,
+              IN_GAME: 1,
+              WATCHING: 1,
+              OFFLINE: 2,
+            };
+
+            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+
+            if (statusComparison !== 0) {
+              return statusComparison;
             }
+
             return 0;
           });
 
@@ -109,10 +117,15 @@ const Navigation = () => {
               return user;
             })
             .sort((a: friendData, b: friendData) => {
-              if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
-                return -1;
-              } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
-                return 1;
+              const statusOrder: Record<string, number> = {
+                ONLINE: 0,
+                IN_GAME: 1,
+                WATCHING: 1,
+                OFFLINE: 2,
+              };
+              const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+              if (statusComparison !== 0) {
+                return statusComparison;
               }
               return 0;
             });
@@ -144,10 +157,15 @@ const Navigation = () => {
         const newFriendData: friendData = { ...response, unReadMessages: [] };
         setFriendsList((prevFriendsList) => {
           const updatedFriendsList = [...prevFriendsList, newFriendData].sort((a, b) => {
-            if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
-              return -1;
-            } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
-              return 1;
+            const statusOrder: Record<string, number> = {
+              ONLINE: 0,
+              IN_GAME: 1,
+              WATCHING: 1,
+              OFFLINE: 2,
+            };
+            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+            if (statusComparison !== 0) {
+              return statusComparison;
             }
             return 0;
           });
