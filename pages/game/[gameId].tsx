@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
 import Container from '../../components/columnLayout';
-import Header from '../../components/lobbyHeader';
+import Header from '../../components/game/gameHeader';
+import GameBackGround from '../../components/game/background';
 
 interface UserData {
   id: number;
@@ -16,6 +17,8 @@ interface UserData {
 const generalLobbyPage: React.FC = () => {
   const { gameSocket } = useSocket();
   const router = useRouter();
+  const [width, setWidth] = useState<number>(0);
+  const [height, setHeight] = useState<number>(0);
 
   // game info
   const { gameId } = router.query as { gameId: string };
@@ -40,7 +43,7 @@ const generalLobbyPage: React.FC = () => {
             setStartTime(response.game.startTime);
           } else {
             console.log('game-info error', response);
-            router.push('http://localhost:3000/404');
+            // router.push('http://localhost:3000/404');
           }
         });
 
@@ -49,7 +52,7 @@ const generalLobbyPage: React.FC = () => {
             console.log('game-ready');
           } else {
             console.log('game-ready error', response);
-            router.push('http://localhost:3000/404');
+            // router.push('http://localhost:3000/404');
           }
         });
       }
@@ -66,22 +69,36 @@ const generalLobbyPage: React.FC = () => {
     }
   }, [gameSocket]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const calculatedheight = window.innerHeight * 0.7;
+      const calculatedWidth = calculatedheight * 2;
+      setHeight(calculatedheight);
+      setWidth(calculatedWidth);
+    };
+
+    if (window) {
+      handleResize();
+
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  });
+
   return (
     <Container>
       <Header title='General Game' text='일반 게임' />
-      <GameFrame> INGAME: {gameId} </GameFrame>
+      <GameBackGround width={width} height={height} />
+      <GameContent>INGAME: {gameId}</GameContent>
     </Container>
   );
 };
 
 export default generalLobbyPage;
 
-const GameFrame = styled.div`
-  width: 70%;
-  height: 70%;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-x: hidden;
+const GameContent = styled.div`
+  position: absolute;
+  background-color: ${(props) => props.theme.colors.red};
 `;
