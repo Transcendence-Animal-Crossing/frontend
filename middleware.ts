@@ -9,27 +9,27 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
   const { pathname } = req.nextUrl;
 
   if (pathname === '/login') {
-    // if (session) {
-    //   return NextResponse.redirect(new URL('/', req.url));
-    // }
+    if (session) {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
   } else {
-    // if (!session) {
-    //   return NextResponse.redirect(new URL('/login', req.url));
-    // }
+    if (!session) {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
   }
 
   if (
     pathname === '/chat' ||
-    // pathname === '/mypage' ||
+    pathname === '/mypage' ||
     pathname === '/ranking' ||
     pathname === '/join'
   ) {
-    // if (!session) {
-    //   return NextResponse.redirect(new URL('/login', req.url));
-    // }
+    if (!session) {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
   }
 }
 
 export const config = {
-  matcher: ['/'],
+  matcher: ['/', '/login', '/chat', '/mypage', '/ranking', '/join'],
 };
