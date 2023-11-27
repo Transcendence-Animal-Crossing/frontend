@@ -5,15 +5,14 @@ import { bronze, silver, gold, platinum, diamond } from './tier';
 import info from '../../public/Icon/info.png';
 
 const UserContainer: React.FC<{
+  intraname: string;
   nickname: string;
   tierIndex: number;
   totalCount: number;
   winCount: number;
   winRate: number;
   avatar: string;
-}> = ({ nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
-  const { data: session } = useSession();
-
+}> = ({ intraname, nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const tierTexts = ['브론즈', '실버', '골드', '플래티넘', '다이아몬드'];
 
@@ -21,27 +20,12 @@ const UserContainer: React.FC<{
     <UserProfile>
       <ProfileImage src={avatar} alt='Profile Image' width={100} height={100} />
       <NameFrame>
-        <NicknameFrame>
-          {nickname ? (
-            <NicknameText> {nickname} </NicknameText>
-          ) : (
-            <NicknameText> NickName </NicknameText>
-          )}
-        </NicknameFrame>
-        {session ? <IntraText> {session.user.intraName} </IntraText> : null}
+        <NicknameText> {nickname} </NicknameText>
+        <IntraText> {intraname} </IntraText>
       </NameFrame>
       <DivisionBar />
       <TierFrame>
-        {session ? (
-          <TierImage
-            src={tierImages[tierIndex]}
-            alt='Tier Image'
-            width={30}
-            height={30}
-          />
-        ) : (
-          <TierImage src={tierImages[tierIndex]} alt='default Image' />
-        )}
+        <TierImage src={tierImages[tierIndex]} alt='Tier Image' width={30} height={30} />
         <TierText> {tierTexts[tierIndex]} </TierText>
         <InfoImage src={info} alt='info' />
       </TierFrame>
@@ -73,15 +57,13 @@ const UserProfile = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3%;
+  padding-top: 5%;
+  gap: 4%;
 `;
 
 const ProfileImage = styled(Image)`
-  padding: 5%;
   width: 55%;
   height: auto;
-  margin: 10px;
-  gap: 1%;
   border-radius: 50px;
 `;
 
@@ -92,20 +74,17 @@ const NameFrame = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`;
-
-const NicknameFrame = styled.div`
-  width: auto;
-  background-color: ${(props) => props.theme.colors.pink};
-  border-radius: 20px;
-  padding: 5%;
+  gap: 1vh;
 `;
 
 const NicknameText = styled.div`
+  background-color: ${(props) => props.theme.colors.pink};
+  border-radius: 20px;
+  padding: 5%;
   color: ${(props) => props.theme.colors.white};
   font-family: 'GiantsLight';
   text-align: center;
-  font-size: x-large;
+  font-size: 3.5vh;
 `;
 
 const IntraText = styled.div`
@@ -113,7 +92,7 @@ const IntraText = styled.div`
   color: ${(props) => props.theme.colors.brown};
   font-family: 'GiantsLight';
   text-align: center;
-  font-size: large;
+  font-size: 2vh;
 `;
 
 const DivisionBar = styled.div`
@@ -142,7 +121,7 @@ const TierText = styled.div`
   font-family: 'GiantsLight';
   vertical-align: middle;
   text-align: center;
-  font-size: large;
+  font-size: 2.5vh;
   margin: auto 0;
 `;
 
@@ -160,7 +139,7 @@ const MatchStatFrame = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  gap: 1vh;
+  gap: 2vh;
 `;
 
 const MatchStatText = styled.div`
@@ -170,7 +149,7 @@ const MatchStatText = styled.div`
   font-family: 'GiantsLight';
   display: flex;
   flex-direction: row;
-  font-size: large;
+  font-size: 2.5vh;
 `;
 
 const MatchStatName = styled.div`

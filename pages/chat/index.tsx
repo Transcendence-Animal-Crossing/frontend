@@ -35,17 +35,50 @@ const ChatLobby = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.emitWithAck('room-list').then((response) => {
+      socket.emitWithAck('room-lobby').then((response) => {
         console.log(response);
         setRoomlist(response.body);
       });
-
-      socket.on('room-list', (response) => {
-        console.log(response);
-        setRoomlist(response);
-      });
     }
   }, [socket]);
+
+  useEffect(() => {
+    if (socket) {
+      const handleRoomCreate = (response: RoomListData) => {
+        console.log('handleRoomCreate', response);
+        setRoomlist((prevRoomList) => [...prevRoomList, response]);
+      };
+
+      const handleRoomUpdate = (response: RoomListData) => {
+        const targetRoom = roomlist.find((room) => room.id === response.id);
+        if (targetRoom) {
+          setRoomlist((prevRoomList) => {
+            const updatedRoomlist = prevRoomList.map((room) => {
+              if (room.id === response.id) {
+                return response;
+              }
+              return room;
+            });
+            return updatedRoomlist;
+          });
+        }
+      };
+
+      const handleRoomDelete = (response: { id: string }) => {
+        setRoomlist((prevRoomlist) => prevRoomlist.filter((room) => room.id !== response.id));
+      };
+
+      socket.on('room-create', handleRoomCreate);
+      socket.on('room-update', handleRoomUpdate);
+      socket.on('room-delete', handleRoomDelete);
+
+      return () => {
+        socket.off('room-create', handleRoomCreate);
+        socket.off('room-update', handleRoomUpdate);
+        socket.off('room-delete', handleRoomDelete);
+      };
+    }
+  }, [socket, roomlist]);
 
   const handleRoomJoin = async (roomId: string) => {
     if (socket) {
@@ -95,16 +128,16 @@ const ChatLobby = () => {
           <Room key={index} onClick={() => handleRoomJoin(room.id)}>
             <RoomTitle>
               {room.title}
-              <>{room.mode === 'PROTECTED' && <LockImage src={Lock} alt="Lock" />}</>
+              <>{room.mode === 'PROTECTED' && <LockImage src={Lock} alt='Lock' />}</>
             </RoomTitle>
             <RoomInfo>
               <RoomInfoText>
-                <ColoredText textColor="0">방장:</ColoredText>
-                <ColoredText textColor="1">{room.owner.nickName}</ColoredText>
+                <ColoredText textColor='0'>방장:</ColoredText>
+                <ColoredText textColor='1'>{room.owner.nickName}</ColoredText>
               </RoomInfoText>
               <RoomInfoText>
-                <ColoredText textColor="0">참여인원:</ColoredText>
-                <ColoredText textColor="2">{room.headCount}명</ColoredText>
+                <ColoredText textColor='0'>참여인원:</ColoredText>
+                <ColoredText textColor='2'>{room.headCount}명</ColoredText>
               </RoomInfoText>
             </RoomInfo>
           </Room>

@@ -24,6 +24,7 @@ interface ParticipantData {
   mute: boolean;
   joinTime: Date;
   adminTime: Date;
+  status: number;
 }
 
 interface UserData {
@@ -62,7 +63,9 @@ const Chat = () => {
           .then((response) => {
             if (response.status === 200) {
               console.log(response);
-              setUserlist(response.body.participants);
+              setUserlist(
+                response.body.participants.map((user: ParticipantData) => ({ ...user, status: 1 }))
+              );
               setRoomTitle(response.body.title);
               setRoomMode(response.body.mode);
             } else {
@@ -89,15 +92,28 @@ const Chat = () => {
       };
 
       const handleRoomJoin = (response: ParticipantData) => {
-        console.log(response);
-        setUserlist((prevMessages) => [...prevMessages, response]);
+        console.log('handleRoomJoin', response);
+        const existingUser = userlist.find((user) => user.id === response.id);
+        let updatedUserlist;
+        if (existingUser) {
+          updatedUserlist = userlist.filter((user) => user.id !== response.id);
+        } else {
+          updatedUserlist = [...userlist];
+        }
+        updatedUserlist.push({ ...response, status: 1 });
+        updatedUserlist.sort((a, b) => b.grade - a.grade);
+        setUserlist(updatedUserlist);
         handleUserActionMessage(`${response.nickName}님이 들어왔습니다.`);
       };
 
       const handleRoomLeave = (response: ParticipantData) => {
         const targetId = response.id;
         console.log(targetId);
-        setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+        setUserlist((prevUserlist) =>
+          prevUserlist.map((user) =>
+            user.id === targetId ? { ...user, grade: 0, status: 0 } : user
+          )
+        );
         handleUserActionMessage(`${response.nickName}님이 나갔습니다.`);
       };
 
@@ -109,7 +125,9 @@ const Chat = () => {
           if (targetId == userId) {
             router.push('http://localhost:3000/chat/');
           }
-          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
+          );
           handleUserActionMessage(`${targetUser.nickName}님이 추방당했습니다.`);
         }
       };
@@ -122,7 +140,9 @@ const Chat = () => {
           if (targetId == userId) {
             router.push('http://localhost:3000/chat/');
           }
-          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
+          );
           const banUserData: UserData = {
             id: targetUser.id,
             nickName: targetUser.nickName,
@@ -188,6 +208,7 @@ const Chat = () => {
               }
               return user;
             });
+            sortUserList();
             return updatedUserlist;
           });
           handleUserActionMessage(`${targetUser.nickName}님이 관리자 권한을 얻었습니다.`);
@@ -205,9 +226,31 @@ const Chat = () => {
               }
               return user;
             });
+            sortUserList();
             return updatedUserlist;
           });
           handleUserActionMessage(`${targetUser.nickName}님의 관리자 권한이 해제되었습니다.`);
+        }
+      };
+
+      const handleRoomMode = (response: { mode: string } & object) => {
+        setRoomMode(response.mode);
+      };
+
+      const handleChangeOwner = (response: { id: number } & object) => {
+        const targetUser = userlist.find((user) => user.id === response.id);
+        if (targetUser) {
+          setUserlist((prevUserlist) => {
+            const updatedUserlist = prevUserlist.map((user) => {
+              if (user.id === response.id) {
+                return { ...user, grade: 2 };
+              }
+              return user;
+            });
+            sortUserList();
+            return updatedUserlist;
+          });
+          handleUserActionMessage(`${targetUser.nickName}님이 방장 권한을 얻었습니다.`);
         }
       };
 
@@ -221,6 +264,8 @@ const Chat = () => {
       socket.on('room-unmute', handleRoomUnmute);
       socket.on('add-admin', handleAddAdmin);
       socket.on('remove-admin', handleRemoveAdmin);
+      socket.on('room-mode', handleRoomMode);
+      socket.on('change-owner', handleChangeOwner);
 
       return () => {
         socket.off('room-message', handleRoomMessage);
@@ -233,6 +278,8 @@ const Chat = () => {
         socket.off('room-unmute', handleRoomUnmute);
         socket.off('add-admin', handleAddAdmin);
         socket.off('remove-admin', handleRemoveAdmin);
+        socket.off('room-mode', handleRoomMode);
+        socket.off('change-owner', handleChangeOwner);
       };
     } else {
       router.push('http://localhost:3000/chat/');
@@ -243,6 +290,12 @@ const Chat = () => {
     if (e.key === 'Enter') {
       sendMessage();
     }
+  };
+
+  const sortUserList = () => {
+    const sortedUserlist = [...userlist].sort((a, b) => b.grade - a.grade);
+    setUserlist(sortedUserlist);
+    console.log('sortUserList', userlist);
   };
 
   const sendMessage = () => {

@@ -4,14 +4,12 @@ import UserInfo from '../userInfo';
 import { getSession } from 'next-auth/react';
 
 interface GameProps {
-  game: {
-    id: number;
-    winnerScore: number;
-    loserScore: number;
-    playTime: number;
-    loser: UserProps;
-    winner: UserProps;
-  };
+  id: number;
+  winnerScore: number;
+  loserScore: number;
+  playTime: number;
+  loser: UserProps;
+  winner: UserProps;
 }
 
 interface UserProps {
@@ -21,7 +19,10 @@ interface UserProps {
   avatar: string;
 }
 
-const Game = (game: GameProps) => {
+const Game: React.FC<{
+  game: GameProps;
+  userId: number;
+}> = ({ game, userId }) => {
   const apiUrl = 'http://localhost:8080/';
   const [isWin, setIsWin] = useState(true);
   const [result, setResult] = useState('승' || '패');
@@ -45,49 +46,42 @@ const Game = (game: GameProps) => {
     handleResult();
   }, []);
 
-  const getUserId = async () => {
-    const session = await getSession();
-    const userId = session?.user.id;
-    return userId;
-  };
-
   const handleResult = async () => {
-    const userId = (await getUserId()) || 0;
     await handleWinner(userId);
   };
 
   const handleWinner = async (userId: number) => {
-    if (game.game.winner.id == userId) {
+    if (game.winner.id == userId) {
       setUser1({
-        id: game.game.winner.id,
-        nickName: game.game.winner.nickName,
-        intraName: game.game.winner.intraName,
-        score: game.game.winnerScore,
-        avatar: apiUrl + game.game.winner.avatar,
+        id: game.winner.id,
+        nickName: game.winner.nickName,
+        intraName: game.winner.intraName,
+        score: game.winnerScore,
+        avatar: apiUrl + game.winner.avatar,
       });
       setUser2({
-        id: game.game.loser.id,
-        nickName: game.game.loser.nickName,
-        intraName: game.game.loser.intraName,
-        score: game.game.loserScore,
-        avatar: apiUrl + game.game.loser.avatar,
+        id: game.loser.id,
+        nickName: game.loser.nickName,
+        intraName: game.loser.intraName,
+        score: game.loserScore,
+        avatar: apiUrl + game.loser.avatar,
       });
       setIsWin(true);
       setResult('승');
     } else {
       setUser1({
-        id: game.game.loser.id,
-        nickName: game.game.loser.nickName,
-        intraName: game.game.loser.intraName,
-        score: game.game.loserScore,
-        avatar: apiUrl + game.game.loser.avatar,
+        id: game.loser.id,
+        nickName: game.loser.nickName,
+        intraName: game.loser.intraName,
+        score: game.loserScore,
+        avatar: apiUrl + game.loser.avatar,
       });
       setUser2({
-        id: game.game.winner.id,
-        nickName: game.game.winner.nickName,
-        intraName: game.game.winner.intraName,
-        score: game.game.winnerScore,
-        avatar: apiUrl + game.game.winner.avatar,
+        id: game.winner.id,
+        nickName: game.winner.nickName,
+        intraName: game.winner.intraName,
+        score: game.winnerScore,
+        avatar: apiUrl + game.winner.avatar,
       });
       setIsWin(false);
       setResult('패');
@@ -124,13 +118,14 @@ export default Game;
 
 const GameFrame = styled.div`
   width: 100%;
-  height: 20%;
+  height: 15%;
+  max-height: 50px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   font-family: 'GiantsLight';
-  background-color: #fbf3e6;
+  background-color: ${(props) => props.theme.colors.cream};
   border-radius: 5px;
   margin-bottom: 1%;
   gap: 5%;
@@ -147,6 +142,7 @@ const GameResult = styled.div<{ result: boolean }>`
   background-color: ${(props) =>
     props.result ? props.theme.colors.green : props.theme.colors.red};
   color: ${(props) => props.theme.colors.white};
+  font-size: 2vh;
 `;
 
 const GameBody = styled.div`
@@ -157,7 +153,6 @@ const GameBody = styled.div`
   align-items: center;
   justify-content: center;
   gap: 7%;
-  background-color: #fbf3e6;
   border-radius: 5px;
   margin: 0 3%;
 `;
@@ -165,18 +160,17 @@ const GameBody = styled.div`
 const ResultText = styled.div<{ result: boolean }>`
   width: 5%;
   height: 100%;
-  font-size: medium;
+  font-size: 2vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props) =>
-    props.result ? props.theme.colors.green : props.theme.colors.red};
+  color: ${(props) => (props.result ? props.theme.colors.green : props.theme.colors.red)};
 `;
 
 const VSText = styled.div`
   width: 5%;
   height: 100%;
-  font-size: small;
+  font-size: 2vh;
   display: flex;
   align-items: center;
   justify-content: center;

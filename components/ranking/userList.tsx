@@ -4,6 +4,7 @@ import UserFrame from './userFrame';
 
 const UserList: React.FC<{
   userList: {
+    id: number;
     ranking: number;
     nickName: string;
     intraName: string;
@@ -17,6 +18,7 @@ const UserList: React.FC<{
       {userList.map((user) => {
         return (
           <UserFrame
+            id={user.id}
             ranking={user.ranking}
             nickName={user.nickName}
             intraName={user.intraName}

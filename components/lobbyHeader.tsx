@@ -1,12 +1,38 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
+import InfoModal from './infoModal';
 import info from '../public/Icon/info.png';
 import home from '../public/Icon/home.png';
 
 const Header = (props: { title: string; text: string }) => {
   const router = useRouter();
+  const [isOpenInfo, setOpenInfo] = useState<boolean>(false);
+  const [InfoButtonRect, setInfoButtonRect] = useState<{
+    top: number;
+    left: number;
+  }>({ top: 0, left: 0 });
+  const InfoButtonRef = useRef<HTMLImageElement | null>(null);
+  const infoText = '여기서는 유저 검색도 할 수 있어구리! 닉네임 또는 인트라명으로 검색해봐구리!';
+
+  useEffect(() => {
+    if (InfoButtonRef.current) {
+      const buttonRect = InfoButtonRef.current.getBoundingClientRect();
+      setInfoButtonRect({
+        top: buttonRect.top,
+        left: buttonRect.left,
+      });
+    }
+  }, []);
+
+  const handleOpenInfo = () => {
+    setOpenInfo(true);
+  };
+
+  const handleCloseInfo = () => {
+    setOpenInfo(false);
+  };
 
   const handleRouteLobby = async () => {
     router.push('/');
@@ -18,7 +44,7 @@ const Header = (props: { title: string; text: string }) => {
         <InfoFrame>
           <TitleFrame>{props.title}</TitleFrame>
           <SubText>{props.text}</SubText>
-          <InfoImage src={info} alt='info' />
+          <InfoImage src={info} alt='info' onClick={handleOpenInfo} ref={InfoButtonRef} />
         </InfoFrame>
         <ButtonFrame>
           <Button onClick={handleRouteLobby}>
@@ -26,6 +52,13 @@ const Header = (props: { title: string; text: string }) => {
           </Button>
         </ButtonFrame>
       </HeaderFrame>
+      {isOpenInfo && (
+        <InfoModal
+          handleCloseModal={handleCloseInfo}
+          infoText={infoText}
+          InfoButtonRect={InfoButtonRect}
+        />
+      )}
     </>
   );
 };
@@ -33,8 +66,8 @@ const Header = (props: { title: string; text: string }) => {
 export default Header;
 
 const HeaderFrame = styled.div`
-  width: 100%;
-  height: 10%;
+  width: 70%;
+  height: auto;
   display: flex;
   flex-direction: row;
   margin-bottom: 2vh;

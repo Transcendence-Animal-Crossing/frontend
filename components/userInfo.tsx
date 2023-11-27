@@ -9,7 +9,7 @@ const UserInfo: React.FC<{
   height: number;
 }> = ({ nickName, intraName, avatar, width, height }) => {
   return (
-    <UserInfoFrame width={width} height={height}>
+    <UserInfoFrame width={width + 20} height={height}>
       <ProfileImage src={avatar} alt='Profile Image' width={100} height={100} />
       <NameFrame>
         <NickNameFrame> {nickName} </NickNameFrame>

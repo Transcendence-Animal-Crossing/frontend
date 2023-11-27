@@ -83,7 +83,7 @@ const JoinPage: React.FC = () => {
           user: {
             ...session?.user,
             nickName: response.data.nickName,
-            avatar: response.data.filepath,
+            avatar: response.data.avatar,
           },
         });
       }
