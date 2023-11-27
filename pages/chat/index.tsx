@@ -25,7 +25,7 @@ interface RoomListData {
 }
 
 const ChatLobby = () => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const [roomlist, setRoomlist] = useState<RoomListData[]>([]);
   const [openJoinModal, setOpenJoinModal] = useState<boolean>(false);
   const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
@@ -34,16 +34,16 @@ const ChatLobby = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (socket) {
-      socket.emitWithAck('room-lobby').then((response) => {
+    if (chatSocket) {
+      chatSocket.emitWithAck('room-lobby').then((response) => {
         console.log(response);
         setRoomlist(response.body);
       });
     }
-  }, [socket]);
+  }, [chatSocket]);
 
   useEffect(() => {
-    if (socket) {
+    if (chatSocket) {
       const handleRoomCreate = (response: RoomListData) => {
         console.log('handleRoomCreate', response);
         setRoomlist((prevRoomList) => [...prevRoomList, response]);
@@ -68,26 +68,26 @@ const ChatLobby = () => {
         setRoomlist((prevRoomlist) => prevRoomlist.filter((room) => room.id !== response.id));
       };
 
-      socket.on('room-create', handleRoomCreate);
-      socket.on('room-update', handleRoomUpdate);
-      socket.on('room-delete', handleRoomDelete);
+      chatSocket.on('room-create', handleRoomCreate);
+      chatSocket.on('room-update', handleRoomUpdate);
+      chatSocket.on('room-delete', handleRoomDelete);
 
       return () => {
-        socket.off('room-create', handleRoomCreate);
-        socket.off('room-update', handleRoomUpdate);
-        socket.off('room-delete', handleRoomDelete);
+        chatSocket.off('room-create', handleRoomCreate);
+        chatSocket.off('room-update', handleRoomUpdate);
+        chatSocket.off('room-delete', handleRoomDelete);
       };
     }
-  }, [socket, roomlist]);
+  }, [chatSocket, roomlist]);
 
   const handleRoomJoin = async (roomId: string) => {
-    if (socket) {
+    if (chatSocket) {
       const room = roomlist.find((room) => room.id === roomId);
       if (room?.mode == 'PROTECTED') {
         setJoinRoomId(roomId);
         setOpenJoinModal(true);
       } else {
-        await socket
+        await chatSocket
           .emitWithAck('room-join', {
             roomId: roomId,
           })

@@ -37,7 +37,7 @@ const Header: React.FC<{
   userlist: ParticipantData[];
   banlist: UserData[];
 }> = ({ roomTitle, roomMode, roomId, userlist, banlist }) => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const { data: session } = useSession();
   const [isOwner, setIsOwner] = useState(false);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
@@ -87,9 +87,9 @@ const Header: React.FC<{
   };
 
   const handleRouteChatLobby = async () => {
-    if (socket) {
+    if (chatSocket) {
       console.log(roomId);
-      socket.emit('room-leave', { roomId: roomId });
+      chatSocket.emit('room-leave', { roomId: roomId });
     }
     router.push('/chat');
   };

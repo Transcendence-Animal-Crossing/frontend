@@ -14,7 +14,7 @@ const Header = (props: { title: string; text: string }) => {
     left: number;
   }>({ top: 0, left: 0 });
   const InfoButtonRef = useRef<HTMLImageElement | null>(null);
-  const infoText = '여기서는 유저 검색도 할 수 있어구리! 닉네임 또는 인트라명으로 검색해봐구리!';
+  const [infoText, setInfoText] = useState<string>('');
 
   useEffect(() => {
     if (InfoButtonRef.current) {
@@ -23,6 +23,15 @@ const Header = (props: { title: string; text: string }) => {
         top: buttonRect.top,
         left: buttonRect.left,
       });
+    }
+    if (props.title === 'Ranking') {
+      setInfoText('여기서는 유저 검색도 할 수 있어구리! 닉네임 또는 인트라명으로 검색해봐구리!');
+    } else if (props.title === 'General Game') {
+      setInfoText(
+        '일반 게임에서는 \'Normal\' 과 \'Hard\' , 두 가지 모드를 선택 할 수 있어구리. 진행중인 게임도 관전할 수 있으니 구경해봐구리!'
+      );
+    } else if (props.title === 'Rank Game') {
+      setInfoText('랭크게임에선 실력이 비슷한 유저와 게임을 할 수 있어구리. 너의 실력을 세상에 보여줘 구리!!');
     }
   }, []);
 

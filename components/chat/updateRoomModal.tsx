@@ -13,7 +13,7 @@ const UpdateRoomModal: React.FC<{
   handleCloseModal: () => void;
   createButtonRect: { top: number; right: number; height: number };
 }> = ({ handleCloseModal, createButtonRect }) => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState('PUBLIC');
   const [isUnlockButtonPressed, setIsUnlockButtonPressed] = useState(true);
@@ -23,8 +23,8 @@ const UpdateRoomModal: React.FC<{
   const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
 
   const handleUpdateRoom = async () => {
-    if (socket) {
-      await socket
+    if (chatSocket) {
+      await chatSocket
         .emitWithAck('room-mode', {
           mode: mode,
           password: password,

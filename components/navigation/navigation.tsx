@@ -35,9 +35,9 @@ interface RequestData {
 
 const Navigation = () => {
   const { data: session } = useSession();
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const emitter = useEventEmitter();
-  const [socketFlag, setSocketFlag] = useState<boolean>(true);
+  const [chatSocketFlag, setSocketFlag] = useState<boolean>(true);
   const [friendsList, setFriendsList] = useState<friendData[]>([]);
   const [requestList, setRequestList] = useState<RequestData[]>([]);
   const [requestListLen, setRequestListLen] = useState<number>(0);
@@ -64,20 +64,39 @@ const Navigation = () => {
   }>({ top: 0, left: 0, width: 0 });
   const userRefs: React.MutableRefObject<HTMLDivElement | null>[] = [];
 
+  // game lobby
+  const [gameButton, setGameButton] = useState<boolean>(false);
+  const [matchingGame, setMatchingGame] = useState<boolean>(false);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [isOpenmode, setIsOpenmode] = useState<boolean>(false);
+  const [modeButton, setModeButton] = useState<string>('NORMAL');
+  const [modeRect, setModeRect] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  }>({ top: 0, left: 0, width: 0 });
+  const modeRefs = useRef<HTMLImageElement | null>(null);
+  let overlayTop = `${modeRect.top * 0.96}px`;
+  let overlayLeft = `${modeRect.left + (modeRect.width / 3) * 2}px`;
+
   useEffect(() => {
-    if (socket && socketFlag) {
-      socket.emitWithAck('friend-list').then((response) => {
+    if (chatSocket && chatSocketFlag) {
+      chatSocket.emitWithAck('friend-list').then((response) => {
         console.log('response', response);
         if (response.status === 200) {
           const sortedFriendsList = response.body.sort((a: friendData, b: friendData) => {
-            if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
-              return -1;
-            } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
-              return 1;
+            const statusOrder: Record<string, number> = {
+              ONLINE: 0,
+              IN_GAME: 1,
+              WATCHING: 1,
+              OFFLINE: 2,
+            };
+            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+            if (statusComparison !== 0) {
+              return statusComparison;
             }
             return 0;
           });
-
           setFriendsList(sortedFriendsList);
           setRequestListLen(requestList.length);
           setSocketFlag(false);
@@ -87,7 +106,7 @@ const Navigation = () => {
   });
 
   useEffect(() => {
-    if (socket) {
+    if (chatSocket) {
       const handleFriendUpdate = (response: friendData) => {
         console.log('friend update', response);
         setFriendsList((preFriendslist) => {
@@ -104,10 +123,15 @@ const Navigation = () => {
               return user;
             })
             .sort((a: friendData, b: friendData) => {
-              if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
-                return -1;
-              } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
-                return 1;
+              const statusOrder: Record<string, number> = {
+                ONLINE: 0,
+                IN_GAME: 1,
+                WATCHING: 1,
+                OFFLINE: 2,
+              };
+              const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+              if (statusComparison !== 0) {
+                return statusComparison;
               }
               return 0;
             });
@@ -139,10 +163,15 @@ const Navigation = () => {
         const newFriendData: friendData = { ...response, unReadMessages: [] };
         setFriendsList((prevFriendsList) => {
           const updatedFriendsList = [...prevFriendsList, newFriendData].sort((a, b) => {
-            if (a.status === 'ONLINE' && b.status !== 'ONLINE') {
-              return -1;
-            } else if (a.status !== 'ONLINE' && b.status === 'ONLINE') {
-              return 1;
+            const statusOrder: Record<string, number> = {
+              ONLINE: 0,
+              IN_GAME: 1,
+              WATCHING: 1,
+              OFFLINE: 2,
+            };
+            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+            if (statusComparison !== 0) {
+              return statusComparison;
             }
             return 0;
           });
@@ -166,23 +195,23 @@ const Navigation = () => {
         );
       };
 
-      socket.on('friend-update', handleFriendUpdate);
-      socket.on('dm', handleDM);
-      socket.on('new-friend', handleNewFriend);
-      socket.on('delete-friend', handleDeleteFriend);
-      socket.on('new-friend-request', handleNewFriendRequest);
-      socket.on('delete-friend-request', handleDeleteFriendRequest);
+      chatSocket.on('friend-update', handleFriendUpdate);
+      chatSocket.on('dm', handleDM);
+      chatSocket.on('new-friend', handleNewFriend);
+      chatSocket.on('delete-friend', handleDeleteFriend);
+      chatSocket.on('new-friend-request', handleNewFriendRequest);
+      chatSocket.on('delete-friend-request', handleDeleteFriendRequest);
 
       return () => {
-        socket.off('friend-update', handleFriendUpdate);
-        socket.off('dm', handleDM);
-        socket.off('new-friend', handleNewFriend);
-        socket.off('delete-friend', handleDeleteFriend);
-        socket.off('new-friend-request', handleNewFriendRequest);
-        socket.off('delete-friend-request', handleDeleteFriendRequest);
+        chatSocket.off('friend-update', handleFriendUpdate);
+        chatSocket.off('dm', handleDM);
+        chatSocket.off('new-friend', handleNewFriend);
+        chatSocket.off('delete-friend', handleDeleteFriend);
+        chatSocket.off('new-friend-request', handleNewFriendRequest);
+        chatSocket.off('delete-friend-request', handleDeleteFriendRequest);
       };
     }
-  }, [socket, openDmId]);
+  }, [chatSocket, openDmId]);
 
   useEffect(() => {
     const handleOpenDM = (targetId: number) => {
@@ -203,12 +232,21 @@ const Navigation = () => {
       setOpenDmId(-1);
     };
 
+    const handleGameLobby = (response: string) => {
+      setGameButton(true);
+      if (response === 'General') {
+        setIsOpenmode(true);
+      }
+    };
+
     emitter.on('openDM', handleOpenDM);
     emitter.on('closeDM', handleCloseDM);
+    emitter.on('gameLobby', handleGameLobby);
 
     return () => {
       emitter.removeListener('openDM', handleOpenDM);
       emitter.removeListener('closeDM', handleCloseDM);
+      emitter.removeListener('gameLobby', handleGameLobby);
     };
   }, [emitter]);
 
@@ -219,6 +257,23 @@ const Navigation = () => {
   useEffect(() => {
     handleRequest();
   }, []);
+
+  useEffect(() => {
+    const handleModeButton = () => {
+      if (modeRefs.current) {
+        const buttonRect = modeRefs.current.getBoundingClientRect();
+        setModeRect({
+          top: buttonRect.top,
+          left: buttonRect.left,
+          width: buttonRect.width,
+        });
+        overlayTop = `${buttonRect.top * 0.96}px`;
+        overlayLeft = `${(buttonRect.left, +(buttonRect.width / 3) * 2)}px`;
+      }
+    };
+
+    handleModeButton();
+  }, [gameButton, modeRefs, friendsList]);
 
   const handleRequest = async () => {
     await axiosInstance.get(`/follow/request`).then((response) => {
@@ -268,6 +323,42 @@ const Navigation = () => {
     if (status === 'WATCHING') return '관전중';
   };
 
+  const handleGameStart = () => {
+    emitter.emit('gameStart');
+    setGameButton(false);
+    setMatchingGame(true);
+    setElapsedTime(0);
+  };
+
+  const handleLeaveQueue = () => {
+    emitter.emit('leaveQueue');
+    setGameButton(true);
+    setMatchingGame(false);
+    setElapsedTime(0);
+  };
+
+  const handleGeneralMode = () => {
+    if (modeButton === 'NORMAL') {
+      setModeButton('HARD');
+      emitter.emit('gameMode', 'HARD');
+    } else if (modeButton === 'HARD') {
+      setModeButton('NORMAL');
+      emitter.emit('gameMode', 'NORMAL');
+    }
+  };
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (matchingGame) {
+      intervalId = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [matchingGame]);
+
   return (
     <Container>
       <ProfileContainer />
@@ -278,7 +369,7 @@ const Navigation = () => {
         requestListLen={requestListLen}
       />
       <UserList>
-        {socketFlag && <p> loading... </p>}
+        {chatSocketFlag && <p> loading... </p>}
         {friendsList.map((friend, index) => {
           userRefs[index] = userRefs[index] || React.createRef<HTMLDivElement>();
           return (
@@ -304,6 +395,24 @@ const Navigation = () => {
             </UserInfoFrame>
           );
         })}
+        {gameButton && (
+          <GameStartButton onClick={handleGameStart} ref={modeRefs}>
+            <Text fontsize='3vh'>Game Start</Text>
+          </GameStartButton>
+        )}
+        {matchingGame && (
+          <GameStartButton onClick={handleLeaveQueue} ref={modeRefs}>
+            <Text fontsize='2.5vh'>Matching...</Text>
+            <Text fontsize='2vh'>
+              {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}
+            </Text>
+          </GameStartButton>
+        )}
+        {isOpenmode && (
+          <Content overlayTop={overlayTop} overlayLeft={overlayLeft} onClick={handleGeneralMode}>
+            {modeButton}
+          </Content>
+        )}
       </UserList>
       <>
         {session ? (
@@ -406,4 +515,56 @@ const Status = styled.div<{ textColor: string }>`
         return props.theme.colors.brown;
     }
   }};
+`;
+
+const GameStartButton = styled.div`
+  width: 70%;
+  height: 8vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8% 10%;
+  margin: 5%;
+  border-radius: 100px;
+  color: #7a5025;
+  background-color: #f7cd67;
+  text-align: center;
+  font-family: 'GiantsLight';
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  cursor: pointer;
+  gap: 1vh;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+`;
+
+const Text = styled.div<{ fontsize: string }>`
+  color: #7a5025;
+  font-family: 'GiantsLight';
+  font-size: ${(props) => props.fontsize};
+`;
+
+const Content = styled.div<{ overlayTop: string; overlayLeft: string }>`
+  position: fixed;
+  top: ${(props) => props.overlayTop};
+  left: ${(props) => props.overlayLeft};
+  width: 4.5vw;
+  height: auto;
+  background-color: rgba(103, 109, 247, 0.7);
+  color: ${(props) => props.theme.colors.white};
+  padding: 0.6% 0.5%;
+  border-radius: 20px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'GiantsLight';
+  font-size: 1.5vh;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.02);
+  }
 `;
