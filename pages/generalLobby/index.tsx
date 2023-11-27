@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useSocket } from '../../utils/SocketProvider';
 import { useEventEmitter } from '../../utils/EventEmitterProvider';
@@ -11,14 +12,56 @@ const generalLobbyPage: React.FC = () => {
   const { data: session } = useSession();
   const { queueSocket } = useSocket();
   const emitter = useEventEmitter();
-
-  useEffect(()=>{
-    emitter.emit('gameLobby');
-  },[]);
+  const router = useRouter();
 
   useEffect(() => {
+    emitter.emit('gameLobby');
+  }, []);
 
-  },[emitter]);
+  useEffect(() => {
+    if (queueSocket) {
+      const handleQueueMatched = (response: { id: string }) => {
+        const responseGameId = response.id;
+        router.push(`http://localhost:3000/game/${responseGameId}`);
+      };
+
+      queueSocket.on('queue-matched', handleQueueMatched);
+
+      return () => {
+        queueSocket.off('queue-matched', handleQueueMatched);
+      };
+    }
+  }, [queueSocket]);
+
+  useEffect(() => {
+    const handleGameStart = () => {
+      if (queueSocket) {
+        queueSocket
+          .emitWithAck('queue-join', {
+            type: 'NORMAL',
+          })
+          .then((response) => {
+            console.log(response);
+          });
+      }
+    };
+
+    const handleLeaveQueue = () => {
+      if (queueSocket) {
+        queueSocket.emitWithAck('queue-leave').then((response) => {
+          console.log(response);
+        });
+      }
+    };
+
+    emitter.on('gameStart', handleGameStart);
+    emitter.on('leaveQueue', handleLeaveQueue);
+
+    return () => {
+      emitter.removeListener('gameStart', handleGameStart);
+      emitter.removeListener('leaveQueue', handleLeaveQueue);
+    };
+  }, [emitter, queueSocket]);
 
   return (
     <Container>

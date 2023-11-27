@@ -64,6 +64,7 @@ const Navigation = () => {
   }>({ top: 0, left: 0, width: 0 });
   const userRefs: React.MutableRefObject<HTMLDivElement | null>[] = [];
   const [gameButton, setGameButton] = useState<boolean>(false);
+  const [matchingGame, setMatchingGame] = useState<boolean>(false);
 
   useEffect(() => {
     if (chatSocket && chatSocketFlag) {
@@ -275,6 +276,18 @@ const Navigation = () => {
     if (status === 'WATCHING') return '관전중';
   };
 
+  const handleGameStart = () => {
+    emitter.emit('gameStart');
+    setGameButton(false);
+    setMatchingGame(true);
+  };
+
+  const handleLeaveQueue = () => {
+    emitter.emit('leaveQueue');
+    setGameButton(true);
+    setMatchingGame(false);
+  };
+
   return (
     <Container>
       <ProfileContainer />
@@ -311,7 +324,8 @@ const Navigation = () => {
             </UserInfoFrame>
           );
         })}
-        {gameButton && <GameStartButton> Game Start </GameStartButton>}
+        {gameButton && <GameStartButton onClick={handleGameStart}> Game Start </GameStartButton>}
+        {matchingGame && <GameStartButton onClick={handleLeaveQueue}> 매칭중.. </GameStartButton>}
       </UserList>
       <>
         {session ? (
