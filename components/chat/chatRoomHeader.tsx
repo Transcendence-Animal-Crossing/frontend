@@ -3,10 +3,13 @@ import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
+import { useSession } from 'next-auth/react';
 import UserListModal from './userListModal';
+import UpdateRoomModal from './updateRoomModal';
 import users from '../../public/Icon/users.png';
 import exit from '../../public/Icon/exit.png';
 import lock from '../../public/Chat/lock_gold.png';
+import setting from '../../public/Icon/setting.png';
 
 interface ParticipantData {
   id: number;
@@ -17,6 +20,7 @@ interface ParticipantData {
   mute: boolean;
   joinTime: Date;
   adminTime: Date;
+  status: number;
 }
 
 interface UserData {
@@ -33,8 +37,11 @@ const Header: React.FC<{
   userlist: ParticipantData[];
   banlist: UserData[];
 }> = ({ roomTitle, roomMode, roomId, userlist, banlist }) => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
+  const { data: session } = useSession();
+  const [isOwner, setIsOwner] = useState(false);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
+  const [isOpenSetModal, setOpenSetModal] = useState<boolean>(false);
   const [createButtonRect, setCreateButtonRect] = useState<{
     top: number;
     right: number;
@@ -42,6 +49,15 @@ const Header: React.FC<{
   }>({ top: 0, right: 0, height: 0 });
   const CreateButtonRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const userId = session?.user.id;
+    const user = userlist.find((user) => user.id === userId);
+    console.log('user', user);
+    if (user && user.grade == 2) {
+      setIsOwner(true);
+    }
+  }, [userlist]);
 
   useEffect(() => {
     if (CreateButtonRef.current) {
@@ -62,10 +78,18 @@ const Header: React.FC<{
     setOpenModal(false);
   };
 
+  const handleOpenSetModal = () => {
+    setOpenSetModal(true);
+  };
+
+  const handleCloseSetModal = () => {
+    setOpenSetModal(false);
+  };
+
   const handleRouteChatLobby = async () => {
-    if (socket) {
+    if (chatSocket) {
       console.log(roomId);
-      socket.emit('room-leave', { roomId: roomId });
+      chatSocket.emit('room-leave', { roomId: roomId });
     }
     router.push('/chat');
   };
@@ -78,6 +102,11 @@ const Header: React.FC<{
           {roomMode == 'PROTECTED' && <InfoImage src={lock} alt="lock" />}
         </InfoFrame>
         <ButtonFrame>
+          {isOwner && (
+            <Button onClick={handleOpenSetModal} ref={CreateButtonRef}>
+              <InfoImage src={setting} alt="setting" />
+            </Button>
+          )}
           <Button onClick={handleOpenModal} ref={CreateButtonRef}>
             <InfoImage src={users} alt="users" />
           </Button>
@@ -92,6 +121,12 @@ const Header: React.FC<{
           roomId={roomId}
           userlist={userlist}
           banlist={banlist}
+          createButtonRect={createButtonRect}
+        />
+      )}
+      {isOpenSetModal && (
+        <UpdateRoomModal
+          handleCloseModal={handleCloseSetModal}
           createButtonRect={createButtonRect}
         />
       )}

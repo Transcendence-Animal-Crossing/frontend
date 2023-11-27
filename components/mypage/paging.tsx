@@ -110,28 +110,33 @@ const PagingFrame = styled.div`
 `;
 
 const StyledPagination = styled.div`
-  .pagination { 
-    display: flex; 
-    justify-content: center; 
-    margin-top: 15px; 
-    font-family: "GiantsLight";
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    font-family: 'GiantsLight';
     gap: 0.5%;
   }
   ul.pagination li {
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 4vh;
+    height: 4vh;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1rem; 
+    font-size: 2vh;
   }
-  ul.pagination li a { 
-    text-decoration: none; color: white; font-size: 1rem;
-    color: ${(props) => props.theme.colors.lightgold}}
-  ul.pagination li.active a { color: white; }
+  ul.pagination li a {
+    text-decoration: none;
+    color: white;
+    font-size: 2vh;
+    color: ${(props) => props.theme.colors.lightgold};
+  }
+  ul.pagination li.active a {
+    color: white;
+  }
   ul.pagination li.active {
-      background-color: ${(props) => props.theme.colors.brown} }
+    background-color: ${(props) => props.theme.colors.brown};
   }
 `;

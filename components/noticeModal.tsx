@@ -17,9 +17,8 @@ const NoticeModal: React.FC<{
       <Container onClick={handleOverlayClick}>
         <ContentFrame onClick={handleOverlayClick}>
           <Content>
-            <GuriImage src={Isabelle} alt="Isabelle" />
+            <GuriImage src={Isabelle} alt='Isabelle' />
             <Text> {noticeMessage} </Text>
-
             <CompleteButtonFrame>
               <CompleteButton onClick={handleOverlayClick}> 닫기 </CompleteButton>
             </CompleteButtonFrame>

@@ -6,6 +6,7 @@ declare module 'styled-components' {
       ivory: string;
       brown: string;
       brown05: string;
+      brown08: string;
       pink: string;
       white: string;
       Emerald: string;
@@ -21,6 +22,8 @@ declare module 'styled-components' {
       indigo: string;
       yellow: string;
       darkBrown: string;
+      gray: string;
+      purple: string;
     };
   }
 }
@@ -30,6 +33,7 @@ export const theme: DefaultTheme = {
     ivory: '#f8f4e8',
     brown: '#8a7b66',
     brown05: 'rgba(138, 123, 102, 0.5)',
+    brown08: 'rgba(138, 123, 102, 0.8)',
     pink: '#E2826A',
     white: '#FFFFF7',
     Emerald: '#04AFA6',
@@ -45,5 +49,7 @@ export const theme: DefaultTheme = {
     indigo: '#253B52',
     yellow: '#f7cd67',
     darkBrown: '#7A5025',
+    gray: '#BDBDBD',
+    purple: '#889DF0',
   },
 };

@@ -10,13 +10,13 @@ const JoinRoomModal: React.FC<{
   handleFailModal: () => void;
   roomId: string;
 }> = ({ handleCloseModal, handleFailModal, roomId }) => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const [password, setPassword] = useState('');
   const router = useRouter();
 
   const handleRoomJoin = async (roomId: string) => {
-    if (socket) {
-      await socket
+    if (chatSocket) {
+      await chatSocket
         .emitWithAck('room-join', {
           roomId: roomId,
           password: password,

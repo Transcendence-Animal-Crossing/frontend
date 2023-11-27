@@ -24,6 +24,7 @@ interface ParticipantData {
   mute: boolean;
   joinTime: Date;
   adminTime: Date;
+  status: number;
 }
 
 interface UserData {
@@ -39,7 +40,7 @@ interface ActionRoomData {
 }
 
 const Chat = () => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const [userlist, setUserlist] = useState<ParticipantData[]>([]);
   const [banlist, setBanlist] = useState<UserData[]>([]);
   const [roomTitle, setRoomTitle] = useState('');
@@ -53,16 +54,18 @@ const Chat = () => {
   const { roomId } = router.query as { roomId: string };
 
   useEffect(() => {
-    if (socket) {
+    if (chatSocket) {
       if (!roomTitle) {
-        socket
+        chatSocket
           .emitWithAck('room-detail', {
             roomId: roomId,
           })
           .then((response) => {
             if (response.status === 200) {
               console.log(response);
-              setUserlist(response.body.participants);
+              setUserlist(
+                response.body.participants.map((user: ParticipantData) => ({ ...user, status: 1 }))
+              );
               setRoomTitle(response.body.title);
               setRoomMode(response.body.mode);
             } else {
@@ -89,15 +92,28 @@ const Chat = () => {
       };
 
       const handleRoomJoin = (response: ParticipantData) => {
-        console.log(response);
-        setUserlist((prevMessages) => [...prevMessages, response]);
+        console.log('handleRoomJoin', response);
+        const existingUser = userlist.find((user) => user.id === response.id);
+        let updatedUserlist;
+        if (existingUser) {
+          updatedUserlist = userlist.filter((user) => user.id !== response.id);
+        } else {
+          updatedUserlist = [...userlist];
+        }
+        updatedUserlist.push({ ...response, status: 1 });
+        updatedUserlist.sort((a, b) => b.grade - a.grade);
+        setUserlist(updatedUserlist);
         handleUserActionMessage(`${response.nickName}님이 들어왔습니다.`);
       };
 
       const handleRoomLeave = (response: ParticipantData) => {
         const targetId = response.id;
         console.log(targetId);
-        setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+        setUserlist((prevUserlist) =>
+          prevUserlist.map((user) =>
+            user.id === targetId ? { ...user, grade: 0, status: 0 } : user
+          )
+        );
         handleUserActionMessage(`${response.nickName}님이 나갔습니다.`);
       };
 
@@ -109,7 +125,9 @@ const Chat = () => {
           if (targetId == userId) {
             router.push('http://localhost:3000/chat/');
           }
-          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
+          );
           handleUserActionMessage(`${targetUser.nickName}님이 추방당했습니다.`);
         }
       };
@@ -122,7 +140,9 @@ const Chat = () => {
           if (targetId == userId) {
             router.push('http://localhost:3000/chat/');
           }
-          setUserlist((prevUserlist) => prevUserlist.filter((user) => user.id !== targetId));
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
+          );
           const banUserData: UserData = {
             id: targetUser.id,
             nickName: targetUser.nickName,
@@ -188,6 +208,7 @@ const Chat = () => {
               }
               return user;
             });
+            sortUserList();
             return updatedUserlist;
           });
           handleUserActionMessage(`${targetUser.nickName}님이 관리자 권한을 얻었습니다.`);
@@ -205,39 +226,65 @@ const Chat = () => {
               }
               return user;
             });
+            sortUserList();
             return updatedUserlist;
           });
           handleUserActionMessage(`${targetUser.nickName}님의 관리자 권한이 해제되었습니다.`);
         }
       };
 
-      socket.on('room-message', handleRoomMessage);
-      socket.on('room-join', handleRoomJoin);
-      socket.on('room-leave', handleRoomLeave);
-      socket.on('room-kick', handleRoomKick);
-      socket.on('room-ban', handleRoomBan);
-      socket.on('room-mute', handleRoomMute);
-      socket.on('room-unban', handleRoomUnban);
-      socket.on('room-unmute', handleRoomUnmute);
-      socket.on('add-admin', handleAddAdmin);
-      socket.on('remove-admin', handleRemoveAdmin);
+      const handleRoomMode = (response: { mode: string } & object) => {
+        setRoomMode(response.mode);
+      };
+
+      const handleChangeOwner = (response: { id: number } & object) => {
+        const targetUser = userlist.find((user) => user.id === response.id);
+        if (targetUser) {
+          setUserlist((prevUserlist) => {
+            const updatedUserlist = prevUserlist.map((user) => {
+              if (user.id === response.id) {
+                return { ...user, grade: 2 };
+              }
+              return user;
+            });
+            sortUserList();
+            return updatedUserlist;
+          });
+          handleUserActionMessage(`${targetUser.nickName}님이 방장 권한을 얻었습니다.`);
+        }
+      };
+
+      chatSocket.on('room-message', handleRoomMessage);
+      chatSocket.on('room-join', handleRoomJoin);
+      chatSocket.on('room-leave', handleRoomLeave);
+      chatSocket.on('room-kick', handleRoomKick);
+      chatSocket.on('room-ban', handleRoomBan);
+      chatSocket.on('room-mute', handleRoomMute);
+      chatSocket.on('room-unban', handleRoomUnban);
+      chatSocket.on('room-unmute', handleRoomUnmute);
+      chatSocket.on('add-admin', handleAddAdmin);
+      chatSocket.on('remove-admin', handleRemoveAdmin);
+      chatSocket.on('room-mode', handleRoomMode);
+      chatSocket.on('change-owner', handleChangeOwner);
 
       return () => {
-        socket.off('room-message', handleRoomMessage);
-        socket.off('room-join', handleRoomJoin);
-        socket.off('room-leave', handleRoomLeave);
-        socket.off('room-kick', handleRoomKick);
-        socket.off('room-ban', handleRoomBan);
-        socket.off('room-mute', handleRoomMute);
-        socket.off('room-unban', handleRoomUnban);
-        socket.off('room-unmute', handleRoomUnmute);
-        socket.off('add-admin', handleAddAdmin);
-        socket.off('remove-admin', handleRemoveAdmin);
+        chatSocket.off('room-message', handleRoomMessage);
+        chatSocket.off('room-join', handleRoomJoin);
+        chatSocket.off('room-leave', handleRoomLeave);
+        chatSocket.off('room-kick', handleRoomKick);
+        chatSocket.off('room-ban', handleRoomBan);
+        chatSocket.off('room-mute', handleRoomMute);
+        chatSocket.off('room-unban', handleRoomUnban);
+        chatSocket.off('room-unmute', handleRoomUnmute);
+        chatSocket.off('add-admin', handleAddAdmin);
+        chatSocket.off('remove-admin', handleRemoveAdmin);
+        chatSocket.off('room-mode', handleRoomMode);
+        chatSocket.off('change-owner', handleChangeOwner);
       };
     } else {
       router.push('http://localhost:3000/chat/');
     }
-  }, [socket, userlist, banlist, roomTitle, roomId, router]);
+  }, [chatSocket, userlist, banlist, roomTitle, roomId, router]);
 
   const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {
@@ -245,9 +292,15 @@ const Chat = () => {
     }
   };
 
+  const sortUserList = () => {
+    const sortedUserlist = [...userlist].sort((a, b) => b.grade - a.grade);
+    setUserlist(sortedUserlist);
+    console.log('sortUserList', userlist);
+  };
+
   const sendMessage = () => {
-    if (socket && messageText) {
-      socket
+    if (chatSocket && messageText) {
+      chatSocket
         .emitWithAck('room-message', {
           text: messageText,
           roomId: roomId,

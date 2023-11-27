@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import UserContainer from '../../components/mypage/user';
 import { getSession } from 'next-auth/react';
@@ -12,21 +12,21 @@ import Container from '../../components/columnNevLayout';
 import Game from '../../components/mypage/game';
 import axios from 'axios';
 
-const MyPage = () => {
+const UserPage = () => {
   const apiUrl = 'http://localhost:8080/';
   const router = useRouter();
+  const { userId } = router.query as { userId: string };
 
   // userInfo
+  const [intraname, setIntraname] = useState('intraname');
   const [nickname, setNickname] = useState('nickname');
-  const [avatarPath, setAvatarPath] = useState(
-    apiUrl + 'original/profile2.png'
-  );
+  const [avatarPath, setAvatarPath] = useState(apiUrl + 'original/profile2.png');
   const [tierIndex, setTierIndex] = useState(0);
 
   // const [twofactor, setTwofactor] = useState(false);
 
   // achievement
-  const [achieveList, setAchieveList] = useState([0, 0, 0, 0, 0, 0, 0]);
+  const [achieveList, setAchieveList] = useState([1, 0, 0, 0, 0, 0, 0]);
 
   // record
   const [totalCount, setTotalCount] = useState(1);
@@ -44,32 +44,30 @@ const MyPage = () => {
   });
 
   useEffect(() => {
-    getUserInfo();
-  }, []);
+    if (userId) {
+      getUserInfo();
+    }
+  }, [userId]);
 
   useEffect(() => {
-    getRecord();
-    getMatchHistory();
-  }, [mode]);
+    if (userId) {
+      getRecord();
+      getMatchHistory();
+    }
+  }, [userId, mode]);
 
   const handleRouteLobby = async () => {
     router.push('/');
   };
 
-  const getUserId = async () => {
-    const session = await getSession();
-    const userId = session?.user.id;
-    return userId;
-  };
-
   const getUserInfo = async () => {
     try {
-      const userId = await getUserId();
       const response = await axiosInstance.get('/users/detail', {
         params: { id: userId },
       });
       console.log('getUserInfo() response');
       console.log(response);
+      await setIntraname(response.data.intraName);
       await setNickname(response.data.nickName);
       await setAvatarPath(apiUrl + response.data.avatar);
       await setAchieveList(response.data.achievements);
@@ -82,7 +80,6 @@ const MyPage = () => {
 
   const getRecord = async () => {
     try {
-      const userId = await getUserId();
       const response = await axiosInstance.get('/record', {
         params: {
           id: userId,
@@ -109,7 +106,6 @@ const MyPage = () => {
 
   const getMatchHistory = async () => {
     try {
-      const userId = await getUserId();
       await initMatchHistory();
       const response = await axiosInstance.get('/games/' + mode, {
         params: {
@@ -146,8 +142,14 @@ const MyPage = () => {
   const handleRank = async (rankScore: number) => {
     if (rankScore < 1000) {
       setTierIndex(0);
-    } else {
+    } else if (rankScore < 3000) {
       setTierIndex(1);
+    } else if (rankScore < 5000) {
+      setTierIndex(2);
+    } else if (rankScore < 7000) {
+      setTierIndex(3);
+    } else {
+      setTierIndex(4);
     }
   };
 
@@ -166,7 +168,6 @@ const MyPage = () => {
       return;
     }
     setTimeout(async () => {
-      const userId = await getUserId();
       try {
         const response = await axiosInstance.get('/games/' + mode, {
           params: {
@@ -220,6 +221,7 @@ const MyPage = () => {
     <Container>
       <MyPageFrame>
         <UserContainer
+          intraname={intraname}
           avatar={avatarPath}
           nickname={nickname}
           tierIndex={tierIndex}
@@ -235,16 +237,10 @@ const MyPage = () => {
             <MatchHistoryHeader>
               <Mode>
                 <ModeButton onClick={() => handleMode('general')}>
-                  <div
-                    className={`${mode === 'general' ? 'select' : 'unselect'}`}
-                  >
-                    일반
-                  </div>
+                  <div className={`${mode === 'general' ? 'select' : 'unselect'}`}>일반</div>
                 </ModeButton>
                 <ModeButton onClick={() => handleMode('rank')}>
-                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>
-                    랭크
-                  </div>
+                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>랭크</div>
                 </ModeButton>
               </Mode>
               <Button onClick={handleRouteLobby}>
@@ -257,10 +253,10 @@ const MyPage = () => {
                 next={fetchMoreData}
                 hasMore={hasMore}
                 loader={<div className='loader'>Loading...</div>}
-                height={300}
+                height={'100%'}
               >
                 {matchHistory.games.map((game) => (
-                  <Game game={game} />
+                  <Game game={game} userId={Number(userId)} />
                 ))}
               </InfiniteScroll>
             </MatchHistory>
@@ -273,13 +269,13 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default UserPage;
 
 const MyPageFrame = styled.div`
   width: 70%;
-  height: 70%;
+  height: 80%;
   display: flex;
-  flex Direction: row;
+  flex-direction: row;
 `;
 
 const InfoContainer = styled.div`
@@ -288,6 +284,7 @@ const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
 `;
 
 const DivisionBar = styled.div`
@@ -304,6 +301,7 @@ const MatchHistoryFrame = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1%;
+  box-sizing: border-box;
 `;
 
 const MatchHistoryHeader = styled.div`
@@ -328,6 +326,7 @@ const ModeButton = styled.button`
   width: 100%;
   height: 100%;
   background-color: ${(props) => props.theme.colors.lightbrown};
+  font-size: 1.7vh;
   font-family: 'GiantsLight';
   border-radius: 15px;
   border: none;
@@ -345,7 +344,7 @@ const ModeButton = styled.button`
 `;
 
 const Button = styled.div`
-  height: 30%;
+  height: 40%;
   width: auto;
   padding: 0.5vh 1.5vh;
   background-color: ${(props) => props.theme.colors.beige};

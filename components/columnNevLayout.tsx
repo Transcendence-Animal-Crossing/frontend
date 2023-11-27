@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Head from 'next/head';
 import { ReactNode } from 'react';
-import Nev from './nevigation';
+import Nev from './navigation/navigation';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,7 +12,7 @@ const columnNevLayout = ({ children }: LayoutProps) => {
     <>
       <Head>
         <title>Crossing PingPong</title>
-        <link rel="icon" href="/Login/logo.png" />
+        <link rel='icon' href='/Login/logo.png' />
       </Head>
       <Frame>
         <Container>{children}</Container>

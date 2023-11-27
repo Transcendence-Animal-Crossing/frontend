@@ -31,7 +31,7 @@ const AchievementHeader = styled.div`
   text-align: center;
   color: ${(props) => props.theme.colors.brown};
   font-family: 'GiantsLight';
-  font-size: large;
+  font-size: 2vh;
   flex-direction: row;
   align-items: center;
 `;

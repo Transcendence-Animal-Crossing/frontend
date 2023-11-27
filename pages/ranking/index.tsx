@@ -96,8 +96,8 @@ const Ranking = () => {
 
   return (
     <Container>
+      <Header title='Ranking' text='전체 랭킹' />
       <RankingFrame>
-        <Header title='Ranking' text='전체 랭킹' />
         <SearchFrame>
           <Button onClick={handleSearch}>
             <InfoImage src={search} alt='Search Button' />
@@ -114,16 +114,8 @@ const Ranking = () => {
         <RankingListFrame>
           <UserList userList={userList}></UserList>
           <PageButton>
-            <PageMoveImage
-              src={prev}
-              alt='Prev Button'
-              onClick={handlePrevButton}
-            />
-            <PageMoveImage
-              src={next}
-              alt='Next Button'
-              onClick={handlerNextButton}
-            />
+            <PageMoveImage src={prev} alt='Prev Button' onClick={handlePrevButton} />
+            <PageMoveImage src={next} alt='Next Button' onClick={handlerNextButton} />
           </PageButton>
         </RankingListFrame>
       </RankingFrame>

@@ -1,26 +1,28 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { bronze, silver, gold, platinum, diamond } from './tier';
 import UserInfo from '../userInfo';
+import UserModal from '../userModal';
 
 const UserFrame: React.FC<{
+  id: number;
   ranking: number;
   nickName: string;
   intraName: string;
   avatar: string;
   rankScore: number;
   rankGameTotalCount: number;
-}> = ({
-  ranking,
-  nickName,
-  intraName,
-  avatar,
-  rankScore,
-  rankGameTotalCount,
-}) => {
+}> = ({ id, ranking, nickName, intraName, avatar, rankScore, rankGameTotalCount }) => {
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const [tierIndex, setTierIndex] = useState(0);
+  const [isOpenModal, setOpenModal] = useState<boolean>(false);
+  const [userRect, setUserRect] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  }>({ top: 0, left: 0, width: 0 });
+  const userRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
     handleRank(rankScore);
@@ -40,25 +42,41 @@ const UserFrame: React.FC<{
     }
   };
 
+  const handleClickUser = () => {
+    if (userRef.current) {
+      const rect = userRef.current.getBoundingClientRect();
+      setUserRect({
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+      });
+    }
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
   return (
     <UserRankFrame>
       <LeftFrame>
         <RankingFrame> {ranking} </RankingFrame>
-        <TierImage
-          src={tierImages[tierIndex]}
-          alt='Tier Image'
-          width={30}
-          height={30}
-        />
-        <UserInfo
-          nickName={nickName}
-          intraName={intraName}
-          avatar={avatar}
-          width={50}
-          height={4.5}
-        />
+        <TierImage src={tierImages[tierIndex]} alt='Tier Image' width={30} height={30} />
+        <UserTouchFrame onClick={handleClickUser} ref={userRef}>
+          <UserInfo
+            nickName={nickName}
+            intraName={intraName}
+            avatar={avatar}
+            width={50}
+            height={4.5}
+          />
+        </UserTouchFrame>
       </LeftFrame>
       <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
+      {isOpenModal ? (
+        <UserModal handleCloseModal={handleCloseModal} userId={id} userRect={userRect} />
+      ) : null}
     </UserRankFrame>
   );
 };
@@ -82,6 +100,10 @@ const LeftFrame = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 10%;
+`;
+
+const UserTouchFrame = styled.div`
+  width: 50%;
 `;
 
 const RankingFrame = styled.div`

@@ -10,6 +10,7 @@ import mute from '../../public/Chat/mute.png';
 import unmute from '../../public/Chat/unmute.png';
 import slider from '../../public/Chat/slider.png';
 import users from '../../public/Icon/users.png';
+import crown from '../../public/Icon/crown.png';
 
 interface ParticipantData {
   id: number;
@@ -20,6 +21,7 @@ interface ParticipantData {
   mute: boolean;
   joinTime: Date;
   adminTime: Date;
+  status: number;
 }
 
 interface UserData {
@@ -40,7 +42,7 @@ const userListModal: React.FC<{
   const [isAdmin, setIsAdmin] = useState(false);
   const [showBan, setShowBan] = useState(false);
   const [headerText, setHeaderText] = useState('참여중인 유저목록');
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const { data: session } = useSession();
   const overlayLeft = `${createButtonRect.right - window.innerWidth * 0.2}px`;
   const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
@@ -59,6 +61,10 @@ const userListModal: React.FC<{
       setIsAdmin(false);
     }
   }, [userlist]);
+
+  useEffect(() => {
+    console.log(userlist);
+  });
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -82,8 +88,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserKick = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-kick', {
+    if (chatSocket) {
+      chatSocket.emit('room-kick', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -91,8 +97,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserBan = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-ban', {
+    if (chatSocket) {
+      chatSocket.emit('room-ban', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -100,8 +106,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserUnban = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-unban', {
+    if (chatSocket) {
+      chatSocket.emit('room-unban', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -109,8 +115,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserMute = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-mute', {
+    if (chatSocket) {
+      chatSocket.emit('room-mute', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -118,8 +124,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserUnmute = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-unmute', {
+    if (chatSocket) {
+      chatSocket.emit('room-unmute', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -128,14 +134,14 @@ const userListModal: React.FC<{
 
   const handleUserAdmin = (targetId: number) => {
     const targetUser = userlist.find((user) => user.id === targetId);
-    if (socket && targetUser) {
+    if (chatSocket && targetUser) {
       if (targetUser.grade == 1) {
-        socket.emit('remove-admin', {
+        chatSocket.emit('remove-admin', {
           roomId: roomId,
           targetId: targetId,
         });
       } else {
-        socket.emit('add-admin', {
+        chatSocket.emit('add-admin', {
           roomId: roomId,
           targetId: targetId,
         });
@@ -145,7 +151,7 @@ const userListModal: React.FC<{
 
   const handleUserAdminText = (targetId: number) => {
     const targetUser = userlist.find((user) => user.id === targetId);
-    if (socket && targetUser) {
+    if (chatSocket && targetUser) {
       if (targetUser.grade == 1) {
         return 'Remove Admin';
       } else {
@@ -162,12 +168,12 @@ const userListModal: React.FC<{
             {headerText}
             <HeaderImageFrame>
               {isAdmin && !showBan && (
-                <HeaderImage src={slider} alt="slider" onClick={handlShowBanList} />
+                <HeaderImage src={slider} alt='slider' onClick={handlShowBanList} />
               )}
               {isAdmin && showBan && (
-                <HeaderImage src={users} alt="users" onClick={handlShowBanList} />
+                <HeaderImage src={users} alt='users' onClick={handlShowBanList} />
               )}
-              <HeaderImage src={exit} alt="exit" onClick={handleOverlayClick} />
+              <HeaderImage src={exit} alt='exit' onClick={handleOverlayClick} />
             </HeaderImageFrame>
           </Header>
           {showBan && (
@@ -176,12 +182,12 @@ const userListModal: React.FC<{
                 <UserFrame key={index}>
                   <UserImage
                     src={handleSetUserAvatar(user.avatar)}
-                    alt="Profle Image"
+                    alt='Profle Image'
                     width={100}
                     height={100}
                   />
-                  <Text fontSize="2vh">{user.nickName}</Text>
-                  <Text fontSize="1.2vh">{user.intraName}</Text>
+                  <Text fontSize='2vh'>{user.nickName}</Text>
+                  <Text fontSize='1.2vh'>{user.intraName}</Text>
                   <SetAdmin
                     onClick={() => {
                       handleUserUnban(user.id);
@@ -195,63 +201,68 @@ const userListModal: React.FC<{
           )}
           {!showBan && (
             <UsersFrame userCount={userlist.length}>
-              {userlist.map((user, index) => (
-                <UserFrame key={index}>
-                  <UserImage
-                    src={handleSetUserAvatar(user.avatar)}
-                    alt="Profle Image"
-                    width={100}
-                    height={100}
-                  />
-                  <Text fontSize="2vh">{user.nickName}</Text>
-                  <Text fontSize="1.2vh">{user.intraName}</Text>
-                  {isAdmin && (
-                    <AdminFrame>
-                      <AdminImage
-                        src={kick}
-                        alt="kick"
-                        onClick={() => {
-                          handleUserKick(user.id);
-                        }}
-                      />
-                      <AdminImage
-                        src={ban}
-                        alt="ban"
-                        onClick={() => {
-                          handleUserBan(user.id);
-                        }}
-                      />
-                      {user.mute && (
+              {userlist
+                .filter((user) => user.status === 1)
+                .map((user, index) => (
+                  <UserFrame key={index}>
+                    <UserImage
+                      src={handleSetUserAvatar(user.avatar)}
+                      alt='Profle Image'
+                      width={100}
+                      height={100}
+                    />
+                    <OwnerFrame>
+                      <Text fontSize='2vh'>{user.nickName}</Text>
+                      {user.grade === 2 && <OwnerImage src={crown} alt='crown' />}
+                    </OwnerFrame>
+                    <Text fontSize='1.2vh'>{user.intraName}</Text>
+                    {isAdmin && (
+                      <AdminFrame>
                         <AdminImage
-                          src={unmute}
-                          alt="unmute"
+                          src={kick}
+                          alt='kick'
                           onClick={() => {
-                            handleUserUnmute(user.id);
+                            handleUserKick(user.id);
                           }}
                         />
-                      )}
-                      {!user.mute && (
                         <AdminImage
-                          src={mute}
-                          alt="mute"
+                          src={ban}
+                          alt='ban'
                           onClick={() => {
-                            handleUserMute(user.id);
+                            handleUserBan(user.id);
                           }}
                         />
-                      )}
-                    </AdminFrame>
-                  )}
-                  {isOwner && (
-                    <SetAdmin
-                      onClick={() => {
-                        handleUserAdmin(user.id);
-                      }}
-                    >
-                      {handleUserAdminText(user.id)}
-                    </SetAdmin>
-                  )}
-                </UserFrame>
-              ))}
+                        {user.mute && (
+                          <AdminImage
+                            src={unmute}
+                            alt='unmute'
+                            onClick={() => {
+                              handleUserUnmute(user.id);
+                            }}
+                          />
+                        )}
+                        {!user.mute && (
+                          <AdminImage
+                            src={mute}
+                            alt='mute'
+                            onClick={() => {
+                              handleUserMute(user.id);
+                            }}
+                          />
+                        )}
+                      </AdminFrame>
+                    )}
+                    {isOwner && (
+                      <SetAdmin
+                        onClick={() => {
+                          handleUserAdmin(user.id);
+                        }}
+                      >
+                        {handleUserAdminText(user.id)}
+                      </SetAdmin>
+                    )}
+                  </UserFrame>
+                ))}
             </UsersFrame>
           )}
         </Content>
@@ -343,6 +354,20 @@ const UserImage = styled(Image)`
   width: 5vw;
   height: auto;
   border-radius: 50px;
+`;
+
+const OwnerFrame = styled.div`
+  width: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3vw;
+`;
+
+const OwnerImage = styled(Image)`
+  width: 1.2vw;
+  height: auto;
 `;
 
 const Text = styled.div<{ fontSize: string }>`
