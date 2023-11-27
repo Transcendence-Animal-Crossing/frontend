@@ -13,10 +13,10 @@ const General = () => {
   const passwordRef = useRef(null);
 
   const handleSubmit = async () => {
-    const result = await signIn('credentials', {
+    const result = await signIn('general', {
       intraname: idRef.current,
       password: passwordRef.current,
-      redirect: true,
+      redirect: false,
       callbackUrl: '/',
     });
   };

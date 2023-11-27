@@ -1,23 +1,29 @@
+'use client';
 import { useState } from 'react';
+import { signIn } from 'next-auth/react';
 import styled from 'styled-components';
-import Timmy from '../../public/Login/Timmy.png';
+import Timmy from '../../../public/Login/Timmy.png';
 import Image from 'next/image';
-import router from 'next/router';
-import Container from '../../components/columnLayout';
-import TwoFactAuth from '../../components/login/twofactorInput';
+import router, { useRouter } from 'next/router';
+import Container from '../../../components/columnLayout';
+import TwoFactAuth from '../../../components/login/twofactorInput';
 
 const Twofactor = () => {
-  const [code, setCode] = useState('');
+  const router = useRouter();
+  const [token, setToken] = useState<string>('');
 
   const handleSubmit = async () => {
-    console.log('abc');
+    const intraName = router.query.intraName as string;
+    console.log('router: ', router.query);
+    console.log('intraName: ', intraName);
+    console.log('token: ', token);
+    const result = await signIn('two-factor', {
+      intraName: intraName,
+      token: token,
+      redirect: true,
+      callbackUrl: '/',
+    });
   };
-
-  // const handleKeyDown = (e: any) => {
-  //   if (e.key === 'Enter') {
-  //     handleSubmit();
-  //   }
-  // };
 
   const handleRouteLobby = async () => {
     router.push('/');
@@ -32,7 +38,7 @@ const Twofactor = () => {
           이메일로 보내 드린 코드 7자리를 입력해 주세요-!
         </Description>
         <LoginInput>
-          <TwoFactAuth value={code} onChange={(val) => setCode(val)} />
+          <TwoFactAuth value={token} onChange={(val) => setToken(val)} />
           <DivisionBar />
           <ButtonFrame>
             <Button id='cancel' onClick={handleRouteLobby}>

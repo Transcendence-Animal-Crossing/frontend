@@ -3,6 +3,7 @@ import type { NextAuthOptions, Profile } from 'next-auth';
 import FortyTwoProvider from 'next-auth/providers/42-school';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 const invalidPrimaryCampus = (profile: any) => {
   const campusId = profile.campus_users.find(
@@ -22,6 +23,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     CredentialsProvider({
+      id: 'general',
       name: 'Credentials',
       credentials: {
         intraname: { label: 'Intraname', type: 'text' },
@@ -35,7 +37,53 @@ export const authOptions: NextAuthOptions = {
             intraName: credentials.intraname,
             password: credentials.password,
           });
+          console.log('general login start-----------', response.data);
           if (response.status === 200) {
+            const accessToken = response.headers.authorization.replace(
+              'Bearer ',
+              ''
+            );
+            const refreshToken =
+              response.headers['set-cookie']?.[0]?.match(
+                /refreshToken=([^;]+)/
+              )?.[1];
+            return {
+              id: response.data.id,
+              nickName: response.data.nickName,
+              intraName: response.data.intraName,
+              avatar: response.data.avatar,
+              responseCode: response.status,
+              accessToken,
+              refreshToken,
+            } as any;
+          } else if (response.status === 403) {
+            const intraName = response.data.intraName;
+            const router = useRouter();
+            router.push('http://localhost:3000/mypage');
+          }
+        } catch (e) {
+          console.error('Sign in error:', e);
+          return null;
+        }
+        return null;
+      },
+    }),
+    CredentialsProvider({
+      id: 'two-factor',
+      name: 'Two Factor',
+      credentials: {
+        intraname: { label: 'IntraName', type: 'text' },
+        token: { label: 'Token', type: 'text' },
+      },
+      authorize: async (credentials: any) => {
+        if (!credentials) return null;
+        try {
+          const apiUrl = 'http://localhost:8080/auth/email/token';
+          const response = await axios.post(apiUrl, {
+            intraName: credentials.intraName,
+            token: credentials.token,
+          });
+          if (response.status == 200) {
             const accessToken = response.headers.authorization.replace(
               'Bearer ',
               ''
@@ -56,7 +104,7 @@ export const authOptions: NextAuthOptions = {
           }
         } catch (e) {
           console.error('Sign in error:', e);
-          return null;
+          console.log(credentials.intraName, credentials.token);
         }
         return null;
       },
@@ -64,10 +112,31 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     // @ts-ignore
-    async signIn({ profile, user }) {
+    async signIn({ profile, user, account }) {
       if (!profile && !user) return false;
       if (!profile && user) return user;
       if (invalidPrimaryCampus(profile)) return false;
+      if (profile && account) {
+        console.log('42signin start-----------');
+        try {
+          const apiUrl = 'http://localhost:8080/auth/login';
+          const response = await axios.post(apiUrl, {
+            accessToken: account.access_token,
+          });
+        } catch (error) {
+          console.log('42signin error-----------', error);
+          if (error.response.status == 403) {
+            console.log('error response 403');
+            // console.log(error.response.data);
+            const intraName = error.response.data?.intraName;
+            return intraName ? `/login/twofactor/${intraName}` : '/login';
+            // return `/login/twofactor/${intraName}?intraName=${intraName}`;
+          } else if (error.response.status == 401) {
+            console.log('error response 401');
+            return '/login';
+          }
+        }
+      }
       return user;
     },
     async jwt({ user, token, profile, account, trigger, session }) {
@@ -77,6 +146,7 @@ export const authOptions: NextAuthOptions = {
           ...session.user,
         };
       }
+      // credentials
       if (!profile && account?.type == 'credentials') {
         token.id = user.id;
         token.nickName = user.nickName;
@@ -87,25 +157,28 @@ export const authOptions: NextAuthOptions = {
         token.responseCode = 200;
         return token;
       }
+      // 42login
       if (profile && account) {
         try {
           const apiUrl = 'http://localhost:8080/auth/login';
           const response = await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
-          token.accessToken = response.headers.authorization.replace(
-            'Bearer ',
-            ''
-          );
-          token.refreshToken =
-            response.headers['set-cookie']?.[0]?.match(
-              /refreshToken=([^;]+)/
-            )?.[1];
-          token.id = response.data.id;
-          token.nickName = response.data.nickName;
-          token.intraName = response.data.intraName;
-          token.avatar = response.data.avatar;
-          token.responseCode = response.status;
+          if (response.status === 200 || response.status === 201) {
+            token.accessToken = response.headers.authorization.replace(
+              'Bearer ',
+              ''
+            );
+            token.refreshToken =
+              response.headers['set-cookie']?.[0]?.match(
+                /refreshToken=([^;]+)/
+              )?.[1];
+            token.id = response.data.id;
+            token.nickName = response.data.nickName;
+            token.intraName = response.data.intraName;
+            token.avatar = response.data.avatar;
+            token.responseCode = response.status;
+          }
         } catch (error) {
           console.error('jwt error:', error);
           token.accessToken = 'fail';
@@ -114,6 +187,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      console.log('session start', session, token);
       session.user.id = token.id as number;
       session.user.nickName = token.nickName as string;
       session.user.intraName = token.intraName as string;
@@ -121,7 +195,8 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
       session.responseCode = token.responseCode as number;
-      console.log(session);
+      console.log('session print', session);
+      console.log('session succccccccc');
       return session;
     },
   },
