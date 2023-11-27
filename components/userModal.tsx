@@ -12,7 +12,7 @@ const UserModal: React.FC<{
   userId: number;
   userRect: { top: number; left: number; width: number };
 }> = ({ handleCloseModal, userId, userRect }) => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const [followStatus, setFollowStatus] = useState<number>(0);
   const [blockStatus, setBlockStatus] = useState<number>(0);
   const [IsOpenDm, setIsOpenDm] = useState<boolean>(false);
@@ -48,8 +48,8 @@ const UserModal: React.FC<{
 
   const handleOpenDM = async () => {
     setIsOpenDm(true);
-    if (socket) {
-      socket
+    if (chatSocket) {
+      chatSocket
         .emitWithAck('dm-focus', {
           targetId: userId,
         })
@@ -61,8 +61,8 @@ const UserModal: React.FC<{
 
   const handleCloseDM = async () => {
     setIsOpenDm(false);
-    if (socket) {
-      socket
+    if (chatSocket) {
+      chatSocket
         .emitWithAck('dm-focus', {
           targetId: null,
         })

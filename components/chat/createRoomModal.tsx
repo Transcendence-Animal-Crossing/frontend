@@ -13,7 +13,7 @@ const CreateRoomModal: React.FC<{
   handleCloseModal: () => void;
   createButtonRect: { top: number; right: number; height: number };
 }> = ({ handleCloseModal, createButtonRect }) => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const [title, setTitle] = useState('');
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState('PUBLIC');
@@ -25,8 +25,8 @@ const CreateRoomModal: React.FC<{
   const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
 
   const handleCreateRoom = async () => {
-    if (socket) {
-      await socket
+    if (chatSocket) {
+      await chatSocket
         .emitWithAck('room-create', {
           title: title,
           mode: mode,

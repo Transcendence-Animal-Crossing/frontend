@@ -42,7 +42,7 @@ const userListModal: React.FC<{
   const [isAdmin, setIsAdmin] = useState(false);
   const [showBan, setShowBan] = useState(false);
   const [headerText, setHeaderText] = useState('참여중인 유저목록');
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const { data: session } = useSession();
   const overlayLeft = `${createButtonRect.right - window.innerWidth * 0.2}px`;
   const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
@@ -88,8 +88,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserKick = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-kick', {
+    if (chatSocket) {
+      chatSocket.emit('room-kick', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -97,8 +97,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserBan = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-ban', {
+    if (chatSocket) {
+      chatSocket.emit('room-ban', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -106,8 +106,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserUnban = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-unban', {
+    if (chatSocket) {
+      chatSocket.emit('room-unban', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -115,8 +115,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserMute = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-mute', {
+    if (chatSocket) {
+      chatSocket.emit('room-mute', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -124,8 +124,8 @@ const userListModal: React.FC<{
   };
 
   const handleUserUnmute = (targetId: number) => {
-    if (socket) {
-      socket.emit('room-unmute', {
+    if (chatSocket) {
+      chatSocket.emit('room-unmute', {
         roomId: roomId,
         targetId: targetId,
       });
@@ -134,14 +134,14 @@ const userListModal: React.FC<{
 
   const handleUserAdmin = (targetId: number) => {
     const targetUser = userlist.find((user) => user.id === targetId);
-    if (socket && targetUser) {
+    if (chatSocket && targetUser) {
       if (targetUser.grade == 1) {
-        socket.emit('remove-admin', {
+        chatSocket.emit('remove-admin', {
           roomId: roomId,
           targetId: targetId,
         });
       } else {
-        socket.emit('add-admin', {
+        chatSocket.emit('add-admin', {
           roomId: roomId,
           targetId: targetId,
         });
@@ -151,7 +151,7 @@ const userListModal: React.FC<{
 
   const handleUserAdminText = (targetId: number) => {
     const targetUser = userlist.find((user) => user.id === targetId);
-    if (socket && targetUser) {
+    if (chatSocket && targetUser) {
       if (targetUser.grade == 1) {
         return 'Remove Admin';
       } else {

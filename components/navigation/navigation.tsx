@@ -35,9 +35,9 @@ interface RequestData {
 
 const Navigation = () => {
   const { data: session } = useSession();
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const emitter = useEventEmitter();
-  const [socketFlag, setSocketFlag] = useState<boolean>(true);
+  const [chatSocketFlag, setSocketFlag] = useState<boolean>(true);
   const [friendsList, setFriendsList] = useState<friendData[]>([]);
   const [requestList, setRequestList] = useState<RequestData[]>([]);
   const [requestListLen, setRequestListLen] = useState<number>(0);
@@ -65,8 +65,8 @@ const Navigation = () => {
   const userRefs: React.MutableRefObject<HTMLDivElement | null>[] = [];
 
   useEffect(() => {
-    if (socket && socketFlag) {
-      socket.emitWithAck('friend-list').then((response) => {
+    if (chatSocket && chatSocketFlag) {
+      chatSocket.emitWithAck('friend-list').then((response) => {
         console.log('response', response);
         if (response.status === 200) {
           const sortedFriendsList = response.body.sort((a: friendData, b: friendData) => {
@@ -87,7 +87,7 @@ const Navigation = () => {
   });
 
   useEffect(() => {
-    if (socket) {
+    if (chatSocket) {
       const handleFriendUpdate = (response: friendData) => {
         console.log('friend update', response);
         setFriendsList((preFriendslist) => {
@@ -166,23 +166,23 @@ const Navigation = () => {
         );
       };
 
-      socket.on('friend-update', handleFriendUpdate);
-      socket.on('dm', handleDM);
-      socket.on('new-friend', handleNewFriend);
-      socket.on('delete-friend', handleDeleteFriend);
-      socket.on('new-friend-request', handleNewFriendRequest);
-      socket.on('delete-friend-request', handleDeleteFriendRequest);
+      chatSocket.on('friend-update', handleFriendUpdate);
+      chatSocket.on('dm', handleDM);
+      chatSocket.on('new-friend', handleNewFriend);
+      chatSocket.on('delete-friend', handleDeleteFriend);
+      chatSocket.on('new-friend-request', handleNewFriendRequest);
+      chatSocket.on('delete-friend-request', handleDeleteFriendRequest);
 
       return () => {
-        socket.off('friend-update', handleFriendUpdate);
-        socket.off('dm', handleDM);
-        socket.off('new-friend', handleNewFriend);
-        socket.off('delete-friend', handleDeleteFriend);
-        socket.off('new-friend-request', handleNewFriendRequest);
-        socket.off('delete-friend-request', handleDeleteFriendRequest);
+        chatSocket.off('friend-update', handleFriendUpdate);
+        chatSocket.off('dm', handleDM);
+        chatSocket.off('new-friend', handleNewFriend);
+        chatSocket.off('delete-friend', handleDeleteFriend);
+        chatSocket.off('new-friend-request', handleNewFriendRequest);
+        chatSocket.off('delete-friend-request', handleDeleteFriendRequest);
       };
     }
-  }, [socket, openDmId]);
+  }, [chatSocket, openDmId]);
 
   useEffect(() => {
     const handleOpenDM = (targetId: number) => {
@@ -278,7 +278,7 @@ const Navigation = () => {
         requestListLen={requestListLen}
       />
       <UserList>
-        {socketFlag && <p> loading... </p>}
+        {chatSocketFlag && <p> loading... </p>}
         {friendsList.map((friend, index) => {
           userRefs[index] = userRefs[index] || React.createRef<HTMLDivElement>();
           return (

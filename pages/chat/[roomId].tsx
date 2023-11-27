@@ -40,7 +40,7 @@ interface ActionRoomData {
 }
 
 const Chat = () => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const [userlist, setUserlist] = useState<ParticipantData[]>([]);
   const [banlist, setBanlist] = useState<UserData[]>([]);
   const [roomTitle, setRoomTitle] = useState('');
@@ -54,9 +54,9 @@ const Chat = () => {
   const { roomId } = router.query as { roomId: string };
 
   useEffect(() => {
-    if (socket) {
+    if (chatSocket) {
       if (!roomTitle) {
-        socket
+        chatSocket
           .emitWithAck('room-detail', {
             roomId: roomId,
           })
@@ -254,37 +254,37 @@ const Chat = () => {
         }
       };
 
-      socket.on('room-message', handleRoomMessage);
-      socket.on('room-join', handleRoomJoin);
-      socket.on('room-leave', handleRoomLeave);
-      socket.on('room-kick', handleRoomKick);
-      socket.on('room-ban', handleRoomBan);
-      socket.on('room-mute', handleRoomMute);
-      socket.on('room-unban', handleRoomUnban);
-      socket.on('room-unmute', handleRoomUnmute);
-      socket.on('add-admin', handleAddAdmin);
-      socket.on('remove-admin', handleRemoveAdmin);
-      socket.on('room-mode', handleRoomMode);
-      socket.on('change-owner', handleChangeOwner);
+      chatSocket.on('room-message', handleRoomMessage);
+      chatSocket.on('room-join', handleRoomJoin);
+      chatSocket.on('room-leave', handleRoomLeave);
+      chatSocket.on('room-kick', handleRoomKick);
+      chatSocket.on('room-ban', handleRoomBan);
+      chatSocket.on('room-mute', handleRoomMute);
+      chatSocket.on('room-unban', handleRoomUnban);
+      chatSocket.on('room-unmute', handleRoomUnmute);
+      chatSocket.on('add-admin', handleAddAdmin);
+      chatSocket.on('remove-admin', handleRemoveAdmin);
+      chatSocket.on('room-mode', handleRoomMode);
+      chatSocket.on('change-owner', handleChangeOwner);
 
       return () => {
-        socket.off('room-message', handleRoomMessage);
-        socket.off('room-join', handleRoomJoin);
-        socket.off('room-leave', handleRoomLeave);
-        socket.off('room-kick', handleRoomKick);
-        socket.off('room-ban', handleRoomBan);
-        socket.off('room-mute', handleRoomMute);
-        socket.off('room-unban', handleRoomUnban);
-        socket.off('room-unmute', handleRoomUnmute);
-        socket.off('add-admin', handleAddAdmin);
-        socket.off('remove-admin', handleRemoveAdmin);
-        socket.off('room-mode', handleRoomMode);
-        socket.off('change-owner', handleChangeOwner);
+        chatSocket.off('room-message', handleRoomMessage);
+        chatSocket.off('room-join', handleRoomJoin);
+        chatSocket.off('room-leave', handleRoomLeave);
+        chatSocket.off('room-kick', handleRoomKick);
+        chatSocket.off('room-ban', handleRoomBan);
+        chatSocket.off('room-mute', handleRoomMute);
+        chatSocket.off('room-unban', handleRoomUnban);
+        chatSocket.off('room-unmute', handleRoomUnmute);
+        chatSocket.off('add-admin', handleAddAdmin);
+        chatSocket.off('remove-admin', handleRemoveAdmin);
+        chatSocket.off('room-mode', handleRoomMode);
+        chatSocket.off('change-owner', handleChangeOwner);
       };
     } else {
       router.push('http://localhost:3000/chat/');
     }
-  }, [socket, userlist, banlist, roomTitle, roomId, router]);
+  }, [chatSocket, userlist, banlist, roomTitle, roomId, router]);
 
   const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {
@@ -299,8 +299,8 @@ const Chat = () => {
   };
 
   const sendMessage = () => {
-    if (socket && messageText) {
-      socket
+    if (chatSocket && messageText) {
+      chatSocket
         .emitWithAck('room-message', {
           text: messageText,
           roomId: roomId,

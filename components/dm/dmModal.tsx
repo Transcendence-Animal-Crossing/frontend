@@ -22,7 +22,7 @@ const DmModal: React.FC<{
   targetId: number;
   setOpenNotice: (value: boolean) => void;
 }> = ({ handleCloseModal, targetId, setOpenNotice }) => {
-  const { socket } = useSocket();
+  const { chatSocket } = useSocket();
   const { data: session } = useSession();
   const emitter = useEventEmitter();
   const [nickName, setNickName] = useState<string>('');
@@ -72,8 +72,8 @@ const DmModal: React.FC<{
 
   const handleDmLoad = () => {
     setTimeout(async () => {
-      if (socket) {
-        await socket
+      if (chatSocket) {
+        await chatSocket
           .emitWithAck('dm-load', {
             targetId: targetId,
             cursorId: cursorId,
@@ -100,8 +100,8 @@ const DmModal: React.FC<{
   };
 
   const handleDmLoadFirst = () => {
-    if (socket) {
-      socket
+    if (chatSocket) {
+      chatSocket
         .emitWithAck('dm-load', {
           targetId: targetId,
         })
@@ -120,8 +120,8 @@ const DmModal: React.FC<{
   };
 
   const handleDmLoadConcat = (smallestId: number) => {
-    if (socket) {
-      socket
+    if (chatSocket) {
+      chatSocket
         .emitWithAck('dm-load', {
           targetId: targetId,
           cursorId: smallestId,
@@ -147,8 +147,8 @@ const DmModal: React.FC<{
   };
 
   const sendMessage = () => {
-    if (socket && messageText) {
-      socket
+    if (chatSocket && messageText) {
+      chatSocket
         .emitWithAck('dm', {
           text: messageText,
           receiverId: targetId,
