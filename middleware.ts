@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
 
   if (
     pathname === '/chat' ||
-    pathname === '/mypage' ||
+    pathname === '/profile' ||
     pathname === '/ranking' ||
     pathname === '/join'
   ) {
@@ -31,5 +31,5 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/chat', '/mypage', '/ranking', '/join'],
+  matcher: ['/', '/login', '/chat', '/profile', '/ranking', '/join'],
 };
