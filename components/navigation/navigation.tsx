@@ -397,14 +397,13 @@ const Navigation = () => {
         })}
         {gameButton && (
           <GameStartButton onClick={handleGameStart} ref={modeRefs}>
-            {' '}
-            Game Start{' '}
+            <Text fontsize='3vh'>Game Start</Text>
           </GameStartButton>
         )}
         {matchingGame && (
           <GameStartButton onClick={handleLeaveQueue} ref={modeRefs}>
-            Matching..
-            <Text>
+            <Text fontsize='2.5vh'>Matching...</Text>
+            <Text fontsize='2vh'>
               {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}
             </Text>
           </GameStartButton>
@@ -520,6 +519,7 @@ const Status = styled.div<{ textColor: string }>`
 
 const GameStartButton = styled.div`
   width: 70%;
+  height: 8vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -529,7 +529,6 @@ const GameStartButton = styled.div`
   border-radius: 100px;
   color: #7a5025;
   background-color: #f7cd67;
-  font-size: 3vh;
   text-align: center;
   font-family: 'GiantsLight';
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -542,10 +541,10 @@ const GameStartButton = styled.div`
   }
 `;
 
-const Text = styled.div`
+const Text = styled.div<{ fontsize: string }>`
   color: #7a5025;
   font-family: 'GiantsLight';
-  font-size: 2vh;
+  font-size: ${(props) => props.fontsize};
 `;
 
 const Content = styled.div<{ overlayTop: string; overlayLeft: string }>`
