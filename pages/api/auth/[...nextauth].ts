@@ -3,7 +3,6 @@ import type { NextAuthOptions, Profile } from 'next-auth';
 import FortyTwoProvider from 'next-auth/providers/42-school';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 
 const invalidPrimaryCampus = (profile: any) => {
   const campusId = profile.campus_users.find(
@@ -37,7 +36,6 @@ export const authOptions: NextAuthOptions = {
             intraName: credentials.intraname,
             password: credentials.password,
           });
-          console.log('general login start-----------', response.data);
           if (response.status === 200) {
             const accessToken = response.headers.authorization.replace(
               'Bearer ',
@@ -56,14 +54,12 @@ export const authOptions: NextAuthOptions = {
               accessToken,
               refreshToken,
             } as any;
-          } else if (response.status === 403) {
-            const intraName = response.data.intraName;
-            const router = useRouter();
-            router.push('http://localhost:3000/mypage');
           }
-        } catch (e) {
+        } catch (e: any) {
           console.error('Sign in error:', e);
-          return null;
+          if (e.response.status == 403) {
+            return `/login/twofactor/${credentials.intraname}`;
+          }
         }
         return null;
       },
@@ -104,7 +100,7 @@ export const authOptions: NextAuthOptions = {
           }
         } catch (e) {
           console.error('Sign in error:', e);
-          console.log(credentials.intraName, credentials.token);
+          return `/login/twofactor/${credentials.intraName}`;
         }
         return null;
       },
@@ -117,23 +113,18 @@ export const authOptions: NextAuthOptions = {
       if (!profile && user) return user;
       if (invalidPrimaryCampus(profile)) return false;
       if (profile && account) {
-        console.log('42signin start-----------');
         try {
           const apiUrl = 'http://localhost:8080/auth/login';
-          const response = await axios.post(apiUrl, {
+          await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
-        } catch (error) {
-          console.log('42signin error-----------', error);
+        } catch (error: any) {
           if (error.response.status == 403) {
-            console.log('error response 403');
-            // console.log(error.response.data);
+            console.log('42 login two-factor', error);
             const intraName = error.response.data?.intraName;
-            return intraName ? `/login/twofactor/${intraName}` : '/login';
-            // return `/login/twofactor/${intraName}?intraName=${intraName}`;
-          } else if (error.response.status == 401) {
-            console.log('error response 401');
-            return '/login';
+            return intraName
+              ? `/login/twofactor/${intraName}`
+              : '/login/choice';
           }
         }
       }
@@ -146,7 +137,6 @@ export const authOptions: NextAuthOptions = {
           ...session.user,
         };
       }
-      // credentials
       if (!profile && account?.type == 'credentials') {
         token.id = user.id;
         token.nickName = user.nickName;
@@ -157,7 +147,6 @@ export const authOptions: NextAuthOptions = {
         token.responseCode = 200;
         return token;
       }
-      // 42login
       if (profile && account) {
         try {
           const apiUrl = 'http://localhost:8080/auth/login';
@@ -187,7 +176,6 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log('session start', session, token);
       session.user.id = token.id as number;
       session.user.nickName = token.nickName as string;
       session.user.intraName = token.intraName as string;
@@ -195,8 +183,6 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
       session.responseCode = token.responseCode as number;
-      console.log('session print', session);
-      console.log('session succccccccc');
       return session;
     },
   },
