@@ -14,10 +14,7 @@ const Twofactor = () => {
 
   const handleSubmit = async () => {
     const intraName = router.query.intraName as string;
-    console.log('router: ', router.query);
-    console.log('intraName: ', intraName);
-    console.log('token: ', token);
-    const result = await signIn('two-factor', {
+    await signIn('two-factor', {
       intraName: intraName,
       token: token,
       redirect: true,
