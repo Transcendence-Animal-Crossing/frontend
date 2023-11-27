@@ -63,6 +63,7 @@ const Navigation = () => {
     width: number;
   }>({ top: 0, left: 0, width: 0 });
   const userRefs: React.MutableRefObject<HTMLDivElement | null>[] = [];
+  const [gameButton, setGameButton] = useState<boolean>(false);
 
   useEffect(() => {
     if (chatSocket && chatSocketFlag) {
@@ -203,12 +204,18 @@ const Navigation = () => {
       setOpenDmId(-1);
     };
 
+    const handleGameLobby = () => {
+      setGameButton(true);
+    };
+
     emitter.on('openDM', handleOpenDM);
     emitter.on('closeDM', handleCloseDM);
+    emitter.on('gameLobby', handleGameLobby);
 
     return () => {
       emitter.removeListener('openDM', handleOpenDM);
       emitter.removeListener('closeDM', handleCloseDM);
+      emitter.removeListener('gameLobby', handleGameLobby);
     };
   }, [emitter]);
 
@@ -304,6 +311,7 @@ const Navigation = () => {
             </UserInfoFrame>
           );
         })}
+        {gameButton && <GameStartButton> Game Start </GameStartButton>}
       </UserList>
       <>
         {session ? (
@@ -406,4 +414,26 @@ const Status = styled.div<{ textColor: string }>`
         return props.theme.colors.brown;
     }
   }};
+`;
+
+const GameStartButton = styled.div`
+  width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8% 10%;
+  margin: 5%;
+  border-radius: 100px;
+  color: #7a5025;
+  background-color: #f7cd67;
+  font-size: 3vh;
+  text-align: center;
+  font-family: 'GiantsLight';
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.03);
+  }
 `;
