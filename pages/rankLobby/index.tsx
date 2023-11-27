@@ -15,7 +15,7 @@ const RankLobbyPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    emitter.emit('gameLobby');
+    emitter.emit('gameLobby', 'Rank');
   }, []);
 
   useEffect(() => {

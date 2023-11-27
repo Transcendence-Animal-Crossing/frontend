@@ -68,6 +68,16 @@ const Navigation = () => {
   const [gameButton, setGameButton] = useState<boolean>(false);
   const [matchingGame, setMatchingGame] = useState<boolean>(false);
   const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [isOpenmode, setIsOpenmode] = useState<boolean>(false);
+  const [modeButton, setModeButton] = useState<string>('NORMAL');
+  const [modeRect, setModeRect] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  }>({ top: 0, left: 0, width: 0 });
+  const modeRefs = useRef<HTMLImageElement | null>(null);
+  let overlayTop = `${modeRect.top * 0.96}px`;
+  let overlayLeft = `${modeRect.left + (modeRect.width / 3) * 2}px`;
 
   useEffect(() => {
     if (chatSocket && chatSocketFlag) {
@@ -81,16 +91,12 @@ const Navigation = () => {
               WATCHING: 1,
               OFFLINE: 2,
             };
-
             const statusComparison = statusOrder[a.status] - statusOrder[b.status];
-
             if (statusComparison !== 0) {
               return statusComparison;
             }
-
             return 0;
           });
-
           setFriendsList(sortedFriendsList);
           setRequestListLen(requestList.length);
           setSocketFlag(false);
@@ -226,8 +232,11 @@ const Navigation = () => {
       setOpenDmId(-1);
     };
 
-    const handleGameLobby = () => {
+    const handleGameLobby = (response: string) => {
       setGameButton(true);
+      if (response === 'General') {
+        setIsOpenmode(true);
+      }
     };
 
     emitter.on('openDM', handleOpenDM);
@@ -248,6 +257,23 @@ const Navigation = () => {
   useEffect(() => {
     handleRequest();
   }, []);
+
+  useEffect(() => {
+    const handleModeButton = () => {
+      if (modeRefs.current) {
+        const buttonRect = modeRefs.current.getBoundingClientRect();
+        setModeRect({
+          top: buttonRect.top,
+          left: buttonRect.left,
+          width: buttonRect.width,
+        });
+        overlayTop = `${buttonRect.top * 0.96}px`;
+        overlayLeft = `${(buttonRect.left, +(buttonRect.width / 3) * 2)}px`;
+      }
+    };
+
+    handleModeButton();
+  }, [gameButton, modeRefs, friendsList]);
 
   const handleRequest = async () => {
     await axiosInstance.get(`/follow/request`).then((response) => {
@@ -311,6 +337,16 @@ const Navigation = () => {
     setElapsedTime(0);
   };
 
+  const handleGeneralMode = () => {
+    if (modeButton === 'NORMAL') {
+      setModeButton('HARD');
+      emitter.emit('gameMode', 'HARD');
+    } else if (modeButton === 'HARD') {
+      setModeButton('NORMAL');
+      emitter.emit('gameMode', 'NORMAL');
+    }
+  };
+
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
@@ -359,14 +395,24 @@ const Navigation = () => {
             </UserInfoFrame>
           );
         })}
-        {gameButton && <GameStartButton onClick={handleGameStart}> Game Start </GameStartButton>}
+        {gameButton && (
+          <GameStartButton onClick={handleGameStart} ref={modeRefs}>
+            {' '}
+            Game Start{' '}
+          </GameStartButton>
+        )}
         {matchingGame && (
-          <GameStartButton onClick={handleLeaveQueue}>
+          <GameStartButton onClick={handleLeaveQueue} ref={modeRefs}>
             Matching..
             <Text>
               {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}
             </Text>
           </GameStartButton>
+        )}
+        {isOpenmode && (
+          <Content overlayTop={overlayTop} overlayLeft={overlayLeft} onClick={handleGeneralMode}>
+            {modeButton}
+          </Content>
         )}
       </UserList>
       <>
@@ -500,4 +546,26 @@ const Text = styled.div`
   color: #7a5025;
   font-family: 'GiantsLight';
   font-size: 2vh;
+`;
+
+const Content = styled.div<{ overlayTop: string; overlayLeft: string }>`
+  position: fixed;
+  top: ${(props) => props.overlayTop};
+  left: ${(props) => props.overlayLeft};
+  width: 4.5vw;
+  height: auto;
+  background-color: rgba(103, 109, 247, 0.7);
+  color: ${(props) => props.theme.colors.white};
+  padding: 0.6% 0.5%;
+  border-radius: 20px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'GiantsLight';
+  font-size: 1.5vh;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.02);
+  }
 `;

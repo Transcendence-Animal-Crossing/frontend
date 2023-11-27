@@ -13,9 +13,10 @@ const generalLobbyPage: React.FC = () => {
   const { queueSocket } = useSocket();
   const emitter = useEventEmitter();
   const router = useRouter();
+  const [mode, setMode] = useState<string>('NORMAL');
 
   useEffect(() => {
-    emitter.emit('gameLobby');
+    emitter.emit('gameLobby', 'General');
   }, []);
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const generalLobbyPage: React.FC = () => {
       if (queueSocket) {
         queueSocket
           .emitWithAck('queue-join', {
-            type: 'NORMAL',
+            type: mode,
           })
           .then((response) => {
             console.log(response);
@@ -54,14 +55,20 @@ const generalLobbyPage: React.FC = () => {
       }
     };
 
+    const handleGameMode = (response: string) => {
+      setMode(response);
+    };
+
     emitter.on('gameStart', handleGameStart);
     emitter.on('leaveQueue', handleLeaveQueue);
+    emitter.on('gameMode', handleGameMode);
 
     return () => {
       emitter.removeListener('gameStart', handleGameStart);
       emitter.removeListener('leaveQueue', handleLeaveQueue);
+      emitter.removeListener('gameMode', handleGameMode);
     };
-  }, [emitter, queueSocket]);
+  }, [emitter, queueSocket, mode]);
 
   return (
     <Container>
