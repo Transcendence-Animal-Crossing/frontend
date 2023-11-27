@@ -63,8 +63,11 @@ const Navigation = () => {
     width: number;
   }>({ top: 0, left: 0, width: 0 });
   const userRefs: React.MutableRefObject<HTMLDivElement | null>[] = [];
+
+  // game lobby
   const [gameButton, setGameButton] = useState<boolean>(false);
   const [matchingGame, setMatchingGame] = useState<boolean>(false);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
 
   useEffect(() => {
     if (chatSocket && chatSocketFlag) {
@@ -280,13 +283,27 @@ const Navigation = () => {
     emitter.emit('gameStart');
     setGameButton(false);
     setMatchingGame(true);
+    setElapsedTime(0);
   };
 
   const handleLeaveQueue = () => {
     emitter.emit('leaveQueue');
     setGameButton(true);
     setMatchingGame(false);
+    setElapsedTime(0);
   };
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (matchingGame) {
+      intervalId = setInterval(() => {
+        setElapsedTime((prevTime) => prevTime + 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [matchingGame]);
 
   return (
     <Container>
@@ -325,7 +342,14 @@ const Navigation = () => {
           );
         })}
         {gameButton && <GameStartButton onClick={handleGameStart}> Game Start </GameStartButton>}
-        {matchingGame && <GameStartButton onClick={handleLeaveQueue}> 매칭중.. </GameStartButton>}
+        {matchingGame && (
+          <GameStartButton onClick={handleLeaveQueue}>
+            Matching..
+            <Text>
+              {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}
+            </Text>
+          </GameStartButton>
+        )}
       </UserList>
       <>
         {session ? (
@@ -433,6 +457,7 @@ const Status = styled.div<{ textColor: string }>`
 const GameStartButton = styled.div`
   width: 70%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 8% 10%;
@@ -446,8 +471,15 @@ const GameStartButton = styled.div`
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25);
   box-sizing: border-box;
   cursor: pointer;
+  gap: 1vh;
 
   &:hover {
     transform: scale(1.03);
   }
+`;
+
+const Text = styled.div`
+  color: #7a5025;
+  font-family: 'GiantsLight';
+  font-size: 2vh;
 `;
