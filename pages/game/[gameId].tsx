@@ -40,11 +40,23 @@ const generalLobbyPage: React.FC = () => {
             setStartTime(response.game.startTime);
           } else {
             console.log('game-info error', response);
+            router.push('http://localhost:3000/404');
+          }
+        });
+
+        gameSocket.emitWithAck('game-ready').then((response) => {
+          if (response.status === 200) {
+            console.log('game-ready');
+          } else {
+            console.log('game-ready error', response);
+            router.push('http://localhost:3000/404');
           }
         });
       }
 
-      const handleGameStart = () => {};
+      const handleGameStart = () => {
+        console.log('handleGameStart');
+      };
 
       gameSocket.on('game-start', handleGameStart);
 
