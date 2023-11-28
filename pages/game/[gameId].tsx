@@ -126,14 +126,25 @@ const GamePage: React.FC = () => {
         }
       };
 
+      const handleGamePlayer = (response: { left: pos; right: pos }) => {
+        console.log('handleGamePlayer', response);
+        if (canvasRef.current) {
+          const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
+          drawPlayer(context, normalizeCoordinates(response.left), 'blue'); // 왼쪽 플레이어
+          drawPlayer(context, normalizeCoordinates(response.right), 'red'); // 오른쪽 플레이어
+        }
+      };
+
       gameSocket.on('game-start', handleGameStart);
       gameSocket.on('game-ball', handleGameBall);
+      gameSocket.on('game-player', handleGamePlayer);
       window.addEventListener('keydown', handleKeyDown);
       window.addEventListener('keyup', handleKeyUp);
 
       return () => {
         gameSocket.off('game-start', handleGameStart);
         gameSocket.off('game-ball', handleGameBall);
+        gameSocket.off('game-player', handleGamePlayer);
         window.removeEventListener('keydown', handleKeyDown);
         window.removeEventListener('keyup', handleKeyUp);
       };
@@ -161,6 +172,8 @@ const GamePage: React.FC = () => {
       const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
       const initialBallPos = normalizeCoordinates(ball || { x: 500, y: 250 });
       drawBall(context, initialBallPos);
+      drawPlayer(context, normalizeCoordinates(leftPlayer || { x: 0, y: 250 }), '#889DF0');
+      drawPlayer(context, normalizeCoordinates(rightPlayer || { x: 990, y: 250 }), '#FC736D');
     }
   }, [canvasRef, ball, width, height]);
 
@@ -168,7 +181,15 @@ const GamePage: React.FC = () => {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     context.beginPath();
     context.arc(ballPos.x, ballPos.y, 10, 0, 2 * Math.PI);
-    context.fillStyle = 'red'; // 바까야댐
+    context.fillStyle = '#8a7b66';
+    context.fill();
+    context.closePath();
+  };
+
+  const drawPlayer = (context: CanvasRenderingContext2D, playerPos: pos, color: string) => {
+    context.beginPath();
+    context.rect(playerPos.x, playerPos.y, barWidth, barHeight);
+    context.fillStyle = color;
     context.fill();
     context.closePath();
   };
