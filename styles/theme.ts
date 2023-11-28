@@ -19,6 +19,7 @@ declare module 'styled-components' {
       lightbrown: string;
       green: string;
       red: string;
+      blue: string;
       indigo: string;
       gray: string;
       purple: string;
@@ -44,6 +45,7 @@ export const theme: DefaultTheme = {
     lightbrown: '#e9e2c7',
     green: '#8AC68A',
     red: '#FC736D',
+    blue: '#889DF0',
     indigo: '#253B52',
     gray: '#BDBDBD',
     purple: '#889DF0',
