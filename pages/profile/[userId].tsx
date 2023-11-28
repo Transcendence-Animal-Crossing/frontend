@@ -10,7 +10,6 @@ import home from '../../public/Icon/home.png';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Container from '../../components/columnNevLayout';
 import Game from '../../components/mypage/game';
-import axios from 'axios';
 
 const UserPage = () => {
   const apiUrl = 'http://localhost:8080/';
@@ -20,7 +19,9 @@ const UserPage = () => {
   // userInfo
   const [intraname, setIntraname] = useState('intraname');
   const [nickname, setNickname] = useState('nickname');
-  const [avatarPath, setAvatarPath] = useState(apiUrl + 'original/profile2.png');
+  const [avatarPath, setAvatarPath] = useState(
+    apiUrl + 'original/profile2.png'
+  );
   const [tierIndex, setTierIndex] = useState(0);
 
   // const [twofactor, setTwofactor] = useState(false);
@@ -237,10 +238,16 @@ const UserPage = () => {
             <MatchHistoryHeader>
               <Mode>
                 <ModeButton onClick={() => handleMode('general')}>
-                  <div className={`${mode === 'general' ? 'select' : 'unselect'}`}>일반</div>
+                  <div
+                    className={`${mode === 'general' ? 'select' : 'unselect'}`}
+                  >
+                    일반
+                  </div>
                 </ModeButton>
                 <ModeButton onClick={() => handleMode('rank')}>
-                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>랭크</div>
+                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>
+                    랭크
+                  </div>
                 </ModeButton>
               </Mode>
               <Button onClick={handleRouteLobby}>

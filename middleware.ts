@@ -28,8 +28,10 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
       return NextResponse.redirect(new URL('/login', req.url));
     }
   }
+
+  console.log(pathname);
 }
 
 export const config = {
-  matcher: ['/', '/login', '/chat', '/profile', '/ranking', '/join'],
+  matcher: ['/', '/login', '/chat', '/profile/(.*)', '/ranking', '/join'],
 };
