@@ -135,9 +135,15 @@ const GamePage: React.FC = () => {
         }
       };
 
+      const handleGameScore = (response: { left: number; right: number }) => {
+        setLeftScore(response.left);
+        setRightScore(response.right);
+      };
+
       gameSocket.on('game-start', handleGameStart);
       gameSocket.on('game-ball', handleGameBall);
       gameSocket.on('game-player', handleGamePlayer);
+      gameSocket.on('game-score', handleGameScore);
       window.addEventListener('keydown', handleKeyDown);
       window.addEventListener('keyup', handleKeyUp);
 
@@ -145,6 +151,7 @@ const GamePage: React.FC = () => {
         gameSocket.off('game-start', handleGameStart);
         gameSocket.off('game-ball', handleGameBall);
         gameSocket.off('game-player', handleGamePlayer);
+        gameSocket.off('game-score', handleGameScore);
         window.removeEventListener('keydown', handleKeyDown);
         window.removeEventListener('keyup', handleKeyUp);
       };
