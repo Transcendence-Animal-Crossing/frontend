@@ -2,11 +2,30 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import { useState, useEffect, useRef } from 'react';
 import setting from '../../public/Icon/setting.png';
+import SettingModal from './settingModal';
 
 const myProfile = () => {
   const { data: session } = useSession();
   const router = useRouter();
+
+  const [isOpenSetting, setOpenSetting] = useState<boolean>(false);
+  const [SettingButtonRect, setSettingButtonRect] = useState<{
+    top: number;
+    left: number;
+  }>({ top: 0, left: 0 });
+  const SettingButtonRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (SettingButtonRef.current) {
+      const buttonRect = SettingButtonRef.current.getBoundingClientRect();
+      setSettingButtonRect({
+        top: buttonRect.top,
+        left: buttonRect.left,
+      });
+    }
+  }, []);
 
   const handleSetUserAvatar = () => {
     const apiUrl = 'http://localhost:8080/';
@@ -17,18 +36,45 @@ const myProfile = () => {
     router.push(`http://localhost:3000/profile/${session?.user?.id}`);
   };
 
+  const handleSettingModal = () => {
+    setOpenSetting(true);
+  };
+
+  const handleCloseSetting = () => {
+    setOpenSetting(false);
+  };
+
   return (
     <>
       <ProfileFrame>
         <ProfileInfoFrame onClick={handleUserPage}>
-          <ProfileImage src={handleSetUserAvatar()} alt='Uploaded Image' width={300} height={300} />
+          <ProfileImage
+            src={handleSetUserAvatar()}
+            alt='Uploaded Image'
+            width={300}
+            height={300}
+          />
           <ProfileTextFrame>
             <Text textsize='1.1vw'> {session?.user?.nickName} </Text>
             <Text textsize='0.7vw'> {session?.user?.intraName} </Text>
           </ProfileTextFrame>
         </ProfileInfoFrame>
-        <IconImage src={setting} alt='setting' width={300} height={300} />
+        <IconImage
+          src={setting}
+          alt='setting'
+          width={300}
+          height={300}
+          onClick={handleSettingModal}
+          ref={SettingButtonRef}
+        />
       </ProfileFrame>
+      {isOpenSetting && (
+        <SettingModal
+          handleCloseModal={handleCloseSetting}
+          SettingButtonRect={SettingButtonRect}
+          userId={session?.user?.id}
+        />
+      )}
     </>
   );
 };
@@ -82,4 +128,5 @@ const Text = styled.div<{ textsize: string }>`
 const IconImage = styled(Image)`
   width: 3vh;
   height: auto;
+  cursor: pointer;
 `;

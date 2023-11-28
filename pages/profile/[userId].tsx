@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import UserContainer from '../../components/mypage/user';
-import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import axiosInstance from '../../utils/axiosInstance';
 import AchievementFrame from '../../components/mypage/achievement';
@@ -23,8 +22,6 @@ const UserPage = () => {
     apiUrl + 'original/profile2.png'
   );
   const [tierIndex, setTierIndex] = useState(0);
-
-  // const [twofactor, setTwofactor] = useState(false);
 
   // achievement
   const [achieveList, setAchieveList] = useState([1, 0, 0, 0, 0, 0, 0]);
@@ -195,28 +192,6 @@ const UserPage = () => {
     }
     setMode(mode);
   };
-
-  // const handle2fa = async () => {
-  //   try {
-  //     const userId = await getUserId();
-  //     if (twofactor == false) {
-  //       await setTwofactor(true);
-  //       const response = await axiosInstance.patch('/users/2fa-setup', {
-  //         params: {
-  //           id: userId,
-  //         },
-  //       });
-  //       console.log('2fa setup');
-  //     } else {
-  //       await setTwofactor(false);
-  //       const response = await axiosInstance.patch('users/2fa-cancel');
-  //       console.log('2fa cancel');
-  //     }
-  //   } catch (error) {
-  //     console.log('Error occured in 2fa setup');
-  //     console.log(error);
-  //   }
-  // };
 
   return (
     <Container>
