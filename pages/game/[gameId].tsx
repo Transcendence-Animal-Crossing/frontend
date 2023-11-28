@@ -118,12 +118,22 @@ const GamePage: React.FC = () => {
         }
       };
 
+      const handleGameBall = (response: pos) => {
+        console.log('handleGameBall', response);
+        if (canvasRef.current) {
+          const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
+          drawBall(context, response);
+        }
+      };
+
       gameSocket.on('game-start', handleGameStart);
+      gameSocket.on('game-ball', handleGameBall);
       window.addEventListener('keydown', handleKeyDown);
       window.addEventListener('keyup', handleKeyUp);
 
       return () => {
         gameSocket.off('game-start', handleGameStart);
+        gameSocket.off('game-ball', handleGameBall);
         window.removeEventListener('keydown', handleKeyDown);
         window.removeEventListener('keyup', handleKeyUp);
       };
@@ -144,7 +154,30 @@ const GamePage: React.FC = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [canvasRef]);
+  }, [canvasRef, width, height]);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
+      const initialBallPos = normalizeCoordinates(ball || { x: 500, y: 250 });
+      drawBall(context, initialBallPos);
+    }
+  }, [canvasRef, ball, width, height]);
+
+  const drawBall = (context: CanvasRenderingContext2D, ballPos: pos) => {
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    context.beginPath();
+    context.arc(ballPos.x, ballPos.y, 10, 0, 2 * Math.PI);
+    context.fillStyle = 'red'; // 바까야댐
+    context.fill();
+    context.closePath();
+  };
+
+  const normalizeCoordinates = (position: pos): pos => {
+    const normalizedX = (position.x / 1000) * width;
+    const normalizedY = (position.y / 500) * height;
+    return { x: normalizedX, y: normalizedY };
+  };
 
   const handleResize = () => {
     const calculatedheight = window.innerHeight * 0.7;
@@ -181,7 +214,6 @@ const GamePage: React.FC = () => {
             <Text textsize='0.7vw'> {leftUser.intraName} </Text>
           </UserTextFrame>
         </UserInfoFrame>
-        {/* <p>INGAME: {gameId}</p> */}
         <ScoreBoardFrame>
           <ScoreBoard color='1'> {leftScore} </ScoreBoard>
           <ScoreBoard color='2'> {rightScore} </ScoreBoard>
