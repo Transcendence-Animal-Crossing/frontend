@@ -55,9 +55,12 @@ const GamePage: React.FC = () => {
   const [startTime, setStartTime] = useState<Date>();
 
   // pos
-  const [ball, setBall] = useState<pos>();
-  const [leftPlayer, setLeftPlayer] = useState<pos>();
-  const [rightPlayer, setRrightPlayer] = useState<pos>();
+  // const [ball, setBall] = useState<pos>();
+  // const [leftPlayer, setLeftPlayer] = useState<pos>();
+  // const [rightPlayer, setRrightPlayer] = useState<pos>();
+  const ball = { x: 500, y: 250 };
+  const leftPlayer = { x: 10, y: 200 };
+  const rightPlayer = { x: 980, y: 200 };
 
   useEffect(() => {
     if (gameSocket) {
@@ -71,9 +74,15 @@ const GamePage: React.FC = () => {
             setLeftScore(response.body.gameInfo.leftScore);
             setRightScore(response.body.gameInfo.rightScore);
             setStartTime(response.body.gameInfo.startTime);
-            setBall(response.body.ball);
-            setLeftPlayer(response.body.leftPlayer);
-            setRrightPlayer(response.body.rightPlayer);
+            // setBall(response.body.ball);
+            // setLeftPlayer(response.body.leftPlayer);
+            // setRrightPlayer(response.body.rightPlayer);
+            ball.x = response.body.ball.x;
+            ball.y = response.body.ball.y;
+            leftPlayer.x = response.body.leftPlayer.x;
+            leftPlayer.y = response.body.leftPlayer.y;
+            rightPlayer.x = response.body.rightPlayer.x;
+            rightPlayer.y = response.body.rightPlayer.y;
           } else {
             console.log('game-info error', response);
             // router.push('http://localhost:3000/404');
@@ -133,20 +142,28 @@ const GamePage: React.FC = () => {
         console.log('handleGameBall', response);
         if (canvasRef.current) {
           const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
-          drawBall(context, response);
+          ball.x = response.x;
+          ball.y = response.y;
+          drawBall(context, normalizeCoordinates(ball));
         }
       };
 
       const handleGamePlayer = (response: { left: pos; right: pos }) => {
-        console.log('handleGamePlayer', response);
+        console.log('handleGamePlayer left', response.left);
+        console.log('handleGamePlayer right', response.right);
         if (canvasRef.current) {
           const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
-          drawPlayer(context, normalizeCoordinates(response.left), 'blue');
-          drawPlayer(context, normalizeCoordinates(response.right), 'red');
+          leftPlayer.x = response.left.x;
+          leftPlayer.y = response.left.y - barHeight / 2;
+          rightPlayer.x = response.right.x;
+          rightPlayer.y = response.right.y - barHeight / 2;
+          drawPlayer(context, normalizeCoordinates(leftPlayer), '#889DF0');
+          drawPlayer(context, normalizeCoordinates(rightPlayer), '#FC736D');
         }
       };
 
       const handleGameScore = (response: { left: number; right: number }) => {
+        console.log('handleGameScore', response);
         setLeftScore(response.left);
         setRightScore(response.right);
       };
@@ -167,12 +184,11 @@ const GamePage: React.FC = () => {
         window.removeEventListener('keyup', handleKeyUp);
       };
     }
-  }, [gameSocket]);
+  }, [canvasRef, gameSocket]);
 
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
       canvas.width = width;
       canvas.height = height;
 
@@ -183,33 +199,46 @@ const GamePage: React.FC = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [canvasRef, width, height]);
+  }, [width, height]);
 
   useEffect(() => {
     if (canvasRef.current) {
       const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
-      const initialBallPos = normalizeCoordinates(ball || { x: 500, y: 250 });
-      drawBall(context, initialBallPos);
-      drawPlayer(context, normalizeCoordinates(leftPlayer || { x: 0, y: 250 }), '#889DF0');
-      drawPlayer(context, normalizeCoordinates(rightPlayer || { x: 990, y: 250 }), '#FC736D');
+      context.clearRect(0, 0, width, height);
+      drawBall(context, normalizeCoordinates(ball));
+      drawPlayer(context, normalizeCoordinates(leftPlayer), '#889DF0');
+      drawPlayer(context, normalizeCoordinates(rightPlayer), '#FC736D');
     }
-  }, [canvasRef, ball, width, height]);
+  }, [gameType, leftScore, rightScore]);
 
   const drawBall = (context: CanvasRenderingContext2D, ballPos: pos) => {
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    const clearMargin = 2 * ballRadius;
+    const clearX = ballPos.x - ballRadius - clearMargin;
+    const clearY = ballPos.y - ballRadius - clearMargin;
+    const clearWidth = 2 * (ballRadius + clearMargin);
+    const clearHeight = 2 * (ballRadius + clearMargin);
+
+    context.clearRect(clearX, clearY, clearWidth, clearHeight);
+
     context.beginPath();
     context.arc(ballPos.x, ballPos.y, ballRadius, 0, ballRadius * Math.PI);
     context.fillStyle = '#8a7b66';
     context.fill();
-    context.closePath();
   };
 
   const drawPlayer = (context: CanvasRenderingContext2D, playerPos: pos, color: string) => {
+    const clearMargin = 2 * barWidth;
+    const clearX = playerPos.x - clearMargin;
+    const clearY = playerPos.y - clearMargin;
+    const clearWidth = barWidth + 2 * clearMargin;
+    const clearHeight = barHeight + 2 * clearMargin;
+
+    context.clearRect(clearX, clearY, clearWidth, clearHeight);
+
     context.beginPath();
     context.rect(playerPos.x, playerPos.y, barWidth, barHeight);
     context.fillStyle = color;
     context.fill();
-    context.closePath();
   };
 
   const normalizeCoordinates = (position: pos): pos => {
