@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import UserContainer from '../../components/mypage/user';
-import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import axiosInstance from '../../utils/axiosInstance';
 import AchievementFrame from '../../components/mypage/achievement';
@@ -24,6 +23,7 @@ const UserPage = () => {
   );
   const [tierIndex, setTierIndex] = useState(0);
 
+  // twofactor
   // const [twofactor, setTwofactor] = useState(false);
 
   // achievement
