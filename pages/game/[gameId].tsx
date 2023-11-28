@@ -43,6 +43,7 @@ const GamePage: React.FC = () => {
   const [height, setHeight] = useState<number>(0);
   const [barHeight, setBarHeight] = useState<number>(0);
   const [barWidth, setBarWidth] = useState<number>(0);
+  const [ballRadius, setBallRadius] = useState<number>(0);
 
   // game info
   const { gameId } = router.query as { gameId: string };
@@ -140,8 +141,8 @@ const GamePage: React.FC = () => {
         console.log('handleGamePlayer', response);
         if (canvasRef.current) {
           const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
-          drawPlayer(context, normalizeCoordinates(response.left), 'blue'); // 왼쪽 플레이어
-          drawPlayer(context, normalizeCoordinates(response.right), 'red'); // 오른쪽 플레이어
+          drawPlayer(context, normalizeCoordinates(response.left), 'blue');
+          drawPlayer(context, normalizeCoordinates(response.right), 'red');
         }
       };
 
@@ -197,7 +198,7 @@ const GamePage: React.FC = () => {
   const drawBall = (context: CanvasRenderingContext2D, ballPos: pos) => {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     context.beginPath();
-    context.arc(ballPos.x, ballPos.y, 10, 0, 2 * Math.PI);
+    context.arc(ballPos.x, ballPos.y, ballRadius, 0, ballRadius * Math.PI);
     context.fillStyle = '#8a7b66';
     context.fill();
     context.closePath();
@@ -222,17 +223,34 @@ const GamePage: React.FC = () => {
     const calculatedWidth = calculatedheight * 2;
     setHeight(calculatedheight);
     setWidth(calculatedWidth);
-    setBarWidth(calculatedWidth / 50);
+    setBarWidth(calculatedheight / 50);
+    setBallRadius(calculatedheight / 100);
     if (gameType === 'HARD') {
-      setBarHeight(calculatedWidth / 10);
+      setBarHeight(calculatedheight / 10);
     } else {
-      setBarHeight(calculatedWidth / 5);
+      setBarHeight(calculatedheight / 5);
+    }
+  };
+
+  const handleHeaderTitle = (type: string) => {
+    if (type === 'RANK') {
+      return 'Rank Game';
+    } else {
+      return 'General Game';
+    }
+  };
+
+  const handleHeadertext = (type: string) => {
+    if (type === 'RANK') {
+      return '랭크 게임';
+    } else {
+      return '일반 게임';
     }
   };
 
   return (
     <Container>
-      <Header title='General Game' text='일반 게임' />
+      <Header title={handleHeaderTitle(gameType)} text={handleHeadertext(gameType)} />
       <GameBackGround width={width} height={height} canvasRef={canvasRef} />
       <GameFooter
         leftUser={leftUser}
@@ -240,8 +258,15 @@ const GamePage: React.FC = () => {
         leftScore={leftScore}
         rightScore={rightScore}
       />
+      {countdown > 0 && <CountDown>{countdown}</CountDown>}
     </Container>
   );
 };
 
 export default GamePage;
+
+const CountDown = styled.div`
+  position: absolute;
+  font-size: 5vh;
+  font-family: 'GiantsLight';
+`;
