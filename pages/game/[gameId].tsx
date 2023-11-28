@@ -55,12 +55,9 @@ const GamePage: React.FC = () => {
   const [startTime, setStartTime] = useState<Date>();
 
   // pos
-  // const [ball, setBall] = useState<pos>();
-  // const [leftPlayer, setLeftPlayer] = useState<pos>();
-  // const [rightPlayer, setRrightPlayer] = useState<pos>();
-  const ball = { x: 500, y: 250 };
-  const leftPlayer = { x: 10, y: 200 };
-  const rightPlayer = { x: 980, y: 200 };
+  const [ball, setBall] = useState<pos>({ x: 500, y: 250 });
+  const [leftPlayer, setLeftPlayer] = useState<pos>({ x: 10, y: 200 });
+  const [rightPlayer, setRrightPlayer] = useState<pos>({ x: 980, y: 200 });
 
   useEffect(() => {
     if (gameSocket) {
@@ -74,15 +71,9 @@ const GamePage: React.FC = () => {
             setLeftScore(response.body.gameInfo.leftScore);
             setRightScore(response.body.gameInfo.rightScore);
             setStartTime(response.body.gameInfo.startTime);
-            // setBall(response.body.ball);
-            // setLeftPlayer(response.body.leftPlayer);
-            // setRrightPlayer(response.body.rightPlayer);
-            ball.x = response.body.ball.x;
-            ball.y = response.body.ball.y;
-            leftPlayer.x = response.body.leftPlayer.x;
-            leftPlayer.y = response.body.leftPlayer.y;
-            rightPlayer.x = response.body.rightPlayer.x;
-            rightPlayer.y = response.body.rightPlayer.y;
+            setBall(response.body.ball);
+            setLeftPlayer(response.body.leftPlayer);
+            setRrightPlayer(response.body.rightPlayer);
           } else {
             console.log('game-info error', response);
             // router.push('http://localhost:3000/404');
@@ -140,26 +131,14 @@ const GamePage: React.FC = () => {
 
       const handleGameBall = (response: pos) => {
         console.log('handleGameBall', response);
-        if (canvasRef.current) {
-          const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
-          ball.x = response.x;
-          ball.y = response.y;
-          drawBall(context, normalizeCoordinates(ball));
-        }
+        setBall(response);
       };
 
       const handleGamePlayer = (response: { left: pos; right: pos }) => {
         console.log('handleGamePlayer left', response.left);
         console.log('handleGamePlayer right', response.right);
-        if (canvasRef.current) {
-          const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
-          leftPlayer.x = response.left.x;
-          leftPlayer.y = response.left.y - barHeight / 2;
-          rightPlayer.x = response.right.x;
-          rightPlayer.y = response.right.y - barHeight / 2;
-          drawPlayer(context, normalizeCoordinates(leftPlayer), '#889DF0');
-          drawPlayer(context, normalizeCoordinates(rightPlayer), '#FC736D');
-        }
+        setLeftPlayer(response.left);
+        setRrightPlayer(response.right);
       };
 
       const handleGameScore = (response: { left: number; right: number }) => {
@@ -205,21 +184,23 @@ const GamePage: React.FC = () => {
     if (canvasRef.current) {
       const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
       context.clearRect(0, 0, width, height);
+    }
+  }, [gameType, leftScore, rightScore]);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
+
+      context.fillStyle = '#f8f4e8';
+      context.fillRect(0, 0, width, height);
+
       drawBall(context, normalizeCoordinates(ball));
       drawPlayer(context, normalizeCoordinates(leftPlayer), '#889DF0');
       drawPlayer(context, normalizeCoordinates(rightPlayer), '#FC736D');
     }
-  }, [gameType, leftScore, rightScore]);
+  }, [ball, leftPlayer, rightPlayer]);
 
   const drawBall = (context: CanvasRenderingContext2D, ballPos: pos) => {
-    const clearMargin = 2 * ballRadius;
-    const clearX = ballPos.x - ballRadius - clearMargin;
-    const clearY = ballPos.y - ballRadius - clearMargin;
-    const clearWidth = 2 * (ballRadius + clearMargin);
-    const clearHeight = 2 * (ballRadius + clearMargin);
-
-    context.clearRect(clearX, clearY, clearWidth, clearHeight);
-
     context.beginPath();
     context.arc(ballPos.x, ballPos.y, ballRadius, 0, ballRadius * Math.PI);
     context.fillStyle = '#8a7b66';
@@ -227,14 +208,6 @@ const GamePage: React.FC = () => {
   };
 
   const drawPlayer = (context: CanvasRenderingContext2D, playerPos: pos, color: string) => {
-    const clearMargin = 2 * barWidth;
-    const clearX = playerPos.x - clearMargin;
-    const clearY = playerPos.y - clearMargin;
-    const clearWidth = barWidth + 2 * clearMargin;
-    const clearHeight = barHeight + 2 * clearMargin;
-
-    context.clearRect(clearX, clearY, clearWidth, clearHeight);
-
     context.beginPath();
     context.rect(playerPos.x, playerPos.y, barWidth, barHeight);
     context.fillStyle = color;
