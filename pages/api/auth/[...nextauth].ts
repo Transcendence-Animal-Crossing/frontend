@@ -5,7 +5,9 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
 
 const invalidPrimaryCampus = (profile: any) => {
-  const campusId = profile.campus_users.find((cu: any) => cu.is_primary)?.campus_id;
+  const campusId = profile.campus_users.find(
+    (cu: any) => cu.is_primary
+  )?.campus_id;
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
 
@@ -20,6 +22,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     CredentialsProvider({
+      id: 'general',
       name: 'Credentials',
       credentials: {
         intraname: { label: 'Intraname', type: 'text' },
@@ -34,9 +37,57 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           });
           if (response.status === 200) {
-            const accessToken = response.headers.authorization.replace('Bearer ', '');
+            const accessToken = response.headers.authorization.replace(
+              'Bearer ',
+              ''
+            );
             const refreshToken =
-              response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
+              response.headers['set-cookie']?.[0]?.match(
+                /refreshToken=([^;]+)/
+              )?.[1];
+            return {
+              id: response.data.id,
+              nickName: response.data.nickName,
+              intraName: response.data.intraName,
+              avatar: response.data.avatar,
+              responseCode: response.status,
+              accessToken,
+              refreshToken,
+            } as any;
+          }
+        } catch (e: any) {
+          console.error('Sign in error:', e);
+          if (e.response.status == 403) {
+            return `/login/twofactor/${credentials.intraname}`;
+          }
+        }
+        return null;
+      },
+    }),
+    CredentialsProvider({
+      id: 'two-factor',
+      name: 'Two Factor',
+      credentials: {
+        intraname: { label: 'IntraName', type: 'text' },
+        token: { label: 'Token', type: 'text' },
+      },
+      authorize: async (credentials: any) => {
+        if (!credentials) return null;
+        try {
+          const apiUrl = 'http://localhost:8080/auth/email/token';
+          const response = await axios.post(apiUrl, {
+            intraName: credentials.intraName,
+            token: credentials.token,
+          });
+          if (response.status == 200) {
+            const accessToken = response.headers.authorization.replace(
+              'Bearer ',
+              ''
+            );
+            const refreshToken =
+              response.headers['set-cookie']?.[0]?.match(
+                /refreshToken=([^;]+)/
+              )?.[1];
             return {
               id: response.data.id,
               nickName: response.data.nickName,
@@ -49,7 +100,7 @@ export const authOptions: NextAuthOptions = {
           }
         } catch (e) {
           console.error('Sign in error:', e);
-          return null;
+          return `/login/twofactor/${credentials.intraName}`;
         }
         return null;
       },
@@ -57,10 +108,26 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     // @ts-ignore
-    async signIn({ profile, user }) {
+    async signIn({ profile, user, account }) {
       if (!profile && !user) return false;
       if (!profile && user) return user;
       if (invalidPrimaryCampus(profile)) return false;
+      if (profile && account) {
+        try {
+          const apiUrl = 'http://localhost:8080/auth/login';
+          await axios.post(apiUrl, {
+            accessToken: account.access_token,
+          });
+        } catch (error: any) {
+          if (error.response.status == 403) {
+            console.log('42 login two-factor', error);
+            const intraName = error.response.data?.intraName;
+            return intraName
+              ? `/login/twofactor/${intraName}`
+              : '/login/choice';
+          }
+        }
+      }
       return user;
     },
     async jwt({ user, token, profile, account, trigger, session }) {
@@ -86,14 +153,21 @@ export const authOptions: NextAuthOptions = {
           const response = await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
-          token.accessToken = response.headers.authorization.replace('Bearer ', '');
-          token.refreshToken =
-            response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
-          token.id = response.data.id;
-          token.nickName = response.data.nickName;
-          token.intraName = response.data.intraName;
-          token.avatar = response.data.avatar;
-          token.responseCode = response.status;
+          if (response.status === 200 || response.status === 201) {
+            token.accessToken = response.headers.authorization.replace(
+              'Bearer ',
+              ''
+            );
+            token.refreshToken =
+              response.headers['set-cookie']?.[0]?.match(
+                /refreshToken=([^;]+)/
+              )?.[1];
+            token.id = response.data.id;
+            token.nickName = response.data.nickName;
+            token.intraName = response.data.intraName;
+            token.avatar = response.data.avatar;
+            token.responseCode = response.status;
+          }
         } catch (error) {
           console.error('jwt error:', error);
           token.accessToken = 'fail';
@@ -109,9 +183,11 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
       session.responseCode = token.responseCode as number;
-      console.log(session);
       return session;
     },
+  },
+  pages: {
+    signIn: '/login/general',
   },
 };
 

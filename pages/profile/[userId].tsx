@@ -19,8 +19,12 @@ const UserPage = () => {
   // userInfo
   const [intraname, setIntraname] = useState('intraname');
   const [nickname, setNickname] = useState('nickname');
-  const [avatarPath, setAvatarPath] = useState(apiUrl + 'original/profile2.png');
+  const [avatarPath, setAvatarPath] = useState(
+    apiUrl + 'original/profile2.png'
+  );
   const [tierIndex, setTierIndex] = useState(0);
+
+  // const [twofactor, setTwofactor] = useState(false);
 
   // achievement
   const [achieveList, setAchieveList] = useState([1, 0, 0, 0, 0, 0, 0]);
@@ -192,6 +196,28 @@ const UserPage = () => {
     setMode(mode);
   };
 
+  // const handle2fa = async () => {
+  //   try {
+  //     const userId = await getUserId();
+  //     if (twofactor == false) {
+  //       await setTwofactor(true);
+  //       const response = await axiosInstance.patch('/users/2fa-setup', {
+  //         params: {
+  //           id: userId,
+  //         },
+  //       });
+  //       console.log('2fa setup');
+  //     } else {
+  //       await setTwofactor(false);
+  //       const response = await axiosInstance.patch('users/2fa-cancel');
+  //       console.log('2fa cancel');
+  //     }
+  //   } catch (error) {
+  //     console.log('Error occured in 2fa setup');
+  //     console.log(error);
+  //   }
+  // };
+
   return (
     <Container>
       <MyPageFrame>
@@ -204,15 +230,24 @@ const UserPage = () => {
           winCount={winCount}
           winRate={winRate}
         />
+        {/* <button onClick={handle2fa}>
+          {twofactor == false ? '이중인증 설정' : '이중인증 해제'}
+        </button> */}
         <InfoContainer>
           <MatchHistoryFrame>
             <MatchHistoryHeader>
               <Mode>
                 <ModeButton onClick={() => handleMode('general')}>
-                  <div className={`${mode === 'general' ? 'select' : 'unselect'}`}>일반</div>
+                  <div
+                    className={`${mode === 'general' ? 'select' : 'unselect'}`}
+                  >
+                    일반
+                  </div>
                 </ModeButton>
                 <ModeButton onClick={() => handleMode('rank')}>
-                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>랭크</div>
+                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>
+                    랭크
+                  </div>
                 </ModeButton>
               </Mode>
               <Button onClick={handleRouteLobby}>
