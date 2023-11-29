@@ -78,7 +78,7 @@ const GamePage: React.FC = () => {
             setRrightPlayer(response.body.rightPlayer);
           } else {
             console.log('game-info error', response);
-            router.push('http://localhost:3000/404');
+            router.push('/404');
           }
         });
 
@@ -87,7 +87,7 @@ const GamePage: React.FC = () => {
             console.log('game-ready');
           } else {
             console.log('game-ready error', response);
-            router.push('http://localhost:3000/404');
+            router.push('/404');
           }
         });
       }

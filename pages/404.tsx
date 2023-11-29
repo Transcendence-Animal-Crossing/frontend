@@ -74,7 +74,7 @@ const OverlayWindow = ({
   const overlayTop = `${loginButtonRect.top - loginButtonRect.height * 0.3}px`;
 
   const handleGoHome = async () => {
-    router.push('http://localhost:3000/');
+    router.push('/');
   };
 
   return (
