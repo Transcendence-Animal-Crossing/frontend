@@ -280,17 +280,9 @@ const GamePage: React.FC = () => {
     }
   };
 
-  const handleHeadertext = (type: string) => {
-    if (type === 'RANK') {
-      return '랭크 게임';
-    } else {
-      return '일반 게임';
-    }
-  };
-
   return (
     <Container>
-      <Header title={handleHeaderTitle(gameType)} text={handleHeadertext(gameType)} />
+      <Header title={handleHeaderTitle(gameType)} text={gameType} />
       <GameBackGround width={width} height={height} canvasRef={canvasRef} />
       <GameFooter
         leftUser={leftUser}
