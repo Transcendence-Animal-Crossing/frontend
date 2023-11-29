@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
+import { useState, useRef, useEffect } from 'react';
 import { bronze, silver, gold, platinum, diamond } from './tier';
 import info from '../../public/Icon/info.png';
+import TierModal from './tierModal';
 
 const UserContainer: React.FC<{
   intraname: string;
@@ -12,9 +13,42 @@ const UserContainer: React.FC<{
   winCount: number;
   winRate: number;
   avatar: string;
-}> = ({ intraname, nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
+}> = ({
+  intraname,
+  nickname,
+  tierIndex,
+  totalCount,
+  winCount,
+  winRate,
+  avatar,
+}) => {
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const tierTexts = ['브론즈', '실버', '골드', '플래티넘', '다이아몬드'];
+
+  const [isOpenTierModal, setOpenTierModal] = useState<boolean>(false);
+  const [InfoButtonRect, setInfoButtonRect] = useState<{
+    top: number;
+    left: number;
+  }>({ top: 0, left: 0 });
+  const InfoButtonRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (InfoButtonRef.current) {
+      const buttonRect = InfoButtonRef.current.getBoundingClientRect();
+      setInfoButtonRect({
+        top: buttonRect.top,
+        left: buttonRect.left,
+      });
+    }
+  }, []);
+
+  const handleOpenTierInfo = () => {
+    setOpenTierModal(true);
+  };
+
+  const handleCloseTierInfo = () => {
+    setOpenTierModal(false);
+  };
 
   return (
     <UserProfile>
@@ -25,9 +59,19 @@ const UserContainer: React.FC<{
       </NameFrame>
       <DivisionBar />
       <TierFrame>
-        <TierImage src={tierImages[tierIndex]} alt='Tier Image' width={30} height={30} />
+        <TierImage
+          src={tierImages[tierIndex]}
+          alt='Tier Image'
+          width={30}
+          height={30}
+        />
         <TierText> {tierTexts[tierIndex]} </TierText>
-        <InfoImage src={info} alt='info' />
+        <InfoImage
+          src={info}
+          alt='info'
+          onClick={handleOpenTierInfo}
+          ref={InfoButtonRef}
+        />
       </TierFrame>
       <DivisionBar />
       <MatchStatFrame>
@@ -45,6 +89,12 @@ const UserContainer: React.FC<{
         </MatchStatText>
       </MatchStatFrame>
       <DivisionBar />
+      {isOpenTierModal && (
+        <TierModal
+          handleCloseModal={handleCloseTierInfo}
+          InfoButtonRect={InfoButtonRect}
+        />
+      )}
     </UserProfile>
   );
 };

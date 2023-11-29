@@ -21,6 +21,8 @@ declare module 'styled-components' {
       red: string;
       blue: string;
       indigo: string;
+      yellow: string;
+      darkBrown: string;
       gray: string;
       purple: string;
     };
@@ -47,6 +49,8 @@ export const theme: DefaultTheme = {
     red: '#FC736D',
     blue: '#889DF0',
     indigo: '#253B52',
+    yellow: '#f7cd67',
+    darkBrown: '#7A5025',
     gray: '#BDBDBD',
     purple: '#889DF0',
   },

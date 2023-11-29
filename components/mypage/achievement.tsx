@@ -1,12 +1,18 @@
 import styled from 'styled-components';
 import Paging from './paging';
 
-const AchievementContainer = ({ achieveList }: { achieveList: number[] }) => {
+const AchievementContainer = ({
+  achieveList,
+  refresh,
+}: {
+  achieveList: number[];
+  refresh: boolean;
+}) => {
   return (
     <AchievementFrame>
       <AchievementHeader>Achievements</AchievementHeader>
       <AchievementBody>
-        <Paging achieveList={achieveList} />
+        <Paging achieveList={achieveList} refresh={refresh} />
       </AchievementBody>
     </AchievementFrame>
   );
