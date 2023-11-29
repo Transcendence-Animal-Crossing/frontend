@@ -23,9 +23,6 @@ const UserPage = () => {
   );
   const [tierIndex, setTierIndex] = useState(0);
 
-  // twofactor
-  // const [twofactor, setTwofactor] = useState(false);
-
   // achievement
   const [achieveList, setAchieveList] = useState([1, 0, 0, 0, 0, 0, 0]);
 
@@ -44,9 +41,19 @@ const UserPage = () => {
     games: [],
   });
 
+  const [refresh, setRefresh] = useState(false);
+
   useEffect(() => {
     if (userId) {
       getUserInfo();
+      setIsRank(true);
+      setMode('rank');
+      setHasMore(true);
+      setOffset(0);
+      setMatchHistory({
+        games: [],
+      });
+      setRefresh(!refresh);
     }
   }, [userId]);
 
@@ -114,7 +121,6 @@ const UserPage = () => {
           offset: 0,
         },
       });
-      console.log('getMatchHistory() response first', isRank, mode);
       console.log(response);
       await afterMatchHistory(response.data, 0);
     } catch (error) {
@@ -196,28 +202,6 @@ const UserPage = () => {
     setMode(mode);
   };
 
-  // const handle2fa = async () => {
-  //   try {
-  //     const userId = await getUserId();
-  //     if (twofactor == false) {
-  //       await setTwofactor(true);
-  //       const response = await axiosInstance.patch('/users/2fa-setup', {
-  //         params: {
-  //           id: userId,
-  //         },
-  //       });
-  //       console.log('2fa setup');
-  //     } else {
-  //       await setTwofactor(false);
-  //       const response = await axiosInstance.patch('users/2fa-cancel');
-  //       console.log('2fa cancel');
-  //     }
-  //   } catch (error) {
-  //     console.log('Error occured in 2fa setup');
-  //     console.log(error);
-  //   }
-  // };
-
   return (
     <Container>
       <MyPageFrame>
@@ -230,9 +214,6 @@ const UserPage = () => {
           winCount={winCount}
           winRate={winRate}
         />
-        {/* <button onClick={handle2fa}>
-          {twofactor == false ? '이중인증 설정' : '이중인증 해제'}
-        </button> */}
         <InfoContainer>
           <MatchHistoryFrame>
             <MatchHistoryHeader>
@@ -269,7 +250,7 @@ const UserPage = () => {
             </MatchHistory>
           </MatchHistoryFrame>
           <DivisionBar />
-          <AchievementFrame achieveList={achieveList} />
+          <AchievementFrame achieveList={achieveList} refresh={refresh} />
         </InfoContainer>
       </MyPageFrame>
     </Container>
