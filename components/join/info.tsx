@@ -23,7 +23,12 @@ const InfoContainer: React.FC<{
   onNicknameChange: (newNickname: string) => void;
   handleImageChange: (newIndex: number, e: any) => void;
   handleFileInputChange: (e: any) => void;
-}> = ({ message, onNicknameChange, handleImageChange, handleFileInputChange }) => {
+}> = ({
+  message,
+  onNicknameChange,
+  handleImageChange,
+  handleFileInputChange,
+}) => {
   const [profileFrameWidth, setProfileFrameWidth] = useState(0);
   const imagePaths = [
     profile1,
@@ -64,11 +69,11 @@ const InfoContainer: React.FC<{
       <NicknameFrame>
         <InputFrame>
           <PenFrame>
-            <PenImage src={pen} alt="pen" />
+            <PenImage src={pen} alt='pen' />
           </PenFrame>
           <Input
-            type="text"
-            placeholder="NickName"
+            type='text'
+            placeholder='NickName'
             onChange={(e) => onNicknameChange(e.target.value)}
             maxLength={8}
             required
@@ -77,7 +82,7 @@ const InfoContainer: React.FC<{
         <Text> {message} </Text>
       </NicknameFrame>
       <DivisionBar />
-      <ProfileFrame id="profile-frame" onLoad={handleProfileFrameWidth}>
+      <ProfileFrame id='profile-frame' onLoad={handleProfileFrameWidth}>
         {imagePaths.map((imagePath, index) => (
           <ProfileImage
             key={index}
@@ -88,8 +93,8 @@ const InfoContainer: React.FC<{
           />
         ))}
         <input
-          type="file"
-          id="file-input"
+          type='file'
+          id='file-input'
           style={{ display: 'none' }}
           onChange={handleFileInputChange}
         />
@@ -101,8 +106,8 @@ const InfoContainer: React.FC<{
 export default InfoContainer;
 
 const InfoFrame = styled.div`
-  width: 40%;
-  height: 80%;
+  width: 40vw;
+  height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -113,7 +118,7 @@ const InfoFrame = styled.div`
 const NicknameFrame = styled.div`
   width: 80%;
   height: auto;
-  gap: 5px;
+  gap: 5%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -163,6 +168,7 @@ const Input = styled.input.attrs({ required: true })`
 `;
 
 const Text = styled.div`
+  height: 1.5vw;
   color: #fc736d;
   font-family: 'GiantsLight';
   font-size: 1vw;

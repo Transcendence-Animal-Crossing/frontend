@@ -20,9 +20,8 @@ const infoModal: React.FC<{
     <>
       <Container onClick={handleOverlayClick}>
         <Content overlayTop={overlayTop} overlayLeft={overlayLeft}>
-          <GuriImage src={Guri} alt="Guri" />
+          <GuriImage src={Guri} alt='Guri' />
           <Text> {infoText} </Text>
-
           <CompleteButtonFrame>
             <CompleteButton onClick={handleOverlayClick}> 닫기 </CompleteButton>
           </CompleteButtonFrame>
