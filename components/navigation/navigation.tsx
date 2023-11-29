@@ -10,6 +10,7 @@ import SearchBarContainer from './searchBar';
 import UserInfo from '../userInfo';
 import UserModal from '../userModal';
 import AlarmModal from './alarmModal';
+import RoomInviteModal from '../roomInviteModal';
 
 interface dmData {
   id: number;
@@ -33,15 +34,20 @@ interface RequestData {
   intraName: string;
 }
 
+interface InviteRoomData {
+  id: string;
+  title: string;
+  sendBy: friendData;
+}
+
 const Navigation = () => {
   const { data: session } = useSession();
   const { chatSocket } = useSocket();
   const emitter = useEventEmitter();
   const [chatSocketFlag, setSocketFlag] = useState<boolean>(true);
+
+  // friends
   const [friendsList, setFriendsList] = useState<friendData[]>([]);
-  const [requestList, setRequestList] = useState<RequestData[]>([]);
-  const [requestListLen, setRequestListLen] = useState<number>(0);
-  const [openDmId, setOpenDmId] = useState<number>(-1);
   const [userInfo, setUserInfo] = useState<friendData>({
     id: 0,
     nickName: '',
@@ -50,12 +56,18 @@ const Navigation = () => {
     status: '',
     unReadMessages: [],
   });
+
+  // request
+  const [requestList, setRequestList] = useState<RequestData[]>([]);
+  const [requestListLen, setRequestListLen] = useState<number>(0);
   const [isOpenRequest, setOpenRequest] = useState<boolean>(false);
   const [requestRect, setRequestRect] = useState<{
     top: number;
     left: number;
     height: number;
   }>({ top: 0, left: 0, height: 0 });
+
+  // user modal
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [userRect, setUserRect] = useState<{
     top: number;
@@ -63,6 +75,7 @@ const Navigation = () => {
     width: number;
   }>({ top: 0, left: 0, width: 0 });
   const userRefs: React.MutableRefObject<HTMLDivElement | null>[] = [];
+  const [openDmId, setOpenDmId] = useState<number>(-1);
 
   // game lobby
   const [gameButton, setGameButton] = useState<boolean>(false);
@@ -78,6 +91,10 @@ const Navigation = () => {
   const modeRefs = useRef<HTMLImageElement | null>(null);
   let overlayTop = `${modeRect.top * 0.96}px`;
   let overlayLeft = `${modeRect.left + (modeRect.width / 3) * 2}px`;
+
+  // invite chatting room
+  const [isRoomInvite, setIsRoomInvite] = useState<boolean>(true);
+  const [inviteRoomInfo, setInviteRoomInfo] = useState<InviteRoomData>();
 
   useEffect(() => {
     if (chatSocket && chatSocketFlag) {
@@ -195,12 +212,18 @@ const Navigation = () => {
         );
       };
 
+      const handleRoomInvite = (response: InviteRoomData) => {
+        setInviteRoomInfo(response);
+        setIsRoomInvite(true);
+      };
+
       chatSocket.on('friend-update', handleFriendUpdate);
       chatSocket.on('dm', handleDM);
       chatSocket.on('new-friend', handleNewFriend);
       chatSocket.on('delete-friend', handleDeleteFriend);
       chatSocket.on('new-friend-request', handleNewFriendRequest);
       chatSocket.on('delete-friend-request', handleDeleteFriendRequest);
+      chatSocket.on('room-invite', handleRoomInvite);
 
       return () => {
         chatSocket.off('friend-update', handleFriendUpdate);
@@ -209,6 +232,7 @@ const Navigation = () => {
         chatSocket.off('delete-friend', handleDeleteFriend);
         chatSocket.off('new-friend-request', handleNewFriendRequest);
         chatSocket.off('delete-friend-request', handleDeleteFriendRequest);
+        chatSocket.off('room-invite', handleRoomInvite);
       };
     }
   }, [chatSocket, openDmId]);
@@ -309,6 +333,10 @@ const Navigation = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
+  };
+
+  const handleCloseInvite = () => {
+    setIsRoomInvite(false);
   };
 
   const handleAvatarPath = (avatar: string) => {
@@ -435,6 +463,7 @@ const Navigation = () => {
           requestRect={requestRect}
         />
       ) : null}
+      {isRoomInvite && inviteRoomInfo && <RoomInviteModal roomInfo={inviteRoomInfo}  handleCloseModal={handleCloseInvite} />}
     </Container>
   );
 };
