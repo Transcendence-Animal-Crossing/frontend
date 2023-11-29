@@ -58,8 +58,8 @@ const GamePage: React.FC = () => {
 
   // pos
   const [ball, setBall] = useState<pos>({ x: 500, y: 250 });
-  const [leftPlayer, setLeftPlayer] = useState<pos>({ x: 10, y: 200 });
-  const [rightPlayer, setRrightPlayer] = useState<pos>({ x: 980, y: 200 });
+  const [leftPlayer, setLeftPlayer] = useState<pos>({ x: 50, y: 200 });
+  const [rightPlayer, setRrightPlayer] = useState<pos>({ x: 940, y: 200 });
 
   useEffect(() => {
     if (gameSocket) {
@@ -76,6 +76,13 @@ const GamePage: React.FC = () => {
             setBall(response.body.ball);
             setLeftPlayer(response.body.leftPlayer);
             setRrightPlayer(response.body.rightPlayer);
+
+            const calculatedheight = window.innerHeight * 0.7;
+            if (response.body.gameInfo.type === 'HARD') {
+              setBarHeight(calculatedheight / 10);
+            } else {
+              setBarHeight(calculatedheight / 5);
+            }
           } else {
             console.log('game-info error', response);
             router.push('/404');
@@ -107,6 +114,7 @@ const GamePage: React.FC = () => {
 
       const handleGameEnd = () => {
         console.log('handleGameEnd');
+        setCountdown(0);
         setEndFlag(true);
       };
 
@@ -152,6 +160,16 @@ const GamePage: React.FC = () => {
         console.log('handleGameScore', response);
         setLeftScore(response.left);
         setRightScore(response.right);
+
+        setCountdown(3);
+        const countdownInterval = setInterval(() => {
+          setCountdown((prevCountdown) => prevCountdown - 1);
+        }, 1000);
+
+        setTimeout(() => {
+          clearInterval(countdownInterval);
+          setCountdown(0);
+        }, 3000);
       };
 
       gameSocket.on('game-start', handleGameStart);
@@ -187,12 +205,23 @@ const GamePage: React.FC = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [width, height]);
+  }, [gameType, width, height]);
 
   useEffect(() => {
     if (canvasRef.current) {
       const context = canvasRef.current.getContext('2d') as CanvasRenderingContext2D;
-      context.clearRect(0, 0, width, height);
+
+      context.fillStyle = '#f8f4e8';
+      context.fillRect(0, 0, width, height);
+
+      drawBall(context, normalizeCoordinates({ x: 500, y: 250 }));
+      if (gameType == 'HARD') {
+        drawPlayer(context, normalizeCoordinates({ x: 50, y: 225 }), '#889DF0');
+        drawPlayer(context, normalizeCoordinates({ x: 940, y: 225 }), '#FC736D');
+      } else {
+        drawPlayer(context, normalizeCoordinates({ x: 50, y: 200 }), '#889DF0');
+        drawPlayer(context, normalizeCoordinates({ x: 940, y: 200 }), '#FC736D');
+      }
     }
   }, [gameType, leftScore, rightScore]);
 
@@ -279,6 +308,6 @@ export default GamePage;
 
 const CountDown = styled.div`
   position: absolute;
-  font-size: 5vh;
+  font-size: 10vh;
   font-family: 'GiantsLight';
 `;
