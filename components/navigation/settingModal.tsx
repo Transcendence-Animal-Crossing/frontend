@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
 import ProfileModal from './profileModal';
+import PasswordModal from './passwordModal';
 
 const settingModal: React.FC<{
   handleCloseModal: () => void;
@@ -13,6 +14,7 @@ const settingModal: React.FC<{
 
   const [twofactor, setTwofactor] = useState(false);
   const [isOpenProfile, setOpenProfile] = useState<boolean>(false);
+  const [isOpenPassword, setOpenPassword] = useState<boolean>(false);
 
   useEffect(() => {
     get2fa();
@@ -68,6 +70,15 @@ const settingModal: React.FC<{
     }
   };
 
+  const handlePasswordModal = () => {
+    setOpenPassword(true);
+  };
+
+  const handleClosePassword = () => {
+    setOpenPassword(false);
+    handleCloseModal();
+  };
+
   return (
     <>
       <Container onClick={handleOverlayClick}>
@@ -77,10 +88,14 @@ const settingModal: React.FC<{
             <Button onClick={handleTwoFactor}>
               {twofactor ? '이중인증 해제' : '이중인증 설정'}
             </Button>
+            <Button onClick={handlePasswordModal}> 비밀번호 설정 </Button>
           </ButtonFrame>
         </Content>
         {isOpenProfile && (
           <ProfileModal handleCloseModal={handleCloseProfile} />
+        )}
+        {isOpenPassword && (
+          <PasswordModal handleCloseModal={handleClosePassword} />
         )}
       </Container>
     </>
