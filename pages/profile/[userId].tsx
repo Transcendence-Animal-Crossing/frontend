@@ -41,9 +41,19 @@ const UserPage = () => {
     games: [],
   });
 
+  const [refresh, setRefresh] = useState(false);
+
   useEffect(() => {
     if (userId) {
       getUserInfo();
+      setIsRank(true);
+      setMode('rank');
+      setHasMore(true);
+      setOffset(0);
+      setMatchHistory({
+        games: [],
+      });
+      setRefresh(!refresh);
     }
   }, [userId]);
 
@@ -111,7 +121,6 @@ const UserPage = () => {
           offset: 0,
         },
       });
-      console.log('getMatchHistory() response first', isRank, mode);
       console.log(response);
       await afterMatchHistory(response.data, 0);
     } catch (error) {
@@ -205,9 +214,6 @@ const UserPage = () => {
           winCount={winCount}
           winRate={winRate}
         />
-        {/* <button onClick={handle2fa}>
-          {twofactor == false ? '이중인증 설정' : '이중인증 해제'}
-        </button> */}
         <InfoContainer>
           <MatchHistoryFrame>
             <MatchHistoryHeader>
@@ -244,7 +250,7 @@ const UserPage = () => {
             </MatchHistory>
           </MatchHistoryFrame>
           <DivisionBar />
-          <AchievementFrame achieveList={achieveList} />
+          <AchievementFrame achieveList={achieveList} refresh={refresh} />
         </InfoContainer>
       </MyPageFrame>
     </Container>
