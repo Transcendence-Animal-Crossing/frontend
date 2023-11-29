@@ -9,7 +9,8 @@ const invalidPrimaryCampus = (profile: any) => {
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
 
-const apiUrl = 'http://backend:8080';
+const apiUrl = 'http://localhost:8080';
+// const apiUrl = 'http://backend:8080';
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.SECRET as string,
