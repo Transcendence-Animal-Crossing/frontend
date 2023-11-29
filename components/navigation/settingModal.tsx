@@ -15,8 +15,22 @@ const settingModal: React.FC<{
   const [isOpenProfile, setOpenProfile] = useState<boolean>(false);
 
   useEffect(() => {
-    // api call : get twofactor setting
+    get2fa();
   }, []);
+
+  const get2fa = async () => {
+    try {
+      const response = await axiosInstance.get('/users/2fa');
+      if (response.data == true) {
+        setTwofactor(true);
+      } else {
+        setTwofactor(false);
+      }
+    } catch (error) {
+      console.log('Error occured in get2fa');
+      console.log(error);
+    }
+  };
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
