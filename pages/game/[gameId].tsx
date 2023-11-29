@@ -7,6 +7,7 @@ import Container from '../../components/columnLayout';
 import Header from '../../components/game/gameHeader';
 import GameBackGround from '../../components/game/background';
 import GameFooter from '../../components/game/gameFooter';
+import GameEndModal from '../../components/game/gameEndModal';
 
 interface UserData {
   id: number;
@@ -53,6 +54,7 @@ const GamePage: React.FC = () => {
   const [leftScore, setLeftScore] = useState<number>(0);
   const [rightScore, setRightScore] = useState<number>(0);
   const [startTime, setStartTime] = useState<Date>();
+  const [endFlag, setEndFlag] = useState<boolean>(false);
 
   // pos
   const [ball, setBall] = useState<pos>({ x: 500, y: 250 });
@@ -103,6 +105,11 @@ const GamePage: React.FC = () => {
         }, 3000);
       };
 
+      const handleGameEnd = () => {
+        console.log('handleGameEnd');
+        setEndFlag(true);
+      };
+
       const handleKeyDown = (event: KeyboardEvent) => {
         let gameKey: 'left' | 'right' | 'up' | 'down' | undefined;
         if (event.key == 'a' || event.key == 'ArrowLeft') gameKey = 'left';
@@ -148,6 +155,7 @@ const GamePage: React.FC = () => {
       };
 
       gameSocket.on('game-start', handleGameStart);
+      gameSocket.on('game-end', handleGameEnd);
       gameSocket.on('game-ball', handleGameBall);
       gameSocket.on('game-player', handleGamePlayer);
       gameSocket.on('game-score', handleGameScore);
@@ -156,6 +164,7 @@ const GamePage: React.FC = () => {
 
       return () => {
         gameSocket.off('game-start', handleGameStart);
+        gameSocket.off('game-end', handleGameEnd);
         gameSocket.off('game-ball', handleGameBall);
         gameSocket.off('game-player', handleGamePlayer);
         gameSocket.off('game-score', handleGameScore);
@@ -261,6 +270,7 @@ const GamePage: React.FC = () => {
         rightScore={rightScore}
       />
       {countdown > 0 && <CountDown>{countdown}</CountDown>}
+      {endFlag && <GameEndModal />}
     </Container>
   );
 };
