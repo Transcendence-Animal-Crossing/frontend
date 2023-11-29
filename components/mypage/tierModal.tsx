@@ -11,10 +11,10 @@ const tierModal: React.FC<{
   const tierTexts = ['브론즈', '실버', '골드', '플래티넘', '다이아몬드'];
   const tierScore = [
     '1000점 미만',
-    '3000점 미만',
-    '5000점 미만',
-    '7000점 미만',
-    '7000점 이상',
+    '1100점 미만',
+    '1500점 미만',
+    '2000점 미만',
+    '2000점 이상',
   ];
   const overlayTop = `${InfoButtonRect.top * 1.1}px`;
   const overlayLeft = `${InfoButtonRect.left * 0.5}px`;

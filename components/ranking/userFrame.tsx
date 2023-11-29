@@ -13,7 +13,15 @@ const UserFrame: React.FC<{
   avatar: string;
   rankScore: number;
   rankGameTotalCount: number;
-}> = ({ id, ranking, nickName, intraName, avatar, rankScore, rankGameTotalCount }) => {
+}> = ({
+  id,
+  ranking,
+  nickName,
+  intraName,
+  avatar,
+  rankScore,
+  rankGameTotalCount,
+}) => {
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const [tierIndex, setTierIndex] = useState(0);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
@@ -31,11 +39,11 @@ const UserFrame: React.FC<{
   const handleRank = async (rankScore: number) => {
     if (rankScore < 1000) {
       setTierIndex(0);
-    } else if (rankScore < 3000) {
+    } else if (rankScore < 1100) {
       setTierIndex(1);
-    } else if (rankScore < 5000) {
+    } else if (rankScore < 1500) {
       setTierIndex(2);
-    } else if (rankScore < 7000) {
+    } else if (rankScore < 2000) {
       setTierIndex(3);
     } else {
       setTierIndex(4);
@@ -62,7 +70,12 @@ const UserFrame: React.FC<{
     <UserRankFrame>
       <LeftFrame>
         <RankingFrame> {ranking} </RankingFrame>
-        <TierImage src={tierImages[tierIndex]} alt='Tier Image' width={30} height={30} />
+        <TierImage
+          src={tierImages[tierIndex]}
+          alt='Tier Image'
+          width={30}
+          height={30}
+        />
         <UserTouchFrame onClick={handleClickUser} ref={userRef}>
           <UserInfo
             nickName={nickName}
@@ -75,7 +88,11 @@ const UserFrame: React.FC<{
       </LeftFrame>
       <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
       {isOpenModal ? (
-        <UserModal handleCloseModal={handleCloseModal} userId={id} userRect={userRect} />
+        <UserModal
+          handleCloseModal={handleCloseModal}
+          userId={id}
+          userRect={userRect}
+        />
       ) : null}
     </UserRankFrame>
   );
