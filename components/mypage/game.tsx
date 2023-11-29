@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import UserInfo from '../userInfo';
 import { getSession } from 'next-auth/react';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 interface GameProps {
   id: number;
@@ -23,7 +24,6 @@ const Game: React.FC<{
   game: GameProps;
   userId: number;
 }> = ({ game, userId }) => {
-  const apiUrl = 'http://localhost:8080/';
   const [isWin, setIsWin] = useState(true);
   const [result, setResult] = useState('승' || '패');
   const [user1, setUser1] = useState({
@@ -57,14 +57,14 @@ const Game: React.FC<{
         nickName: game.winner.nickName,
         intraName: game.winner.intraName,
         score: game.winnerScore,
-        avatar: apiUrl + game.winner.avatar,
+        avatar: handleSetUserAvatar(game.winner.avatar),
       });
       setUser2({
         id: game.loser.id,
         nickName: game.loser.nickName,
         intraName: game.loser.intraName,
         score: game.loserScore,
-        avatar: apiUrl + game.loser.avatar,
+        avatar: handleSetUserAvatar(game.loser.avatar),
       });
       setIsWin(true);
       setResult('승');
@@ -74,14 +74,14 @@ const Game: React.FC<{
         nickName: game.loser.nickName,
         intraName: game.loser.intraName,
         score: game.loserScore,
-        avatar: apiUrl + game.loser.avatar,
+        avatar: handleSetUserAvatar(game.loser.avatar),
       });
       setUser2({
         id: game.winner.id,
         nickName: game.winner.nickName,
         intraName: game.winner.intraName,
         score: game.winnerScore,
-        avatar: apiUrl + game.winner.avatar,
+        avatar: handleSetUserAvatar(game.winner.avatar),
       });
       setIsWin(false);
       setResult('패');

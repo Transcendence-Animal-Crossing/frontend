@@ -8,6 +8,7 @@ import axiosInstance from '../../utils/axiosInstance';
 import exit from '../../public/Icon/exit.png';
 import DMContainer from './renderDM';
 import InputDmContainer from './inputDM';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 interface dmData {
   body: dmData;
@@ -173,9 +174,9 @@ const DmModal: React.FC<{
         params: { id: targetId },
       })
       .then((response) => {
-        const apiUrl = 'http://localhost:8080/';
         setNickName(response.data.nickName);
-        setAvatar(apiUrl + response.data.avatar);
+        setAvatar(handleSetUserAvatar(response.data.avatar));
+
       });
   };
 

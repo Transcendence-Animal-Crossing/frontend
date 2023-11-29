@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 interface UserData {
   id: number;
@@ -14,16 +15,12 @@ const GameFooter: React.FC<{
   leftScore: number;
   rightScore: number;
 }> = ({ leftUser, rightUser, leftScore, rightScore }) => {
-  const handleAvatarPath = (avatar: string) => {
-    const apiUrl = 'http://localhost:8080/';
-    return apiUrl + avatar;
-  };
 
   return (
     <GameContent>
       <UserInfoFrame sort='flex-start'>
         <UserImage
-          src={handleAvatarPath(leftUser.avatar)}
+          src={handleSetUserAvatar(leftUser.avatar)}
           alt='Uploaded Image'
           width={300}
           height={300}
@@ -43,7 +40,7 @@ const GameFooter: React.FC<{
           <Text textsize='0.7vw'> {rightUser.intraName} </Text>
         </UserTextFrame>
         <UserImage
-          src={handleAvatarPath(rightUser.avatar)}
+          src={handleSetUserAvatar(rightUser.avatar)}
           alt='Uploaded Image'
           width={300}
           height={300}

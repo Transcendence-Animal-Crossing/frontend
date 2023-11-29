@@ -9,9 +9,9 @@ import UserList from '../../components/ranking/userList';
 import search from '../../public/Icon/search.png';
 import prev from '../../public/Icon/prev.png';
 import next from '../../public/Icon/next.png';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 const Ranking = () => {
-  const apiUrl = 'http://localhost:8080/';
   const userPerPage = 8;
   const { data: session } = useSession();
   console.log(session);
@@ -36,7 +36,7 @@ const Ranking = () => {
       });
       console.log('getRankingList() response');
       response.data.map((user: any) => {
-        user.avatar = apiUrl + user.avatar;
+        user.avatar = handleSetUserAvatar(user.avatar);
       });
       console.log(response.data);
       await printResponse(response.data);
@@ -60,7 +60,7 @@ const Ranking = () => {
       console.log('handleSearch() response');
       console.log(response.data);
       response.data.map((user: any) => {
-        user.avatar = apiUrl + user.avatar;
+        user.avatar = handleSetUserAvatar(user.avatar);
       });
       await setUserList(response.data);
     } catch (error: any) {

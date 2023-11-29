@@ -9,6 +9,8 @@ const invalidPrimaryCampus = (profile: any) => {
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
 
+const apiUrl = 'http://backend:8080';
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.SECRET as string,
   providers: [
@@ -28,8 +30,7 @@ export const authOptions: NextAuthOptions = {
       authorize: async (credentials) => {
         if (!credentials) return null;
         try {
-          const apiUrl = 'http://localhost:8080/auth/signIn';
-          const response = await axios.post(apiUrl, {
+          const response = await axios.post(apiUrl + '/auth/signIn', {
             intraName: credentials.intraname,
             password: credentials.password,
           });
@@ -82,8 +83,7 @@ export const authOptions: NextAuthOptions = {
       }
       if (profile && account) {
         try {
-          const apiUrl = 'http://localhost:8080/auth/login';
-          const response = await axios.post(apiUrl, {
+          const response = await axios.post(apiUrl + '/auth/login', {
             accessToken: account.access_token,
           });
           token.accessToken = response.headers.authorization.replace('Bearer ', '');

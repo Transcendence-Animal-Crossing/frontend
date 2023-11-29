@@ -3,15 +3,11 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import setting from '../../public/Icon/setting.png';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 const myProfile = () => {
   const { data: session } = useSession();
   const router = useRouter();
-
-  const handleSetUserAvatar = () => {
-    const apiUrl = 'http://localhost:8080/';
-    return apiUrl + session?.user.avatar;
-  };
 
   const handleUserPage = () => {
     router.push(`http://localhost:3000/profile/${session?.user?.id}`);
@@ -21,7 +17,12 @@ const myProfile = () => {
     <>
       <ProfileFrame>
         <ProfileInfoFrame onClick={handleUserPage}>
-          <ProfileImage src={handleSetUserAvatar()} alt='Uploaded Image' width={300} height={300} />
+          <ProfileImage
+            src={handleSetUserAvatar(session?.user?.avatar)}
+            alt='Uploaded Image'
+            width={300}
+            height={300}
+          />
           <ProfileTextFrame>
             <Text textsize='1.1vw'> {session?.user?.nickName} </Text>
             <Text textsize='0.7vw'> {session?.user?.intraName} </Text>

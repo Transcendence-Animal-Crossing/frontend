@@ -10,6 +10,7 @@ import SearchBarContainer from './searchBar';
 import UserInfo from '../userInfo';
 import UserModal from '../userModal';
 import AlarmModal from './alarmModal';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 interface dmData {
   id: number;
@@ -311,11 +312,6 @@ const Navigation = () => {
     setOpenModal(false);
   };
 
-  const handleAvatarPath = (avatar: string) => {
-    const apiUrl = 'http://localhost:8080/';
-    return apiUrl + avatar;
-  };
-
   const handlerTranslation = (status: string) => {
     if (status === 'OFFLINE') return '오프라인';
     if (status === 'ONLINE') return '온라인';
@@ -381,7 +377,7 @@ const Navigation = () => {
               <UserInfo
                 nickName={friend.nickName}
                 intraName={friend.intraName}
-                avatar={handleAvatarPath(friend.avatar)}
+                avatar={handleSetUserAvatar(friend.avatar)}
                 width={40}
                 height={5}
               />
