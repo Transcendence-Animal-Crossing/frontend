@@ -29,7 +29,6 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
     }
   }
 
-  console.log(pathname);
 }
 
 export const config = {

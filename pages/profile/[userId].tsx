@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import UserContainer from '../../components/mypage/user';
-import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import axiosInstance from '../../utils/axiosInstance';
 import AchievementFrame from '../../components/mypage/achievement';
@@ -24,6 +23,7 @@ const UserPage = () => {
   );
   const [tierIndex, setTierIndex] = useState(0);
 
+  // twofactor
   // const [twofactor, setTwofactor] = useState(false);
 
   // achievement
@@ -143,11 +143,11 @@ const UserPage = () => {
   const handleRank = async (rankScore: number) => {
     if (rankScore < 1000) {
       setTierIndex(0);
-    } else if (rankScore < 3000) {
+    } else if (rankScore < 1100) {
       setTierIndex(1);
-    } else if (rankScore < 5000) {
+    } else if (rankScore < 1500) {
       setTierIndex(2);
-    } else if (rankScore < 7000) {
+    } else if (rankScore < 2000) {
       setTierIndex(3);
     } else {
       setTierIndex(4);
