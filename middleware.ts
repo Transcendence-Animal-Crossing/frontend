@@ -22,7 +22,10 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
     pathname === '/chat' ||
     pathname === '/profile' ||
     pathname === '/ranking' ||
-    pathname === '/join'
+    pathname === '/join' ||
+    pathname === '/game' ||
+    pathname === '/generalLobby' ||
+    pathname === '/rankLobby'
   ) {
     if (!session) {
       return NextResponse.redirect(new URL('/login', req.url));
@@ -33,5 +36,15 @@ export async function middleware(req: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/chat', '/profile/(.*)', '/ranking', '/join'],
+  matcher: [
+    '/',
+    '/login',
+    '/chat',
+    '/profile/(.*)',
+    '/ranking',
+    '/join',
+    '/game',
+    '/generalLobby',
+    '/rankLobby',
+  ],
 };
