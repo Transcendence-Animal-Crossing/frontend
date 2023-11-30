@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import UserModal from '../userModal';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 interface RoomMessageDto {
   text: string;
@@ -61,13 +62,12 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
     }
   };
 
-  const handleSetUserAvatar = (userId: number) => {
+  const handleUserAvatar = (userId: number) => {
     const user = userlist.find((user) => user.id === userId);
     if (user) {
-      const apiUrl = 'http://localhost:8080/';
-      return apiUrl + user.avatar;
+      return handleSetUserAvatar(user.avatar);
     } else {
-      return 'http://localhost:8080/original/profile2.png';
+      return handleSetUserAvatar('original/profile2.png');
     }
   };
 
@@ -111,8 +111,8 @@ const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: Partici
                   ref={userRefs[index]}
                 >
                   <UserImage
-                    src={handleSetUserAvatar(message.senderId)}
-                    alt="Profle Image"
+                    src={handleUserAvatar(message.senderId)}
+                    alt='Profle Image'
                     width={100}
                     height={100}
                   />

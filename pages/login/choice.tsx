@@ -16,9 +16,9 @@ const ChoicePage: React.FC = () => {
   useEffect(() => {
     if (session) {
       if (session.responseCode === 200) {
-        router.push('http://localhost:3000/');
+        router.push('/');
       } else if (session.responseCode === 201) {
-        router.push('http://localhost:3000/join');
+        router.push('/join');
       }
     }
   });

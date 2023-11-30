@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import UserContainer from '../../components/mypage/user';
-import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import axiosInstance from '../../utils/axiosInstance';
 import AchievementFrame from '../../components/mypage/achievement';
@@ -10,21 +9,17 @@ import home from '../../public/Icon/home.png';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Container from '../../components/columnNevLayout';
 import Game from '../../components/mypage/game';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 const UserPage = () => {
-  const apiUrl = 'http://localhost:8080/';
   const router = useRouter();
   const { userId } = router.query as { userId: string };
 
   // userInfo
   const [intraname, setIntraname] = useState('intraname');
   const [nickname, setNickname] = useState('nickname');
-  const [avatarPath, setAvatarPath] = useState(
-    apiUrl + 'original/profile2.png'
-  );
+  const [avatarPath, setAvatarPath] = useState(handleSetUserAvatar('original/profile2.png'));
   const [tierIndex, setTierIndex] = useState(0);
-
-  // const [twofactor, setTwofactor] = useState(false);
 
   // achievement
   const [achieveList, setAchieveList] = useState([1, 0, 0, 0, 0, 0, 0]);
@@ -44,9 +39,19 @@ const UserPage = () => {
     games: [],
   });
 
+  const [refresh, setRefresh] = useState(false);
+
   useEffect(() => {
     if (userId) {
       getUserInfo();
+      setIsRank(true);
+      setMode('rank');
+      setHasMore(true);
+      setOffset(0);
+      setMatchHistory({
+        games: [],
+      });
+      setRefresh(!refresh);
     }
   }, [userId]);
 
@@ -70,7 +75,7 @@ const UserPage = () => {
       console.log(response);
       await setIntraname(response.data.intraName);
       await setNickname(response.data.nickName);
-      await setAvatarPath(apiUrl + response.data.avatar);
+      await setAvatarPath(handleSetUserAvatar(response.data.avatar));
       await setAchieveList(response.data.achievements);
       await handleRank(response.data.rankScore);
     } catch (error) {
@@ -114,7 +119,6 @@ const UserPage = () => {
           offset: 0,
         },
       });
-      console.log('getMatchHistory() response first', isRank, mode);
       console.log(response);
       await afterMatchHistory(response.data, 0);
     } catch (error) {
@@ -143,11 +147,11 @@ const UserPage = () => {
   const handleRank = async (rankScore: number) => {
     if (rankScore < 1000) {
       setTierIndex(0);
-    } else if (rankScore < 3000) {
+    } else if (rankScore < 1100) {
       setTierIndex(1);
-    } else if (rankScore < 5000) {
+    } else if (rankScore < 1500) {
       setTierIndex(2);
-    } else if (rankScore < 7000) {
+    } else if (rankScore < 2000) {
       setTierIndex(3);
     } else {
       setTierIndex(4);
@@ -196,28 +200,6 @@ const UserPage = () => {
     setMode(mode);
   };
 
-  // const handle2fa = async () => {
-  //   try {
-  //     const userId = await getUserId();
-  //     if (twofactor == false) {
-  //       await setTwofactor(true);
-  //       const response = await axiosInstance.patch('/users/2fa-setup', {
-  //         params: {
-  //           id: userId,
-  //         },
-  //       });
-  //       console.log('2fa setup');
-  //     } else {
-  //       await setTwofactor(false);
-  //       const response = await axiosInstance.patch('users/2fa-cancel');
-  //       console.log('2fa cancel');
-  //     }
-  //   } catch (error) {
-  //     console.log('Error occured in 2fa setup');
-  //     console.log(error);
-  //   }
-  // };
-
   return (
     <Container>
       <MyPageFrame>
@@ -230,9 +212,6 @@ const UserPage = () => {
           winCount={winCount}
           winRate={winRate}
         />
-        {/* <button onClick={handle2fa}>
-          {twofactor == false ? '이중인증 설정' : '이중인증 해제'}
-        </button> */}
         <InfoContainer>
           <MatchHistoryFrame>
             <MatchHistoryHeader>
@@ -269,7 +248,7 @@ const UserPage = () => {
             </MatchHistory>
           </MatchHistoryFrame>
           <DivisionBar />
-          <AchievementFrame achieveList={achieveList} />
+          <AchievementFrame achieveList={achieveList} refresh={refresh} />
         </InfoContainer>
       </MyPageFrame>
     </Container>

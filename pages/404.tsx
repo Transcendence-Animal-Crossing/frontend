@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Logo from '../../public/Login/logo.png';
-import ButtonImage from '../../public/Login/loginplz.png';
-import OverlayImage from '../../public/Login/overlay.png';
-import SelectLoginImage from '../../public/Login/selectLogin.png';
-import SelectNoImage from '../../public/Login/selectNo.png';
+import Logo from '../public/Login/logo.png';
+import ButtonImage from '../public/404/message.png';
+import OverlayImage from '../public/Login/overlay.png';
+import SelectLoginImage from '../public/404/gohome.png';
+import SelectNoImage from '../public/404/nono.png';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Container from '../../components/columnLayout';
+import Container from '../components/columnLayout';
 
-const LoginPage: React.FC = () => {
+const NotFoundPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);
   const [loginButtonRect, setLoginButtonRect] = useState<DOMRect | null>(null);
   const loginButtonRef = useRef<HTMLDivElement | null>(null);
@@ -29,9 +29,9 @@ const LoginPage: React.FC = () => {
   return (
     <>
       <Container>
-        <LogoImage src={Logo} alt="Login" />
+        <LogoImage src={Logo} alt='Login' />
         <LoginButton onClick={handleLoginView} ref={loginButtonRef}>
-          <LoginButtonImg src={ButtonImage} alt="Login Plz" />
+          <LoginButtonImg src={ButtonImage} alt='Login Plz' />
         </LoginButton>
       </Container>
       {clickState && loginButtonRect && (
@@ -41,7 +41,7 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default NotFoundPage;
 
 const LogoImage = styled(Image)`
   width: 6%;
@@ -73,19 +73,19 @@ const OverlayWindow = ({
   const overlayRight = `${loginButtonRect.right - loginButtonRect.width * 0.2}px`;
   const overlayTop = `${loginButtonRect.top - loginButtonRect.height * 0.3}px`;
 
-  const handleLoginChoice = async () => {
-    router.push('/login/choice');
+  const handleGoHome = async () => {
+    router.push('/');
   };
 
   return (
     <Overlay style={{ top: overlayTop, left: overlayRight }}>
-      <OverlayBackImage src={OverlayImage} alt="Overlay" />
+      <OverlayBackImage src={OverlayImage} alt='Overlay' />
       <OverlayButtonFrame>
-        <OverlayButton onClick={handleLoginChoice}>
-          <OverlayButtonImg src={SelectLoginImage} alt="SelectLogin" />
+        <OverlayButton onClick={handleGoHome}>
+          <OverlayButtonImg src={SelectLoginImage} alt='SelectLogin' />
         </OverlayButton>
         <OverlayButton onClick={handleLoginView}>
-          <OverlayButtonImg src={SelectNoImage} alt="SelectLogin" />
+          <OverlayButtonImg src={SelectNoImage} alt='SelectLogin' />
         </OverlayButton>
       </OverlayButtonFrame>
     </Overlay>

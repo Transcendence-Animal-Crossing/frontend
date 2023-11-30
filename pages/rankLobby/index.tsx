@@ -22,7 +22,7 @@ const RankLobbyPage: React.FC = () => {
     if (queueSocket) {
       const handleQueueMatched = (response: { id: string }) => {
         const responseGameId = response.id;
-        router.push(`http://localhost:3000/game/${responseGameId}`);
+        router.push(`/game/${responseGameId}`);
       };
 
       queueSocket.on('queue-matched', handleQueueMatched);

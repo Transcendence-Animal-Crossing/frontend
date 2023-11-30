@@ -1,29 +1,23 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Guri from '../public/Login/logo.png';
+import Isabelle from '../../public/Login/Isabelle.png';
+import { useRouter } from 'next/router';
 
-const infoModal: React.FC<{
-  handleCloseModal: () => void;
-  infoText: string;
-  InfoButtonRect: { top: number; left: number };
-}> = ({ handleCloseModal, infoText, InfoButtonRect }) => {
-  const overlayTop = `${InfoButtonRect.top * 1.5}px`;
-  const overlayLeft = `${InfoButtonRect.left * 0.8}px`;
+const GameEndModal = () => {
+  const router = useRouter();
 
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleCloseModal();
-    }
+  const handleHomeClick = () => {
+    router.push('/');
   };
 
   return (
     <>
-      <Container onClick={handleOverlayClick}>
-        <Content overlayTop={overlayTop} overlayLeft={overlayLeft}>
-          <GuriImage src={Guri} alt='Guri' />
-          <Text> {infoText} </Text>
+      <Container>
+        <Content>
+          <GuriImage src={Isabelle} alt='Isabelle' />
+          <Text> 게임이 끝나셨어요 ~ 로비로 돌아가주세요. </Text>
           <CompleteButtonFrame>
-            <CompleteButton onClick={handleOverlayClick}> 닫기 </CompleteButton>
+            <CompleteButton onClick={handleHomeClick}> 로비로 이동하기 </CompleteButton>
           </CompleteButtonFrame>
         </Content>
       </Container>
@@ -31,7 +25,7 @@ const infoModal: React.FC<{
   );
 };
 
-export default infoModal;
+export default GameEndModal;
 
 const Container = styled.div`
   position: absolute;
@@ -45,11 +39,9 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const Content = styled.div<{ overlayTop: string; overlayLeft: string }>`
+const Content = styled.div`
   position: fixed;
-  top: ${(props) => props.overlayTop};
-  left: ${(props) => props.overlayLeft};
-  width: 25vw;
+  width: 20vw;
   height: auto;
   background-color: ${(props) => props.theme.colors.cream};
   padding: 2vh;

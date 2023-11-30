@@ -21,7 +21,13 @@ import {
   achieveLight7,
 } from './achieveLight';
 
-const Paging = ({ achieveList }: { achieveList: number[] }) => {
+const Paging = ({
+  achieveList,
+  refresh,
+}: {
+  achieveList: number[];
+  refresh: boolean;
+}) => {
   const achieveDark = [
     achieveDark1,
     achieveDark2,
@@ -60,14 +66,18 @@ const Paging = ({ achieveList }: { achieveList: number[] }) => {
   const indexOfFirstCard = indexOfLastCard - cardPerPage;
   const currentCards = achievements.slice(indexOfFirstCard, indexOfLastCard);
 
+  useEffect(() => {
+    handleAchievements();
+    setPage(1);
+  }, [refresh]);
+
+  useEffect(() => {
+    handleAchievements();
+  }, [achieveList]);
+
   const handlePageChange = (page: number) => {
     setPage(page);
   };
-
-  useEffect(() => {
-    console.log('useEffect() page', page);
-    handleAchievements();
-  }, [page]);
 
   const handleAchievements = () => {
     console.log('handleAchievements() achieveList', achieveList);
