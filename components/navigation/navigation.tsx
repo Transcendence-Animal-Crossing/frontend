@@ -85,19 +85,22 @@ const Navigation = () => {
       chatSocket.emitWithAck('friend-list').then((response) => {
         console.log('response', response);
         if (response.status === 200) {
-          const sortedFriendsList = response.body.sort((a: friendData, b: friendData) => {
-            const statusOrder: Record<string, number> = {
-              ONLINE: 0,
-              IN_GAME: 1,
-              WATCHING: 1,
-              OFFLINE: 2,
-            };
-            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
-            if (statusComparison !== 0) {
-              return statusComparison;
+          const sortedFriendsList = response.body.sort(
+            (a: friendData, b: friendData) => {
+              const statusOrder: Record<string, number> = {
+                ONLINE: 0,
+                IN_GAME: 1,
+                WATCHING: 1,
+                OFFLINE: 2,
+              };
+              const statusComparison =
+                statusOrder[a.status] - statusOrder[b.status];
+              if (statusComparison !== 0) {
+                return statusComparison;
+              }
+              return 0;
             }
-            return 0;
-          });
+          );
           setFriendsList(sortedFriendsList);
           setRequestListLen(requestList.length);
           setSocketFlag(false);
@@ -130,7 +133,8 @@ const Navigation = () => {
                 WATCHING: 1,
                 OFFLINE: 2,
               };
-              const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+              const statusComparison =
+                statusOrder[a.status] - statusOrder[b.status];
               if (statusComparison !== 0) {
                 return statusComparison;
               }
@@ -163,19 +167,22 @@ const Navigation = () => {
       const handleNewFriend = (response: friendData) => {
         const newFriendData: friendData = { ...response, unReadMessages: [] };
         setFriendsList((prevFriendsList) => {
-          const updatedFriendsList = [...prevFriendsList, newFriendData].sort((a, b) => {
-            const statusOrder: Record<string, number> = {
-              ONLINE: 0,
-              IN_GAME: 1,
-              WATCHING: 1,
-              OFFLINE: 2,
-            };
-            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
-            if (statusComparison !== 0) {
-              return statusComparison;
+          const updatedFriendsList = [...prevFriendsList, newFriendData].sort(
+            (a, b) => {
+              const statusOrder: Record<string, number> = {
+                ONLINE: 0,
+                IN_GAME: 1,
+                WATCHING: 1,
+                OFFLINE: 2,
+              };
+              const statusComparison =
+                statusOrder[a.status] - statusOrder[b.status];
+              if (statusComparison !== 0) {
+                return statusComparison;
+              }
+              return 0;
             }
-            return 0;
-          });
+          );
           return updatedFriendsList;
         });
       };
@@ -192,7 +199,9 @@ const Navigation = () => {
 
       const handleDeleteFriendRequest = (response: { sendBy: number }) => {
         setRequestList((prevRequestList) =>
-          prevRequestList.filter((request) => request.sendBy !== response.sendBy)
+          prevRequestList.filter(
+            (request) => request.sendBy !== response.sendBy
+          )
         );
       };
 
@@ -218,7 +227,9 @@ const Navigation = () => {
     const handleOpenDM = (targetId: number) => {
       setOpenDmId(targetId);
       setFriendsList((prevFriendsList) => {
-        const targetFriend = prevFriendsList.find((friend) => friend.id === targetId);
+        const targetFriend = prevFriendsList.find(
+          (friend) => friend.id === targetId
+        );
         if (targetFriend) {
           process.nextTick(() => {
             emitter.emit('unReadMessages', targetFriend.unReadMessages);
@@ -367,7 +378,8 @@ const Navigation = () => {
       <UserList>
         {chatSocketFlag && <p> loading... </p>}
         {friendsList.map((friend, index) => {
-          userRefs[index] = userRefs[index] || React.createRef<HTMLDivElement>();
+          userRefs[index] =
+            userRefs[index] || React.createRef<HTMLDivElement>();
           return (
             <UserInfoFrame
               key={index}
@@ -405,23 +417,21 @@ const Navigation = () => {
           </GameStartButton>
         )}
         {isOpenmode && (
-          <Content overlayTop={overlayTop} overlayLeft={overlayLeft} onClick={handleGeneralMode}>
+          <Content
+            overlayTop={overlayTop}
+            overlayLeft={overlayLeft}
+            onClick={handleGeneralMode}
+          >
             {modeButton}
           </Content>
         )}
       </UserList>
-      <>
-        {session ? (
-          <>
-            <br />
-            <br />
-            <br />
-            <button onClick={() => signOut()}>Sign out</button>
-          </>
-        ) : null}
-      </>
       {isOpenModal ? (
-        <UserModal handleCloseModal={handleCloseModal} userId={userInfo.id} userRect={userRect} />
+        <UserModal
+          handleCloseModal={handleCloseModal}
+          userId={userInfo.id}
+          userRect={userRect}
+        />
       ) : null}
       {isOpenRequest ? (
         <AlarmModal
