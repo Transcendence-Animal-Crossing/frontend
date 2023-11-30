@@ -123,7 +123,7 @@ const Chat = () => {
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
           if (targetId == userId) {
-            router.push('http://localhost:3000/chat/');
+            router.push('/chat');
           }
           setUserlist((prevUserlist) =>
             prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
@@ -138,7 +138,7 @@ const Chat = () => {
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
           if (targetId == userId) {
-            router.push('http://localhost:3000/chat/');
+            router.push('/chat');
           }
           setUserlist((prevUserlist) =>
             prevUserlist.map((user) => (user.id === targetId ? { ...user, status: 0 } : user))
@@ -268,7 +268,7 @@ const Chat = () => {
         chatSocket.off('change-owner', handleChangeOwner);
       };
     } else {
-      router.push('http://localhost:3000/chat/');
+      router.push('/chat');
     }
   }, [chatSocket, userlist, banlist, roomTitle, roomId, router]);
 

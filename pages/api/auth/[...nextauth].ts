@@ -11,6 +11,9 @@ const invalidPrimaryCampus = (profile: any) => {
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
 
+const apiUrl = 'http://localhost:8080';
+// const apiUrl = 'http://backend:8080';
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.SECRET as string,
   providers: [
@@ -31,8 +34,7 @@ export const authOptions: NextAuthOptions = {
       authorize: async (credentials) => {
         if (!credentials) return null;
         try {
-          const apiUrl = 'http://localhost:8080/auth/signIn';
-          const response = await axios.post(apiUrl, {
+          const response = await axios.post(apiUrl + '/auth/signIn', {
             intraName: credentials.intraname,
             password: credentials.password,
           });
@@ -115,9 +117,25 @@ export const authOptions: NextAuthOptions = {
       if (profile && account) {
         try {
           const apiUrl = 'http://localhost:8080/auth/login';
-          await axios.post(apiUrl, {
+          const response = await axios.post(apiUrl, {
             accessToken: account.access_token,
           });
+          if (response.status == 200 || response.status == 201) {
+            user.accessToken = response.headers.authorization.replace(
+              'Bearer ',
+              ''
+            );
+            user.refreshToken =
+              response.headers['set-cookie']?.[0]?.match(
+                /refreshToken=([^;]+)/
+              )?.[1];
+            user.id = response.data.id;
+            user.nickName = response.data.nickName;
+            user.intraName = response.data.intraName;
+            user.avatar = response.data.avatar;
+            user.responseCode = response.status;
+            return user;
+          }
         } catch (error: any) {
           if (error.response.status == 403) {
             console.log('42 login two-factor', error);
@@ -125,6 +143,9 @@ export const authOptions: NextAuthOptions = {
             return intraName
               ? `/login/twofactor/${intraName}`
               : '/login/choice';
+          } else {
+            console.error('42 login error:', error);
+            return '/login/choice';
           }
         }
       }
@@ -148,29 +169,14 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
       if (profile && account) {
-        try {
-          const apiUrl = 'http://localhost:8080/auth/login';
-          const response = await axios.post(apiUrl, {
-            accessToken: account.access_token,
-          });
-          if (response.status === 200 || response.status === 201) {
-            token.accessToken = response.headers.authorization.replace(
-              'Bearer ',
-              ''
-            );
-            token.refreshToken =
-              response.headers['set-cookie']?.[0]?.match(
-                /refreshToken=([^;]+)/
-              )?.[1];
-            token.id = response.data.id;
-            token.nickName = response.data.nickName;
-            token.intraName = response.data.intraName;
-            token.avatar = response.data.avatar;
-            token.responseCode = response.status;
-          }
-        } catch (error) {
-          console.error('jwt error:', error);
-          token.accessToken = 'fail';
+        if (user) {
+          token.id = user.id;
+          token.nickName = user.nickName;
+          token.intraName = user.intraName;
+          token.avatar = user.avatar;
+          token.accessToken = user.accessToken;
+          token.refreshToken = user.refreshToken;
+          token.responseCode = user.responseCode;
         }
       }
       return token;
@@ -183,6 +189,7 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
       session.responseCode = token.responseCode as number;
+      console.log('session:', session);
       return session;
     },
   },

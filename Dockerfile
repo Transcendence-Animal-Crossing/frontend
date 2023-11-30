@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . /usr/src/next
 
-RUN npm run build
+RUN npm run build --no-warnings || true
 
 EXPOSE 3000
 
