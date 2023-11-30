@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useSocket } from '../../utils/SocketProvider';
 import exit from '../../public/Icon/exit.png';
 import UserInfo from '../userInfo';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 interface friendData {
   id: number;
@@ -66,11 +67,6 @@ const InviteUserModal: React.FC<{
     if (status === 'WATCHING') return '관전중';
   };
 
-  const handleAvatarPath = (avatar: string) => {
-    const apiUrl = 'http://localhost:8080/';
-    return apiUrl + avatar;
-  };
-
   return (
     <>
       <Container onClick={handleOverlayClick}>
@@ -89,7 +85,7 @@ const InviteUserModal: React.FC<{
                     key={index}
                     nickName={friend.nickName}
                     intraName={friend.intraName}
-                    avatar={handleAvatarPath(friend.avatar)}
+                    avatar={handleSetUserAvatar(friend.avatar)}
                     width={40}
                     height={5}
                   />

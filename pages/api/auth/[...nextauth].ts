@@ -76,8 +76,7 @@ export const authOptions: NextAuthOptions = {
       authorize: async (credentials: any) => {
         if (!credentials) return null;
         try {
-          const apiUrl = 'http://localhost:8080/auth/email/token';
-          const response = await axios.post(apiUrl, {
+          const response = await axios.post(apiUrl+'/auth/email/token', {
             intraName: credentials.intraName,
             token: credentials.token,
           });
@@ -116,8 +115,7 @@ export const authOptions: NextAuthOptions = {
       if (invalidPrimaryCampus(profile)) return false;
       if (profile && account) {
         try {
-          const apiUrl = 'http://localhost:8080/auth/login';
-          const response = await axios.post(apiUrl, {
+          const response = await axios.post(apiUrl+'/auth/login', {
             accessToken: account.access_token,
           });
           if (response.status == 200 || response.status == 201) {

@@ -28,13 +28,8 @@ const myProfile = () => {
     }
   }, []);
 
-  const handleSetUserAvatar = () => {
-    const apiUrl = 'http://localhost:8080/';
-    return apiUrl + session?.user.avatar;
-  };
-
   const handleUserPage = () => {
-    router.push(`http://localhost:3000/profile/${session?.user?.id}`);
+    router.push(`/profile/${session?.user?.id}`);
   };
 
   const handleSettingModal = () => {
