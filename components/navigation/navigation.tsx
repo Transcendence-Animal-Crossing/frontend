@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
 import { useEventEmitter } from '../../utils/EventEmitterProvider';
 import axiosInstance from '../../utils/axiosInstance';
@@ -10,6 +11,8 @@ import SearchBarContainer from './searchBar';
 import UserInfo from '../userInfo';
 import UserModal from '../userModal';
 import AlarmModal from './alarmModal';
+import RoomInviteModal from '../roomInviteModal';
+import ReceiveGameModal from '../receiveGameModal';
 import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 interface dmData {
@@ -34,15 +37,21 @@ interface RequestData {
   intraName: string;
 }
 
+interface InviteRoomData {
+  id: string;
+  title: string;
+  sendBy: friendData;
+}
+
 const Navigation = () => {
   const { data: session } = useSession();
-  const { chatSocket } = useSocket();
+  const { chatSocket, gameSocket } = useSocket();
+  const router = useRouter();
   const emitter = useEventEmitter();
   const [chatSocketFlag, setSocketFlag] = useState<boolean>(true);
+
+  // friends
   const [friendsList, setFriendsList] = useState<friendData[]>([]);
-  const [requestList, setRequestList] = useState<RequestData[]>([]);
-  const [requestListLen, setRequestListLen] = useState<number>(0);
-  const [openDmId, setOpenDmId] = useState<number>(-1);
   const [userInfo, setUserInfo] = useState<friendData>({
     id: 0,
     nickName: '',
@@ -51,12 +60,18 @@ const Navigation = () => {
     status: '',
     unReadMessages: [],
   });
+
+  // request
+  const [requestList, setRequestList] = useState<RequestData[]>([]);
+  const [requestListLen, setRequestListLen] = useState<number>(0);
   const [isOpenRequest, setOpenRequest] = useState<boolean>(false);
   const [requestRect, setRequestRect] = useState<{
     top: number;
     left: number;
     height: number;
   }>({ top: 0, left: 0, height: 0 });
+
+  // user modal
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [userRect, setUserRect] = useState<{
     top: number;
@@ -64,6 +79,7 @@ const Navigation = () => {
     width: number;
   }>({ top: 0, left: 0, width: 0 });
   const userRefs: React.MutableRefObject<HTMLDivElement | null>[] = [];
+  const [openDmId, setOpenDmId] = useState<number>(-1);
 
   // game lobby
   const [gameButton, setGameButton] = useState<boolean>(false);
@@ -80,24 +96,37 @@ const Navigation = () => {
   let overlayTop = `${modeRect.top * 0.96}px`;
   let overlayLeft = `${modeRect.left + (modeRect.width / 3) * 2}px`;
 
+  // invite chatting room
+  const [isRoomInvite, setIsRoomInvite] = useState<boolean>(true);
+  const [inviteRoomInfo, setInviteRoomInfo] = useState<InviteRoomData>();
+
+  // invite game
+  const [isGameInvite, setIsGameInvite] = useState<boolean>(true);
+  const [inviteGameInfo, setInviteGameInfo] = useState<friendData>();
+  const [inviteResponse, setInviteResponse] = useState<string>('');
+  const inviteResponseRef = useRef<string>('');
+
   useEffect(() => {
     if (chatSocket && chatSocketFlag) {
       chatSocket.emitWithAck('friend-list').then((response) => {
         console.log('response', response);
         if (response.status === 200) {
-          const sortedFriendsList = response.body.sort((a: friendData, b: friendData) => {
-            const statusOrder: Record<string, number> = {
-              ONLINE: 0,
-              IN_GAME: 1,
-              WATCHING: 1,
-              OFFLINE: 2,
-            };
-            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
-            if (statusComparison !== 0) {
-              return statusComparison;
+          const sortedFriendsList = response.body.sort(
+            (a: friendData, b: friendData) => {
+              const statusOrder: Record<string, number> = {
+                ONLINE: 0,
+                IN_GAME: 1,
+                WATCHING: 1,
+                OFFLINE: 2,
+              };
+              const statusComparison =
+                statusOrder[a.status] - statusOrder[b.status];
+              if (statusComparison !== 0) {
+                return statusComparison;
+              }
+              return 0;
             }
-            return 0;
-          });
+          );
           setFriendsList(sortedFriendsList);
           setRequestListLen(requestList.length);
           setSocketFlag(false);
@@ -130,7 +159,8 @@ const Navigation = () => {
                 WATCHING: 1,
                 OFFLINE: 2,
               };
-              const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+              const statusComparison =
+                statusOrder[a.status] - statusOrder[b.status];
               if (statusComparison !== 0) {
                 return statusComparison;
               }
@@ -163,19 +193,22 @@ const Navigation = () => {
       const handleNewFriend = (response: friendData) => {
         const newFriendData: friendData = { ...response, unReadMessages: [] };
         setFriendsList((prevFriendsList) => {
-          const updatedFriendsList = [...prevFriendsList, newFriendData].sort((a, b) => {
-            const statusOrder: Record<string, number> = {
-              ONLINE: 0,
-              IN_GAME: 1,
-              WATCHING: 1,
-              OFFLINE: 2,
-            };
-            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
-            if (statusComparison !== 0) {
-              return statusComparison;
+          const updatedFriendsList = [...prevFriendsList, newFriendData].sort(
+            (a, b) => {
+              const statusOrder: Record<string, number> = {
+                ONLINE: 0,
+                IN_GAME: 1,
+                WATCHING: 1,
+                OFFLINE: 2,
+              };
+              const statusComparison =
+                statusOrder[a.status] - statusOrder[b.status];
+              if (statusComparison !== 0) {
+                return statusComparison;
+              }
+              return 0;
             }
-            return 0;
-          });
+          );
           return updatedFriendsList;
         });
       };
@@ -192,8 +225,35 @@ const Navigation = () => {
 
       const handleDeleteFriendRequest = (response: { sendBy: number }) => {
         setRequestList((prevRequestList) =>
-          prevRequestList.filter((request) => request.sendBy !== response.sendBy)
+          prevRequestList.filter(
+            (request) => request.sendBy !== response.sendBy
+          )
         );
+      };
+
+      const handleRoomInvite = (response: InviteRoomData) => {
+        setInviteRoomInfo(response);
+        setIsRoomInvite(true);
+      };
+
+      const handleGameInvite = (response: friendData, callback: (arg0: string) => void) => {
+        inviteResponseRef.current = '';
+        setInviteGameInfo(response);
+        setIsGameInvite(true);
+
+        const checkResponse = () => {
+          if (inviteResponseRef.current === 'ACCEPT' || inviteResponseRef.current === 'DENIED') {
+            callback(inviteResponseRef.current);
+            setIsGameInvite(false);
+          } else {
+            setTimeout(checkResponse, 100);
+          }
+        };
+
+        checkResponse();
+        setTimeout(() => {
+          setIsGameInvite(false);
+        }, 10000);
       };
 
       chatSocket.on('friend-update', handleFriendUpdate);
@@ -202,6 +262,8 @@ const Navigation = () => {
       chatSocket.on('delete-friend', handleDeleteFriend);
       chatSocket.on('new-friend-request', handleNewFriendRequest);
       chatSocket.on('delete-friend-request', handleDeleteFriendRequest);
+      chatSocket.on('room-invite', handleRoomInvite);
+      chatSocket.on('game-invite', handleGameInvite);
 
       return () => {
         chatSocket.off('friend-update', handleFriendUpdate);
@@ -210,15 +272,39 @@ const Navigation = () => {
         chatSocket.off('delete-friend', handleDeleteFriend);
         chatSocket.off('new-friend-request', handleNewFriendRequest);
         chatSocket.off('delete-friend-request', handleDeleteFriendRequest);
+        chatSocket.off('room-invite', handleRoomInvite);
+        chatSocket.off('game-invite', handleGameInvite);
       };
     }
   }, [chatSocket, openDmId]);
 
   useEffect(() => {
+    if (gameSocket) {
+      const handleGameMatched = (response: { id: string }) => {
+        console.log('handleGameMatched', response);
+        const responseGameId = response.id;
+        router.push(`/game/${responseGameId}`);
+      };
+
+      gameSocket.on('game-matched', handleGameMatched);
+
+      return () => {
+        gameSocket.off('game-matched', handleGameMatched);
+      };
+    }
+  }, [gameSocket]);
+
+  useEffect(() => {
+    inviteResponseRef.current = inviteResponse;
+  }, [inviteResponse]);
+
+  useEffect(() => {
     const handleOpenDM = (targetId: number) => {
       setOpenDmId(targetId);
       setFriendsList((prevFriendsList) => {
-        const targetFriend = prevFriendsList.find((friend) => friend.id === targetId);
+        const targetFriend = prevFriendsList.find(
+          (friend) => friend.id === targetId
+        );
         if (targetFriend) {
           process.nextTick(() => {
             emitter.emit('unReadMessages', targetFriend.unReadMessages);
@@ -312,6 +398,14 @@ const Navigation = () => {
     setOpenModal(false);
   };
 
+  const handleCloseInvite = () => {
+    setIsRoomInvite(false);
+  };
+
+  const handleCloseGame = () => {
+    setIsGameInvite(false);
+  };
+
   const handlerTranslation = (status: string) => {
     if (status === 'OFFLINE') return '오프라인';
     if (status === 'ONLINE') return '온라인';
@@ -367,7 +461,8 @@ const Navigation = () => {
       <UserList>
         {chatSocketFlag && <p> loading... </p>}
         {friendsList.map((friend, index) => {
-          userRefs[index] = userRefs[index] || React.createRef<HTMLDivElement>();
+          userRefs[index] =
+            userRefs[index] || React.createRef<HTMLDivElement>();
           return (
             <UserInfoFrame
               key={index}
@@ -391,7 +486,42 @@ const Navigation = () => {
             </UserInfoFrame>
           );
         })}
-        {gameButton && (
+        {isOpenmode && (
+          <Content
+            overlayTop={overlayTop}
+            overlayLeft={overlayLeft}
+            onClick={handleGeneralMode}
+          >
+            {modeButton}
+          </Content>
+        )}
+      </UserList>
+      {isOpenModal ? (
+        <UserModal
+          handleCloseModal={handleCloseModal}
+          userId={userInfo.id}
+          userRect={userRect}
+        />
+      ) : null}
+      {isOpenRequest ? (
+        <AlarmModal
+          handleCloseModal={handleCloseBell}
+          requestList={requestList}
+          setRequestList={setRequestList}
+          requestRect={requestRect}
+        />
+      ) : null}
+      {isRoomInvite && inviteRoomInfo && (
+        <RoomInviteModal roomInfo={inviteRoomInfo} handleCloseModal={handleCloseInvite} />
+      )}
+      {isGameInvite && inviteGameInfo && (
+        <ReceiveGameModal
+          userInfo={inviteGameInfo}
+          handleCloseModal={handleCloseGame}
+          setInviteResponse={setInviteResponse}
+        />
+      )}
+      {gameButton && (
           <GameStartButton onClick={handleGameStart} ref={modeRefs}>
             <Text fontsize='3vh'>Game Start</Text>
           </GameStartButton>
@@ -404,33 +534,6 @@ const Navigation = () => {
             </Text>
           </GameStartButton>
         )}
-        {isOpenmode && (
-          <Content overlayTop={overlayTop} overlayLeft={overlayLeft} onClick={handleGeneralMode}>
-            {modeButton}
-          </Content>
-        )}
-      </UserList>
-      <>
-        {session ? (
-          <>
-            <br />
-            <br />
-            <br />
-            <button onClick={() => signOut()}>Sign out</button>
-          </>
-        ) : null}
-      </>
-      {isOpenModal ? (
-        <UserModal handleCloseModal={handleCloseModal} userId={userInfo.id} userRect={userRect} />
-      ) : null}
-      {isOpenRequest ? (
-        <AlarmModal
-          handleCloseModal={handleCloseBell}
-          requestList={requestList}
-          setRequestList={setRequestList}
-          requestRect={requestRect}
-        />
-      ) : null}
     </Container>
   );
 };
@@ -456,12 +559,12 @@ const DivisionBar = styled.div`
 
 const UserList = styled.div`
   width: 100%;
-  height: auto;
+  height: 65%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  overflow-y: auto;
+  overflow: auto;
   color: ${(props) => props.theme.colors.brown};
 `;
 
