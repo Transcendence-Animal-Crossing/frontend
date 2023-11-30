@@ -176,30 +176,6 @@ export const authOptions: NextAuthOptions = {
           token.refreshToken = user.refreshToken;
           token.responseCode = user.responseCode;
         }
-        // try {
-        // const apiUrl = 'http://localhost:8080/auth/login';
-        // const response = await axios.post(apiUrl, {
-        //   accessToken: account.access_token,
-        // });
-        // if (response.status === 200 || response.status === 201) {
-        //   token.accessToken = response.headers.authorization.replace(
-        //     'Bearer ',
-        //     ''
-        //   );
-        //   token.refreshToken =
-        //     response.headers['set-cookie']?.[0]?.match(
-        //       /refreshToken=([^;]+)/
-        //     )?.[1];
-        //   token.id = response.data.id;
-        //   token.nickName = response.data.nickName;
-        //   token.intraName = response.data.intraName;
-        //   token.avatar = response.data.avatar;
-        //   token.responseCode = response.status;
-        // }
-        // } catch (error) {
-        //   console.error('jwt error:', error);
-        //   token.accessToken = 'fail';
-        // }
       }
       return token;
     },
