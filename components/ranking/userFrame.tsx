@@ -70,12 +70,15 @@ const UserFrame: React.FC<{
     <UserRankFrame>
       <LeftFrame>
         <RankingFrame> {ranking} </RankingFrame>
-        <TierImage
-          src={tierImages[tierIndex]}
-          alt='Tier Image'
-          width={30}
-          height={30}
-        />
+        <TierFrame>
+          <TierImage
+            src={tierImages[tierIndex]}
+            alt='Tier Image'
+            width={30}
+            height={30}
+          />
+          <RankScore>{rankScore}점</RankScore>
+        </TierFrame>
         <UserTouchFrame onClick={handleClickUser} ref={userRef}>
           <UserInfo
             nickName={nickName}
@@ -134,9 +137,28 @@ const RankingFrame = styled.div`
   color: ${(props) => props.theme.colors.white};
 `;
 
+const TierFrame = styled.div`
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
 const TierImage = styled(Image)`
-  width: 8%;
+  width: 25%;
   height: auto;
+`;
+
+const RankScore = styled.div`
+  width: 55%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4vh;
+  color: ${(props) => props.theme.colors.brown};
 `;
 
 const MatchCountFrame = styled.div`
@@ -146,6 +168,6 @@ const MatchCountFrame = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  font-size: small;
+  font-size: 1.4vh;
   color: ${(props) => props.theme.colors.brown};
 `;
