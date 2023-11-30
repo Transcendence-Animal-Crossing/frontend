@@ -58,8 +58,10 @@ const ProfileModal: React.FC<{
         nickName: newNickname,
       });
       console.log(response);
-      setChecknick(true);
-      setMessage(' ');
+      if (response.status === 200) {
+        setChecknick(true);
+        setMessage(' ');
+      }
     } catch (error) {
       console.log('join err', error);
       setChecknick(false);
