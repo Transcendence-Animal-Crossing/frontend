@@ -18,8 +18,11 @@ const UserPage = () => {
   // userInfo
   const [intraname, setIntraname] = useState('intraname');
   const [nickname, setNickname] = useState('nickname');
-  const [avatarPath, setAvatarPath] = useState(handleSetUserAvatar('original/profile2.png'));
+  const [avatarPath, setAvatarPath] = useState(
+    handleSetUserAvatar('original/profile2.png')
+  );
   const [tierIndex, setTierIndex] = useState(0);
+  const [rankScore, setRankScore] = useState(0);
 
   // achievement
   const [achieveList, setAchieveList] = useState([1, 0, 0, 0, 0, 0, 0]);
@@ -145,6 +148,7 @@ const UserPage = () => {
   };
 
   const handleRank = async (rankScore: number) => {
+    setRankScore(rankScore) ;
     if (rankScore < 1000) {
       setTierIndex(0);
     } else if (rankScore < 1100) {
@@ -207,6 +211,7 @@ const UserPage = () => {
           intraname={intraname}
           avatar={avatarPath}
           nickname={nickname}
+          rankScore={rankScore}
           tierIndex={tierIndex}
           totalCount={totalCount}
           winCount={winCount}

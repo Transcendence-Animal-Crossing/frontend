@@ -8,6 +8,7 @@ import TierModal from './tierModal';
 const UserContainer: React.FC<{
   intraname: string;
   nickname: string;
+  rankScore: number;
   tierIndex: number;
   totalCount: number;
   winCount: number;
@@ -16,6 +17,7 @@ const UserContainer: React.FC<{
 }> = ({
   intraname,
   nickname,
+  rankScore,
   tierIndex,
   totalCount,
   winCount,
@@ -65,7 +67,10 @@ const UserContainer: React.FC<{
           width={30}
           height={30}
         />
-        <TierText> {tierTexts[tierIndex]} </TierText>
+        <TierTextFrame>
+          <TierText> {tierTexts[tierIndex]} </TierText>
+          <TierScore>{rankScore}점</TierScore>
+        </TierTextFrame>
         <InfoImage
           src={info}
           alt='info'
@@ -165,14 +170,30 @@ const TierImage = styled(Image)`
   margin: auto 0;
 `;
 
-const TierText = styled.div`
+const TierTextFrame = styled.div`
   color: ${(props) => props.theme.colors.brown};
   width: 60%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   font-family: 'GiantsLight';
-  vertical-align: middle;
+  gap: 20%;
+`;
+
+const TierText = styled.div`
+  width: 100%;
+  height: 50%;
   text-align: center;
   font-size: 2.5vh;
-  margin: auto 0;
+`;
+
+const TierScore = styled.div`
+  width: 100%;
+  height: 30%;
+  text-align: center;
+  font-size: 1.5vh;
 `;
 
 const InfoImage = styled(Image)`
