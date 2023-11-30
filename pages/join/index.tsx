@@ -7,14 +7,14 @@ import PreviewContainer from '../../components/join/preview';
 import axiosInstance from '../../utils/axiosInstance';
 
 const JoinPage: React.FC = () => {
-  const [nickname, setNickname] = useState('');
+  const { data: session, update } = useSession();
+  const [nickname, setNickname] = useState(session?.user.nickName || '');
   const [message, setMessage] = useState('닉네임은 비어있을 수 없습니다.');
   const [checknick, setChecknick] = useState(false);
   const [profile, setProfile] = useState(1);
   const [profilePath, setProfilePath] = useState('profile2.png');
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const router = useRouter();
-  const { data: session, update } = useSession();
 
   const handleNicknameChange = (newNickname: string) => {
     setNickname(newNickname);
@@ -100,6 +100,7 @@ const JoinPage: React.FC = () => {
       <Container>
         <InfoContainer
           message={message}
+          nickname={nickname}
           onNicknameChange={handleNicknameChange}
           handleImageChange={handleImageChange}
           handleFileInputChange={handleFileInputChange}

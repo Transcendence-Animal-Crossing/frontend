@@ -6,6 +6,7 @@ import { useSocket } from '../utils/SocketProvider';
 import axiosInstance from '../utils/axiosInstance';
 import DmModal from './dm/dmModal';
 import NoticeModal from './noticeModal';
+import RequestGameModal from './requestGameModal';
 
 const UserModal: React.FC<{
   handleCloseModal: () => void;
@@ -18,10 +19,13 @@ const UserModal: React.FC<{
   const [IsOpenDm, setIsOpenDm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
-  const noticeMessage = '유효하지않은 요청입니다.';
+  const [noticeMessage, setNoticeMessage] = useState<string>('유효하지않은 요청입니다.');
   const router = useRouter();
   const overlayLeft = `${userRect.left + userRect.width * 0.4}px`;
   const overlayTop = `${userRect.top}px`;
+
+  // game invite
+  const [isOpenInvite, setIsOpenInvite] = useState<boolean>(false);
 
   useEffect(() => {
     handleFriendInfo();
@@ -72,6 +76,30 @@ const UserModal: React.FC<{
     }
   };
 
+  const handleInviteGame = async () => {
+    if (chatSocket) {
+      setIsOpenInvite(true);
+      await chatSocket
+        .emitWithAck('game-invite', {
+          targetId: userId,
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            console.log('handleInviteGame response ', response);
+            if (response.body === 'DENIED') {
+              setNoticeMessage('친구분이 초대 요청을 거절하셨어요!');
+              setOpenNotice(true);
+              setIsOpenInvite(false);
+            } else if (response.body === 'ACCEPT') {
+              setIsOpenInvite(false);
+            }
+          } else {
+            console.log('game-join : invite', response);
+          }
+        });
+    }
+  };
+
   const handleAddFriend = async () => {
     try {
       await axiosInstance.post(`/follow/request`, {
@@ -79,6 +107,7 @@ const UserModal: React.FC<{
       });
       setFollowStatus(1);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -90,6 +119,7 @@ const UserModal: React.FC<{
       });
       setFollowStatus(0);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -101,6 +131,7 @@ const UserModal: React.FC<{
       });
       setFollowStatus(0);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -112,6 +143,7 @@ const UserModal: React.FC<{
       });
       setBlockStatus(1);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -123,6 +155,7 @@ const UserModal: React.FC<{
       });
       setBlockStatus(0);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -149,7 +182,7 @@ const UserModal: React.FC<{
               <Item onClick={handleUserPage}>프로필 보기</Item>
               {followStatus === 2 && <Item onClick={handleOpenDM}>DM</Item>}
               {followStatus !== 2 && <NonItem>DM</NonItem>}
-              <Item>게임 초대</Item>
+              <Item onClick={handleInviteGame}>게임 초대</Item>
               {followStatus === 0 && <Item onClick={handleAddFriend}>친구 추가</Item>}
               {followStatus === 1 && <Item onClick={handleFriendRequest}>친구요청 취소</Item>}
               {followStatus === 2 && <Item onClick={handleRemoveFriend}>친구 삭제</Item>}
@@ -159,10 +192,13 @@ const UserModal: React.FC<{
           )}
         </Content>
       </Container>
-      {IsOpenDm && <DmModal handleCloseModal={handleCloseDM} targetId={userId} setOpenNotice={setOpenNotice} />}
+      {IsOpenDm && (
+        <DmModal handleCloseModal={handleCloseDM} targetId={userId} setOpenNotice={setOpenNotice} />
+      )}
       {isOpenNotice && (
         <NoticeModal handleCloseModal={handleCloseNotice} noticeMessage={noticeMessage} />
       )}
+      {isOpenInvite && <RequestGameModal />}
     </>
   );
 };

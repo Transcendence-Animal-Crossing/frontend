@@ -14,9 +14,7 @@ const ProfileModal: React.FC<{
   const [profilePath, setProfilePath] = useState('profile2.png');
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const { data: session, update } = useSession();
-  const [nickname, setNickname] = useState(
-    session?.user.nickName ? session.user.nickName : ''
-  );
+  const [nickname, setNickname] = useState(session?.user.nickName || '');
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -49,16 +47,13 @@ const ProfileModal: React.FC<{
 
   const handleCheckNick = async (newNickname: string) => {
     try {
-      if (!newNickname) {
-        setMessage(' ');
-        setChecknick(true);
-        return;
-      }
-      if (newNickname.length < 2) {
+      console.log('newNickname', newNickname);
+      if (!newNickname || newNickname.length < 2) {
         setMessage('닉네임은 2글자 이상이어야 합니다.');
         setChecknick(false);
         return;
       }
+
       const response = await axiosInstance.post('/users/nickname', {
         nickName: newNickname,
       });
@@ -75,9 +70,6 @@ const ProfileModal: React.FC<{
   const handleComplete = async (newNickname: string, profile: number) => {
     let response;
     try {
-      if (!newNickname) {
-        newNickname = nickname;
-      }
       if (profile === 0) {
         if (uploadedImage) {
           const formData = new FormData();
@@ -116,6 +108,7 @@ const ProfileModal: React.FC<{
         <Content>
           <InfoContainer
             message={message}
+            nickname={nickname}
             onNicknameChange={handleNicknameChange}
             handleImageChange={handleImageChange}
             handleFileInputChange={handleFileInputChange}

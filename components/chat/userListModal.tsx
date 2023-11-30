@@ -147,7 +147,7 @@ const userListModal: React.FC<{
 
   const handleUserAdminText = (targetId: number) => {
     const targetUser = userlist.find((user) => user.id === targetId);
-    if (chatSocket && targetUser) {
+    if (targetUser) {
       if (targetUser.grade == 1) {
         return 'Remove Admin';
       } else {
