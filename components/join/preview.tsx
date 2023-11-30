@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import {
   profile1,
@@ -24,7 +23,14 @@ const PreviewContainer: React.FC<{
   uploadedImage: File | null;
   handleCheckNick: (newNickname: string) => void;
   handleComplete: (newNickname: string, profile: number) => void;
-}> = ({ nickname, profile, checknick, uploadedImage, handleCheckNick, handleComplete }) => {
+}> = ({
+  nickname,
+  profile,
+  checknick,
+  uploadedImage,
+  handleCheckNick,
+  handleComplete,
+}) => {
   const imagePaths = [
     profile1,
     profile2,
@@ -48,12 +54,12 @@ const PreviewContainer: React.FC<{
         {profile === 0 && uploadedImage ? (
           <ProfileImage
             src={URL.createObjectURL(uploadedImage)}
-            alt="Uploaded Image"
+            alt='Uploaded Image'
             width={300}
             height={300}
           />
         ) : (
-          <ProfileImage src={imagePaths[profile]} alt="Profile Image" />
+          <ProfileImage src={imagePaths[profile]} alt='Profile Image' />
         )}
         <NameFrame>
           <NicknameFrame>
@@ -83,8 +89,8 @@ const PreviewContainer: React.FC<{
 export default PreviewContainer;
 
 const PreviewFrame = styled.div`
-  width: 20%;
-  height: 80%;
+  width: 20vw;
+  height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -135,6 +141,7 @@ const IntraText = styled.div`
   font-family: 'GiantsLight';
   text-align: center;
   font-size: medium;
+  margin-top: 2%;
 `;
 
 const DivisionBar = styled.div`

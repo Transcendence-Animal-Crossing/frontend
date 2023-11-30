@@ -1,20 +1,56 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
+import { useState, useRef, useEffect } from 'react';
 import { bronze, silver, gold, platinum, diamond } from './tier';
 import info from '../../public/Icon/info.png';
+import TierModal from './tierModal';
 
 const UserContainer: React.FC<{
   intraname: string;
   nickname: string;
+  rankScore: number;
   tierIndex: number;
   totalCount: number;
   winCount: number;
   winRate: number;
   avatar: string;
-}> = ({ intraname, nickname, tierIndex, totalCount, winCount, winRate, avatar }) => {
+}> = ({
+  intraname,
+  nickname,
+  rankScore,
+  tierIndex,
+  totalCount,
+  winCount,
+  winRate,
+  avatar,
+}) => {
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const tierTexts = ['브론즈', '실버', '골드', '플래티넘', '다이아몬드'];
+
+  const [isOpenTierModal, setOpenTierModal] = useState<boolean>(false);
+  const [InfoButtonRect, setInfoButtonRect] = useState<{
+    top: number;
+    left: number;
+  }>({ top: 0, left: 0 });
+  const InfoButtonRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (InfoButtonRef.current) {
+      const buttonRect = InfoButtonRef.current.getBoundingClientRect();
+      setInfoButtonRect({
+        top: buttonRect.top,
+        left: buttonRect.left,
+      });
+    }
+  }, []);
+
+  const handleOpenTierInfo = () => {
+    setOpenTierModal(true);
+  };
+
+  const handleCloseTierInfo = () => {
+    setOpenTierModal(false);
+  };
 
   return (
     <UserProfile>
@@ -25,9 +61,22 @@ const UserContainer: React.FC<{
       </NameFrame>
       <DivisionBar />
       <TierFrame>
-        <TierImage src={tierImages[tierIndex]} alt='Tier Image' width={30} height={30} />
-        <TierText> {tierTexts[tierIndex]} </TierText>
-        <InfoImage src={info} alt='info' />
+        <TierImage
+          src={tierImages[tierIndex]}
+          alt='Tier Image'
+          width={30}
+          height={30}
+        />
+        <TierTextFrame>
+          <TierText> {tierTexts[tierIndex]} </TierText>
+          <TierScore>{rankScore}점</TierScore>
+        </TierTextFrame>
+        <InfoImage
+          src={info}
+          alt='info'
+          onClick={handleOpenTierInfo}
+          ref={InfoButtonRef}
+        />
       </TierFrame>
       <DivisionBar />
       <MatchStatFrame>
@@ -45,6 +94,12 @@ const UserContainer: React.FC<{
         </MatchStatText>
       </MatchStatFrame>
       <DivisionBar />
+      {isOpenTierModal && (
+        <TierModal
+          handleCloseModal={handleCloseTierInfo}
+          InfoButtonRect={InfoButtonRect}
+        />
+      )}
     </UserProfile>
   );
 };
@@ -115,14 +170,30 @@ const TierImage = styled(Image)`
   margin: auto 0;
 `;
 
-const TierText = styled.div`
+const TierTextFrame = styled.div`
   color: ${(props) => props.theme.colors.brown};
   width: 60%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   font-family: 'GiantsLight';
-  vertical-align: middle;
+  gap: 20%;
+`;
+
+const TierText = styled.div`
+  width: 100%;
+  height: 50%;
   text-align: center;
   font-size: 2.5vh;
-  margin: auto 0;
+`;
+
+const TierScore = styled.div`
+  width: 100%;
+  height: 30%;
+  text-align: center;
+  font-size: 1.5vh;
 `;
 
 const InfoImage = styled(Image)`

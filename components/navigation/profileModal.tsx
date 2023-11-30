@@ -1,20 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import Container from '../../components/rowLayout';
-import InfoContainer from '../../components/join/info';
-import PreviewContainer from '../../components/join/preview';
+import InfoContainer from '../join/info';
+import PreviewContainer from '../join/preview';
 import axiosInstance from '../../utils/axiosInstance';
+import styled from 'styled-components';
 
-const JoinPage: React.FC = () => {
-  const { data: session, update } = useSession();
-  const [nickname, setNickname] = useState(session?.user.nickName || '');
-  const [message, setMessage] = useState('닉네임은 비어있을 수 없습니다.');
+const ProfileModal: React.FC<{
+  handleCloseModal: () => void;
+}> = ({ handleCloseModal }) => {
+  const [message, setMessage] = useState('변경할 닉네임을 입력해주세요!');
   const [checknick, setChecknick] = useState(false);
   const [profile, setProfile] = useState(1);
   const [profilePath, setProfilePath] = useState('profile2.png');
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
-  const router = useRouter();
+  const { data: session, update } = useSession();
+  const [nickname, setNickname] = useState(session?.user.nickName || '');
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleCloseModal();
+    }
+  };
 
   const handleNicknameChange = (newNickname: string) => {
     setNickname(newNickname);
@@ -41,6 +47,7 @@ const JoinPage: React.FC = () => {
 
   const handleCheckNick = async (newNickname: string) => {
     try {
+      console.log('newNickname', newNickname);
       if (!newNickname || newNickname.length < 2) {
         setMessage('닉네임은 2글자 이상이어야 합니다.');
         setChecknick(false);
@@ -87,7 +94,7 @@ const JoinPage: React.FC = () => {
           },
         });
       }
-      router.push('/');
+      handleCloseModal();
     } catch (error) {
       console.log('join err', error);
       setChecknick(false);
@@ -97,25 +104,53 @@ const JoinPage: React.FC = () => {
 
   return (
     <>
-      <Container>
-        <InfoContainer
-          message={message}
-          nickname={nickname}
-          onNicknameChange={handleNicknameChange}
-          handleImageChange={handleImageChange}
-          handleFileInputChange={handleFileInputChange}
-        />
-        <PreviewContainer
-          nickname={nickname}
-          profile={profile}
-          checknick={checknick}
-          uploadedImage={uploadedImage}
-          handleCheckNick={handleCheckNick}
-          handleComplete={handleComplete}
-        />
+      <Container onClick={handleOverlayClick}>
+        <Content>
+          <InfoContainer
+            message={message}
+            nickname={nickname}
+            onNicknameChange={handleNicknameChange}
+            handleImageChange={handleImageChange}
+            handleFileInputChange={handleFileInputChange}
+          />
+          <PreviewContainer
+            nickname={nickname}
+            profile={profile}
+            checknick={checknick}
+            uploadedImage={uploadedImage}
+            handleCheckNick={handleCheckNick}
+            handleComplete={handleComplete}
+          />
+        </Content>
       </Container>
     </>
   );
 };
 
-export default JoinPage;
+export default ProfileModal;
+
+const Container = styled.div`
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Content = styled.div`
+  position: fixed;
+  width: 70vw;
+  height: 80vh;
+  background-color: ${(props) => props.theme.colors.cream};
+  padding: 2vh;
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;

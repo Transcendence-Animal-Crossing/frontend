@@ -13,7 +13,15 @@ const UserFrame: React.FC<{
   avatar: string;
   rankScore: number;
   rankGameTotalCount: number;
-}> = ({ id, ranking, nickName, intraName, avatar, rankScore, rankGameTotalCount }) => {
+}> = ({
+  id,
+  ranking,
+  nickName,
+  intraName,
+  avatar,
+  rankScore,
+  rankGameTotalCount,
+}) => {
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const [tierIndex, setTierIndex] = useState(0);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
@@ -31,11 +39,11 @@ const UserFrame: React.FC<{
   const handleRank = async (rankScore: number) => {
     if (rankScore < 1000) {
       setTierIndex(0);
-    } else if (rankScore < 3000) {
+    } else if (rankScore < 1100) {
       setTierIndex(1);
-    } else if (rankScore < 5000) {
+    } else if (rankScore < 1500) {
       setTierIndex(2);
-    } else if (rankScore < 7000) {
+    } else if (rankScore < 2000) {
       setTierIndex(3);
     } else {
       setTierIndex(4);
@@ -62,7 +70,15 @@ const UserFrame: React.FC<{
     <UserRankFrame>
       <LeftFrame>
         <RankingFrame> {ranking} </RankingFrame>
-        <TierImage src={tierImages[tierIndex]} alt='Tier Image' width={30} height={30} />
+        <TierFrame>
+          <TierImage
+            src={tierImages[tierIndex]}
+            alt='Tier Image'
+            width={30}
+            height={30}
+          />
+          <RankScore>{rankScore}점</RankScore>
+        </TierFrame>
         <UserTouchFrame onClick={handleClickUser} ref={userRef}>
           <UserInfo
             nickName={nickName}
@@ -75,7 +91,11 @@ const UserFrame: React.FC<{
       </LeftFrame>
       <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
       {isOpenModal ? (
-        <UserModal handleCloseModal={handleCloseModal} userId={id} userRect={userRect} />
+        <UserModal
+          handleCloseModal={handleCloseModal}
+          userId={id}
+          userRect={userRect}
+        />
       ) : null}
     </UserRankFrame>
   );
@@ -117,9 +137,28 @@ const RankingFrame = styled.div`
   color: ${(props) => props.theme.colors.white};
 `;
 
+const TierFrame = styled.div`
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
 const TierImage = styled(Image)`
-  width: 8%;
+  width: 25%;
   height: auto;
+`;
+
+const RankScore = styled.div`
+  width: 55%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4vh;
+  color: ${(props) => props.theme.colors.brown};
 `;
 
 const MatchCountFrame = styled.div`
@@ -129,6 +168,6 @@ const MatchCountFrame = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  font-size: small;
+  font-size: 1.4vh;
   color: ${(props) => props.theme.colors.brown};
 `;

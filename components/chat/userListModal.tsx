@@ -11,6 +11,7 @@ import unmute from '../../public/Chat/unmute.png';
 import slider from '../../public/Chat/slider.png';
 import users from '../../public/Icon/users.png';
 import crown from '../../public/Icon/crown.png';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 interface ParticipantData {
   id: number;
@@ -70,11 +71,6 @@ const userListModal: React.FC<{
     if (e.target === e.currentTarget) {
       handleCloseModal();
     }
-  };
-
-  const handleSetUserAvatar = (avatar: string) => {
-    const apiUrl = 'http://localhost:8080/';
-    return apiUrl + avatar;
   };
 
   const handlShowBanList = () => {
@@ -151,7 +147,7 @@ const userListModal: React.FC<{
 
   const handleUserAdminText = (targetId: number) => {
     const targetUser = userlist.find((user) => user.id === targetId);
-    if (chatSocket && targetUser) {
+    if (targetUser) {
       if (targetUser.grade == 1) {
         return 'Remove Admin';
       } else {
