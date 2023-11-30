@@ -478,35 +478,12 @@ const Navigation = () => {
             </UserInfoFrame>
           );
         })}
-        {gameButton && (
-          <GameStartButton onClick={handleGameStart} ref={modeRefs}>
-            <Text fontsize='3vh'>Game Start</Text>
-          </GameStartButton>
-        )}
-        {matchingGame && (
-          <GameStartButton onClick={handleLeaveQueue} ref={modeRefs}>
-            <Text fontsize='2.5vh'>Matching...</Text>
-            <Text fontsize='2vh'>
-              {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}
-            </Text>
-          </GameStartButton>
-        )}
         {isOpenmode && (
           <Content overlayTop={overlayTop} overlayLeft={overlayLeft} onClick={handleGeneralMode}>
             {modeButton}
           </Content>
         )}
       </UserList>
-      <>
-        {session ? (
-          <>
-            <br />
-            <br />
-            <br />
-            <button onClick={() => signOut()}>Sign out</button>
-          </>
-        ) : null}
-      </>
       {isOpenModal ? (
         <UserModal handleCloseModal={handleCloseModal} userId={userInfo.id} userRect={userRect} />
       ) : null}
@@ -528,6 +505,19 @@ const Navigation = () => {
           setInviteResponse={setInviteResponse}
         />
       )}
+      {gameButton && (
+          <GameStartButton onClick={handleGameStart} ref={modeRefs}>
+            <Text fontsize='3vh'>Game Start</Text>
+          </GameStartButton>
+        )}
+        {matchingGame && (
+          <GameStartButton onClick={handleLeaveQueue} ref={modeRefs}>
+            <Text fontsize='2.5vh'>Matching...</Text>
+            <Text fontsize='2vh'>
+              {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}
+            </Text>
+          </GameStartButton>
+        )}
     </Container>
   );
 };
@@ -553,12 +543,12 @@ const DivisionBar = styled.div`
 
 const UserList = styled.div`
   width: 100%;
-  height: auto;
+  height: 65%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  overflow-y: auto;
+  overflow: auto;
   color: ${(props) => props.theme.colors.brown};
 `;
 
