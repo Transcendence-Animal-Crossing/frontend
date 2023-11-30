@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useRef } from 'react';
 import setting from '../../public/Icon/setting.png';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 import SettingModal from './settingModal';
 
 const myProfile = () => {
@@ -49,7 +50,7 @@ const myProfile = () => {
       <ProfileFrame>
         <ProfileInfoFrame onClick={handleUserPage}>
           <ProfileImage
-            src={handleSetUserAvatar()}
+            src={handleSetUserAvatar(session?.user?.avatar)}
             alt='Uploaded Image'
             width={300}
             height={300}

@@ -6,7 +6,7 @@ const nextConfig = {
     styledComponents: true,
   },
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'backend'],
   },
 };
 

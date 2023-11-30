@@ -9,18 +9,16 @@ import home from '../../public/Icon/home.png';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Container from '../../components/columnNevLayout';
 import Game from '../../components/mypage/game';
+import { handleSetUserAvatar } from '../../utils/avatarUtils';
 
 const UserPage = () => {
-  const apiUrl = 'http://localhost:8080/';
   const router = useRouter();
   const { userId } = router.query as { userId: string };
 
   // userInfo
   const [intraname, setIntraname] = useState('intraname');
   const [nickname, setNickname] = useState('nickname');
-  const [avatarPath, setAvatarPath] = useState(
-    apiUrl + 'original/profile2.png'
-  );
+  const [avatarPath, setAvatarPath] = useState(handleSetUserAvatar('original/profile2.png'));
   const [tierIndex, setTierIndex] = useState(0);
 
   // achievement
@@ -77,7 +75,7 @@ const UserPage = () => {
       console.log(response);
       await setIntraname(response.data.intraName);
       await setNickname(response.data.nickName);
-      await setAvatarPath(apiUrl + response.data.avatar);
+      await setAvatarPath(handleSetUserAvatar(response.data.avatar));
       await setAchieveList(response.data.achievements);
       await handleRank(response.data.rankScore);
     } catch (error) {

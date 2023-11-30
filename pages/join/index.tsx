@@ -87,7 +87,7 @@ const JoinPage: React.FC = () => {
           },
         });
       }
-      router.push('http://localhost:3000/');
+      router.push('/');
     } catch (error) {
       console.log('join err', error);
       setChecknick(false);
