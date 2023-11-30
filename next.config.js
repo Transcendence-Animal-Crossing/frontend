@@ -6,7 +6,7 @@ const nextConfig = {
     styledComponents: true,
   },
   images: {
-    domains: ['localhost', 'backend'],
+    domains: ['localhost', 'backend', 'ec2-43-201-205-34.ap-northeast-2.compute.amazonaws.com'],
   },
 };
 

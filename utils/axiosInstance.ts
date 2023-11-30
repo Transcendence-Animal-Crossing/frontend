@@ -4,7 +4,7 @@ import { signOut } from 'next-auth/react';
 import Router from 'next/router';
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://ec2-43-201-205-34.ap-northeast-2.compute.amazonaws.com:8080',
   headers: {
     Authorization: '',
   },

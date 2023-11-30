@@ -26,7 +26,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!chatSocket && session && session.accessToken) {
-      const newChatSocket = io("ws://localhost:8080/chat", {
+      const newChatSocket = io("ws://ec2-43-201-205-34.ap-northeast-2.compute.amazonaws.com:8080/chat", {
         transports: ["websocket"],
         auth: {
           token: session.accessToken,
@@ -37,7 +37,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
 
     if (!queueSocket && session && session.accessToken) {
-      const newQueueSocket = io("ws://localhost:8080/queue", {
+      const newQueueSocket = io("ws://ec2-43-201-205-34.ap-northeast-2.compute.amazonaws.com:8080/queue", {
         transports: ["websocket"],
         auth: {
           token: session.accessToken,
@@ -48,7 +48,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
 
     if (!gameSocket && session && session.accessToken) {
-      const newGameSocket = io("ws://localhost:8080/game", {
+      const newGameSocket = io("ws://ec2-43-201-205-34.ap-northeast-2.compute.amazonaws.com:8080/game", {
         transports: ["websocket"],
         auth: {
           token: session.accessToken,

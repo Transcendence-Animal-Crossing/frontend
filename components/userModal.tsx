@@ -47,7 +47,7 @@ const UserModal: React.FC<{
   };
 
   const handleUserPage = () => {
-    router.push(`http://localhost:3000/profile/${userId}`);
+    router.push(`http://ec2-43-201-205-34.ap-northeast-2.compute.amazonaws.com:3000/profile/${userId}`);
   };
 
   const handleOpenDM = async () => {
