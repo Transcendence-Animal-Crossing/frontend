@@ -30,6 +30,7 @@ axiosInstance.interceptors.response.use(
       signOut();
       return new Promise(() => {});
     }
+    return Promise.reject(error);
   }
 );
 
