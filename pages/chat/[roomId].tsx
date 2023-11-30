@@ -160,7 +160,7 @@ const Chat = () => {
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
           if (targetId == userId) {
-            setNoticeMessage('30분간 뮤트당하셨어요!');
+            setNoticeMessage('10분간 뮤트당하셨어요!');
             setOpenNotice(true);
           }
           setUserlist((prevUserlist) => {
