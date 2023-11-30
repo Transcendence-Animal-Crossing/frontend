@@ -201,16 +201,9 @@ const Chat = () => {
         const { targetId } = response;
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
-          setUserlist((prevUserlist) => {
-            const updatedUserlist = prevUserlist.map((user) => {
-              if (user.id === targetId) {
-                return { ...user, grade: 1 };
-              }
-              return user;
-            });
-            sortUserList();
-            return updatedUserlist;
-          });
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, grade: 1 } : user))
+          );
           handleUserActionMessage(`${targetUser.nickName}님이 관리자 권한을 얻었습니다.`);
         }
       };
@@ -219,16 +212,9 @@ const Chat = () => {
         const { targetId } = response;
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
-          setUserlist((prevUserlist) => {
-            const updatedUserlist = prevUserlist.map((user) => {
-              if (user.id === targetId) {
-                return { ...user, grade: 0 };
-              }
-              return user;
-            });
-            sortUserList();
-            return updatedUserlist;
-          });
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, grade: 0 } : user))
+          );
           handleUserActionMessage(`${targetUser.nickName}님의 관리자 권한이 해제되었습니다.`);
         }
       };
