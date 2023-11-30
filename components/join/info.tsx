@@ -20,11 +20,13 @@ import pen from '../../public/Icon/pen.png';
 
 const InfoContainer: React.FC<{
   message: string;
+  nickname:string
   onNicknameChange: (newNickname: string) => void;
   handleImageChange: (newIndex: number, e: any) => void;
   handleFileInputChange: (e: any) => void;
 }> = ({
   message,
+  nickname,
   onNicknameChange,
   handleImageChange,
   handleFileInputChange,
@@ -73,7 +75,7 @@ const InfoContainer: React.FC<{
           </PenFrame>
           <Input
             type='text'
-            placeholder='NickName'
+            placeholder={nickname}
             onChange={(e) => onNicknameChange(e.target.value)}
             maxLength={8}
             required

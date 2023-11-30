@@ -6,8 +6,10 @@ import { useSocket } from '../../utils/SocketProvider';
 import { useSession } from 'next-auth/react';
 import UserListModal from './userListModal';
 import UpdateRoomModal from './updateRoomModal';
+import InviteUserModal from './inviteUserModal';
 import users from '../../public/Icon/users.png';
 import exit from '../../public/Icon/exit.png';
+import invite from '../../public/Icon/invite.png';
 import lock from '../../public/Chat/lock_gold.png';
 import setting from '../../public/Icon/setting.png';
 
@@ -42,6 +44,7 @@ const Header: React.FC<{
   const [isOwner, setIsOwner] = useState(false);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
   const [isOpenSetModal, setOpenSetModal] = useState<boolean>(false);
+  const [isOpenInvite, setOpenInvite] = useState<boolean>(false);
   const [createButtonRect, setCreateButtonRect] = useState<{
     top: number;
     right: number;
@@ -86,6 +89,14 @@ const Header: React.FC<{
     setOpenSetModal(false);
   };
 
+  const handleOpenInvite = () => {
+    setOpenInvite(true);
+  };
+
+  const handleCloseInvite = () => {
+    setOpenInvite(false);
+  };
+
   const handleRouteChatLobby = async () => {
     if (chatSocket) {
       console.log(roomId);
@@ -99,19 +110,22 @@ const Header: React.FC<{
       <HeaderFrame>
         <InfoFrame>
           <TitleFrame> {roomTitle} </TitleFrame>
-          {roomMode == 'PROTECTED' && <InfoImage src={lock} alt="lock" />}
+          {roomMode == 'PROTECTED' && <InfoImage src={lock} alt='lock' />}
         </InfoFrame>
         <ButtonFrame>
           {isOwner && (
             <Button onClick={handleOpenSetModal} ref={CreateButtonRef}>
-              <InfoImage src={setting} alt="setting" />
+              <InfoImage src={setting} alt='setting' />
             </Button>
           )}
+          <Button onClick={handleOpenInvite} ref={CreateButtonRef}>
+            <InfoImage src={invite} alt='invite' />
+          </Button>
           <Button onClick={handleOpenModal} ref={CreateButtonRef}>
-            <InfoImage src={users} alt="users" />
+            <InfoImage src={users} alt='users' />
           </Button>
           <Button onClick={handleRouteChatLobby}>
-            <InfoImage src={exit} alt="exit" />
+            <InfoImage src={exit} alt='exit' />
           </Button>
         </ButtonFrame>
       </HeaderFrame>
@@ -130,6 +144,7 @@ const Header: React.FC<{
           createButtonRect={createButtonRect}
         />
       )}
+      {isOpenInvite && <InviteUserModal handleCloseModal={handleCloseInvite} roomId={roomId} />}
     </>
   );
 };
