@@ -14,7 +14,7 @@ const ProfileModal: React.FC<{
   const [profilePath, setProfilePath] = useState('profile2.png');
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const { data: session, update } = useSession();
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState(session?.user.nickName || '');
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -108,6 +108,7 @@ const ProfileModal: React.FC<{
         <Content>
           <InfoContainer
             message={message}
+            nickname={nickname}
             onNicknameChange={handleNicknameChange}
             handleImageChange={handleImageChange}
             handleFileInputChange={handleFileInputChange}
