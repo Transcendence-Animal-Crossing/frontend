@@ -25,13 +25,13 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error?.response?.status) {
-      if (error.response.status === 401) {
-        console.log('Unauthorized');
-        signOut();
-        return new Promise(() => {});
-      }
+    const statusCode = error?.response?.status;
+    if (statusCode === 401) {
+      console.log('Unauthorized');
+      signOut();
+      return new Promise(() => {});
     }
+    console.log(error);
     return Promise.reject(error);
   }
 );
