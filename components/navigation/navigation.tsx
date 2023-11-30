@@ -11,6 +11,7 @@ import UserInfo from '../userInfo';
 import UserModal from '../userModal';
 import AlarmModal from './alarmModal';
 import RoomInviteModal from '../roomInviteModal';
+import ReceiveGameModal from '../receiveGameModal';
 
 interface dmData {
   id: number;
@@ -95,6 +96,12 @@ const Navigation = () => {
   // invite chatting room
   const [isRoomInvite, setIsRoomInvite] = useState<boolean>(true);
   const [inviteRoomInfo, setInviteRoomInfo] = useState<InviteRoomData>();
+
+  // invite game
+  const [isGameInvite, setIsGameInvite] = useState<boolean>(true);
+  const [inviteGameInfo, setInviteGameInfo] = useState<friendData>();
+  const [inviteResponse, setInviteResponse] = useState<string>('');
+  const inviteResponseRef = useRef<string>('');
 
   useEffect(() => {
     if (chatSocket && chatSocketFlag) {
@@ -217,6 +224,26 @@ const Navigation = () => {
         setIsRoomInvite(true);
       };
 
+      const handleGameInvite = (response: friendData, callback: (arg0: string) => void) => {
+        inviteResponseRef.current = '';
+        setInviteGameInfo(response);
+        setIsGameInvite(true);
+
+        const checkResponse = () => {
+          if (inviteResponseRef.current === 'ACCEPT' || inviteResponseRef.current === 'DENIED') {
+            callback(inviteResponseRef.current);
+            setIsGameInvite(false);
+          } else {
+            setTimeout(checkResponse, 100);
+          }
+        };
+
+        checkResponse();
+        setTimeout(() => {
+          setIsGameInvite(false);
+        }, 10000);
+      };
+
       chatSocket.on('friend-update', handleFriendUpdate);
       chatSocket.on('dm', handleDM);
       chatSocket.on('new-friend', handleNewFriend);
@@ -224,6 +251,7 @@ const Navigation = () => {
       chatSocket.on('new-friend-request', handleNewFriendRequest);
       chatSocket.on('delete-friend-request', handleDeleteFriendRequest);
       chatSocket.on('room-invite', handleRoomInvite);
+      chatSocket.on('game-invite', handleGameInvite);
 
       return () => {
         chatSocket.off('friend-update', handleFriendUpdate);
@@ -233,9 +261,14 @@ const Navigation = () => {
         chatSocket.off('new-friend-request', handleNewFriendRequest);
         chatSocket.off('delete-friend-request', handleDeleteFriendRequest);
         chatSocket.off('room-invite', handleRoomInvite);
+        chatSocket.off('game-invite', handleGameInvite);
       };
     }
   }, [chatSocket, openDmId]);
+
+  useEffect(() => {
+    inviteResponseRef.current = inviteResponse;
+  }, [inviteResponse]);
 
   useEffect(() => {
     const handleOpenDM = (targetId: number) => {
@@ -337,6 +370,10 @@ const Navigation = () => {
 
   const handleCloseInvite = () => {
     setIsRoomInvite(false);
+  };
+
+  const handleCloseGame = () => {
+    setIsGameInvite(false);
   };
 
   const handleAvatarPath = (avatar: string) => {
@@ -463,7 +500,16 @@ const Navigation = () => {
           requestRect={requestRect}
         />
       ) : null}
-      {isRoomInvite && inviteRoomInfo && <RoomInviteModal roomInfo={inviteRoomInfo}  handleCloseModal={handleCloseInvite} />}
+      {isRoomInvite && inviteRoomInfo && (
+        <RoomInviteModal roomInfo={inviteRoomInfo} handleCloseModal={handleCloseInvite} />
+      )}
+      {isGameInvite && inviteGameInfo && (
+        <ReceiveGameModal
+          userInfo={inviteGameInfo}
+          handleCloseModal={handleCloseGame}
+          setInviteResponse={setInviteResponse}
+        />
+      )}
     </Container>
   );
 };
