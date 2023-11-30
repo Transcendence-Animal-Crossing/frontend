@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
           }
         } catch (e: any) {
           console.error('Sign in error:', e);
-          if (e.response.status == 403) {
+          if (e.response.status == 400 || e.response.status == 403) {
             return `/login/twofactor/${credentials.intraname}`;
           }
         }
@@ -121,7 +121,7 @@ export const authOptions: NextAuthOptions = {
             accessToken: account.access_token,
           });
         } catch (error: any) {
-          if (error.response.status == 403) {
+          if (error.response.status == 400 || error.response.status == 403) {
             console.log('42 login two-factor', error);
             const intraName = error.response.data?.intraName;
             return intraName
