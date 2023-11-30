@@ -225,7 +225,19 @@ const Chat = () => {
         }
       };
 
-      const handleUserUpdate = () => {};
+      const handleUserUpdate = (response: any) => {
+        console.log('handleUserUpdate', response);
+        const targetUser = userlist.find((user) => user.id === response.id);
+        if (targetUser) {
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) =>
+              user.id === response.id
+                ? { ...user, nickName: response.nickName, avatar: response.avatar }
+                : user
+            )
+          );
+        }
+      };
 
       chatSocket.on('room-message', handleRoomMessage);
       chatSocket.on('room-join', handleRoomJoin);
