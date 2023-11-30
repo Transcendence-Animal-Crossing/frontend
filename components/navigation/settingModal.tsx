@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import axiosInstance from '../../utils/axiosInstance';
 import ProfileModal from './profileModal';
 import PasswordModal from './passwordModal';
+import { signOut } from 'next-auth/react';
 
 const settingModal: React.FC<{
   handleCloseModal: () => void;
@@ -89,6 +90,7 @@ const settingModal: React.FC<{
               {twofactor ? '이중인증 해제' : '이중인증 설정'}
             </Button>
             <Button onClick={handlePasswordModal}> 비밀번호 설정 </Button>
+            <Button onClick={() => signOut()}> 로그아웃 </Button>
           </ButtonFrame>
         </Content>
         {isOpenProfile && (
