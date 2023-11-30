@@ -29,17 +29,19 @@ const ReceiveGameModal: React.FC<{
   return (
     <>
       <Container>
-        <Content>
-          <GuriImage src={Isabelle} alt='Isabelle' />
-          <Text>
-            <span className='nickName'>{userInfo.nickName}</span>
-            <span className='intraName'> ({userInfo.intraName}) </span>님께서 도전장을 보내셨어요!
-          </Text>
-          <CompleteButtonFrame>
-            <CompleteButton onClick={handleGameDeny}> 거절하기 </CompleteButton>
-            <CompleteButton onClick={handleGameAccept}> 수락하기 </CompleteButton>
-          </CompleteButtonFrame>
-        </Content>
+        <ContentFrame>
+          <Content>
+            <GuriImage src={Isabelle} alt='Isabelle' />
+            <Text>
+              <span className='nickName'>{userInfo.nickName}</span>
+              <span className='intraName'> ({userInfo.intraName}) </span>님께서 도전장을 보내셨어요!
+            </Text>
+            <CompleteButtonFrame>
+              <CompleteButton onClick={handleGameDeny}> 거절하기 </CompleteButton>
+              <CompleteButton onClick={handleGameAccept}> 수락하기 </CompleteButton>
+            </CompleteButtonFrame>
+          </Content>
+        </ContentFrame>
       </Container>
     </>
   );
@@ -56,9 +58,18 @@ const Container = styled.div`
   background: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 `;
 
+const ContentFrame = styled.div`
+  width: 80%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 const Content = styled.div`
   position: fixed;
   width: 20vw;

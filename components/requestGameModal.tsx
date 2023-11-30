@@ -7,10 +7,12 @@ const RequestGameModal: React.FC<{}> = ({}) => {
   return (
     <>
       <Container>
-        <Content>
-          <GuriImage src={Isabelle} alt='Isabelle' />
-          <Text> 상대방의 수락을 기다리는 중이에요 ! </Text>
-        </Content>
+        <ContentFrame>
+          <Content>
+            <GuriImage src={Isabelle} alt='Isabelle' />
+            <Text> 상대방의 수락을 기다리는 중이에요 ! </Text>
+          </Content>
+        </ContentFrame>
       </Container>
     </>
   );
@@ -25,6 +27,16 @@ const Container = styled.div`
   top: 0;
   left: 0;
   background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
+const ContentFrame = styled.div`
+  width: 80%;
+  height: 100%;
+  top: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
