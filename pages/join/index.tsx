@@ -50,9 +50,10 @@ const JoinPage: React.FC = () => {
       const response = await axiosInstance.post('/users/nickname', {
         nickName: newNickname,
       });
-      console.log(response);
-      setChecknick(true);
-      setMessage(' ');
+      if (response.status === 200) {
+        setChecknick(true);
+        setMessage(' ');
+      }
     } catch (error) {
       console.log('join err', error);
       setChecknick(false);

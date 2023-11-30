@@ -155,23 +155,19 @@ const Chat = () => {
       };
 
       const handleRoomMute = (response: ActionRoomData) => {
+        console.log('handleRoomMute', response);
         const { targetId } = response;
         const userId = session?.user.id;
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
+          console.log('handleRoomMute2', response);
           if (targetId == userId) {
             setNoticeMessage('10분간 뮤트당하셨어요!');
             setOpenNotice(true);
           }
-          setUserlist((prevUserlist) => {
-            const updatedUserlist = prevUserlist.map((user) => {
-              if (user.id === targetId) {
-                return { ...user, mute: true };
-              }
-              return user;
-            });
-            return updatedUserlist;
-          });
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, mute: true } : user))
+          );
           handleUserActionMessage(`${targetUser.nickName}님이 채팅 금지 상태입니다.`);
         }
       };
@@ -182,18 +178,14 @@ const Chat = () => {
       };
 
       const handleRoomUnmute = (response: ActionRoomData) => {
+        console.log('handleRoomUnmute', response);
         const { targetId } = response;
         const targetUser = userlist.find((user) => user.id === targetId);
         if (targetUser) {
-          setUserlist((prevUserlist) => {
-            const updatedUserlist = prevUserlist.map((user) => {
-              if (user.id === targetId) {
-                return { ...user, mute: false };
-              }
-              return user;
-            });
-            return updatedUserlist;
-          });
+          console.log('handleRoomUnmute2', response);
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === targetId ? { ...user, mute: false } : user))
+          );
         }
       };
 
@@ -226,17 +218,24 @@ const Chat = () => {
       const handleChangeOwner = (response: { id: number } & object) => {
         const targetUser = userlist.find((user) => user.id === response.id);
         if (targetUser) {
-          setUserlist((prevUserlist) => {
-            const updatedUserlist = prevUserlist.map((user) => {
-              if (user.id === response.id) {
-                return { ...user, grade: 2 };
-              }
-              return user;
-            });
-            sortUserList();
-            return updatedUserlist;
-          });
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) => (user.id === response.id ? { ...user, grade: 2 } : user))
+          );
           handleUserActionMessage(`${targetUser.nickName}님이 방장 권한을 얻었습니다.`);
+        }
+      };
+
+      const handleUserUpdate = (response: any) => {
+        console.log('handleUserUpdate', response);
+        const targetUser = userlist.find((user) => user.id === response.id);
+        if (targetUser) {
+          setUserlist((prevUserlist) =>
+            prevUserlist.map((user) =>
+              user.id === response.id
+                ? { ...user, nickName: response.nickName, avatar: response.avatar }
+                : user
+            )
+          );
         }
       };
 
@@ -252,6 +251,7 @@ const Chat = () => {
       chatSocket.on('remove-admin', handleRemoveAdmin);
       chatSocket.on('room-mode', handleRoomMode);
       chatSocket.on('change-owner', handleChangeOwner);
+      chatSocket.on('room-user-update', handleUserUpdate);
 
       return () => {
         chatSocket.off('room-message', handleRoomMessage);
@@ -266,6 +266,7 @@ const Chat = () => {
         chatSocket.off('remove-admin', handleRemoveAdmin);
         chatSocket.off('room-mode', handleRoomMode);
         chatSocket.off('change-owner', handleChangeOwner);
+        chatSocket.off('room-user-update', handleUserUpdate);
       };
     } else {
       router.push('/chat');
