@@ -70,6 +70,7 @@ const General = () => {
 export default General;
 
 const GeneralLogin = styled.div`
+  font-size: 2vw;
   width: 20%;
   height: 50%;
   display: flex;
@@ -91,7 +92,7 @@ const Text = styled.div`
   align-items: center;
   color: ${(props) => props.theme.colors.brown};
   font-family: 'GiantsLight';
-  font-size: 3vmin;
+  font-size: 100%;
 `;
 
 const LoginInput = styled.div`

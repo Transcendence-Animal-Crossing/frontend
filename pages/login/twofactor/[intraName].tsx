@@ -59,7 +59,8 @@ const TwoFactorFrame = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3%;
+  gap: 2%;
+  font-size: 2vw;
 `;
 
 const LogoImage = styled(Image)`
@@ -75,7 +76,7 @@ const Title = styled.div`
   align-items: center;
   color: ${(props) => props.theme.colors.brown};
   font-family: 'GiantsLight';
-  font-size: 3vmin;
+  font-size: 100%;
 `;
 
 const Description = styled.div`
@@ -85,7 +86,7 @@ const Description = styled.div`
   justify-content: center;
   align-items: center;
   font-family: 'GiantsLight';
-  font-size: 1.5vmin;
+  font-size: 50%;
   color: ${(props) => props.theme.colors.brown05};
 `;
 
