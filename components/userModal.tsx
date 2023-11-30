@@ -6,6 +6,7 @@ import { useSocket } from '../utils/SocketProvider';
 import axiosInstance from '../utils/axiosInstance';
 import DmModal from './dm/dmModal';
 import NoticeModal from './noticeModal';
+import RequestGameModal from './requestGameModal';
 
 const UserModal: React.FC<{
   handleCloseModal: () => void;
@@ -18,10 +19,13 @@ const UserModal: React.FC<{
   const [IsOpenDm, setIsOpenDm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
-  const noticeMessage = '유효하지않은 요청입니다.';
+  const [noticeMessage, setNoticeMessage] = useState<string>('유효하지않은 요청입니다.');
   const router = useRouter();
   const overlayLeft = `${userRect.left + userRect.width * 0.4}px`;
   const overlayTop = `${userRect.top}px`;
+
+  // game invite
+  const [isOpenInvite, setIsOpenInvite] = useState<boolean>(false);
 
   useEffect(() => {
     handleFriendInfo();
@@ -74,7 +78,7 @@ const UserModal: React.FC<{
 
   const handleInviteGame = async () => {
     if (chatSocket) {
-      // request 모달 띄워놓고 기다리기
+      setIsOpenInvite(true);
       await chatSocket
         .emitWithAck('game-invite', {
           targetId: userId,
@@ -82,11 +86,12 @@ const UserModal: React.FC<{
         .then((response) => {
           if (response.status === 200) {
             console.log('handleInviteGame response ', response);
-            if (response.body === 'ACCEPT') {
-              // 수락
-            } else if (response.body === 'DENIED') {
-              // setNoticeMessage('친구분이 초대 요청을 거절하셨어요!');
+            if (response.body === 'DENIED') {
+              setNoticeMessage('친구분이 초대 요청을 거절하셨어요!');
               setOpenNotice(true);
+              setIsOpenInvite(false);
+            } else if (response.body === 'ACCEPT') {
+              setIsOpenInvite(false);
             }
           } else {
             console.log('game-join : invite', response);
@@ -102,6 +107,7 @@ const UserModal: React.FC<{
       });
       setFollowStatus(1);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -113,6 +119,7 @@ const UserModal: React.FC<{
       });
       setFollowStatus(0);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -124,6 +131,7 @@ const UserModal: React.FC<{
       });
       setFollowStatus(0);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -135,6 +143,7 @@ const UserModal: React.FC<{
       });
       setBlockStatus(1);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -146,6 +155,7 @@ const UserModal: React.FC<{
       });
       setBlockStatus(0);
     } catch (error) {
+      setNoticeMessage('유효하지않은 요청입니다.');
       setOpenNotice(true);
     }
   };
@@ -188,6 +198,7 @@ const UserModal: React.FC<{
       {isOpenNotice && (
         <NoticeModal handleCloseModal={handleCloseNotice} noticeMessage={noticeMessage} />
       )}
+      {isOpenInvite && <RequestGameModal />}
     </>
   );
 };
