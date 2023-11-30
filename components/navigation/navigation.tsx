@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useSocket } from '../../utils/SocketProvider';
 import { useEventEmitter } from '../../utils/EventEmitterProvider';
 import axiosInstance from '../../utils/axiosInstance';
@@ -43,7 +44,8 @@ interface InviteRoomData {
 
 const Navigation = () => {
   const { data: session } = useSession();
-  const { chatSocket } = useSocket();
+  const { chatSocket, gameSocket } = useSocket();
+  const router = useRouter();
   const emitter = useEventEmitter();
   const [chatSocketFlag, setSocketFlag] = useState<boolean>(true);
 
@@ -265,6 +267,22 @@ const Navigation = () => {
       };
     }
   }, [chatSocket, openDmId]);
+
+  useEffect(() => {
+    if (gameSocket) {
+      const handleGameMatched = (response: { id: string }) => {
+        console.log('handleGameMatched', response);
+        const responseGameId = response.id;
+        router.push(`/game/${responseGameId}`);
+      };
+
+      gameSocket.on('game-matched', handleGameMatched);
+
+      return () => {
+        gameSocket.off('game-matched', handleGameMatched);
+      };
+    }
+  }, [gameSocket]);
 
   useEffect(() => {
     inviteResponseRef.current = inviteResponse;

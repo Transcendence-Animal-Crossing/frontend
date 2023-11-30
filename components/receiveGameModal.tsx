@@ -16,6 +16,7 @@ const ReceiveGameModal: React.FC<{
   handleCloseModal: () => void;
   setInviteResponse: (arg0: string) => void;
 }> = ({ userInfo, handleCloseModal, setInviteResponse }) => {
+  
   const handleGameAccept = () => {
     setInviteResponse('ACCEPT');
     handleCloseModal();
