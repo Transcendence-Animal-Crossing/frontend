@@ -49,16 +49,12 @@ const ProfileModal: React.FC<{
 
   const handleCheckNick = async (newNickname: string) => {
     try {
-      if (!newNickname) {
-        setMessage(' ');
-        setChecknick(true);
-        return;
-      }
-      if (newNickname.length < 2) {
+      if (!newNickname || newNickname.length < 2) {
         setMessage('닉네임은 2글자 이상이어야 합니다.');
         setChecknick(false);
         return;
       }
+      
       const response = await axiosInstance.post('/users/nickname', {
         nickName: newNickname,
       });
