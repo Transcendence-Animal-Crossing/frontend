@@ -18,6 +18,7 @@ const Ranking = () => {
 
   const [offset, setOffset] = useState(0);
   const [searchText, setSearchText] = useState('');
+  const [isSearch, setIsSearch] = useState(false);
 
   const [userList, setUserList] = useState([]);
 
@@ -26,7 +27,11 @@ const Ranking = () => {
   }, []);
 
   useEffect(() => {
-    getRankingList();
+	if (!isSearch) {
+		getRankingList();
+	} else {
+		getSearchList();
+	}
   }, [offset]);
 
   const getRankingList = async () => {
@@ -47,36 +52,38 @@ const Ranking = () => {
     }
   };
 
+  const getSearchList = async () =>  {
+	try {
+		const response = await axiosInstance.post('/users/search', {
+		  name: searchText,
+		  offset: offset,
+		});
+		console.log('handleSearch() response');
+		console.log(response.data);
+		response.data.map((user: any) => {
+		  user.avatar = handleSetUserAvatar(user.avatar);
+		});
+		await printResponse(response.data);
+		await setUserList(response.data);
+	  } catch (error: any) {
+		console.log(error);
+		handleError(error);
+	  }
+  }
+
   const printResponse = async (data: any) => {
-    console.log('printResponse() data');
-    console.log(data);
+    console.log('printResponse() data', data);
   };
 
   const handleSearch = async () => {
-    try {
-      const response = await axiosInstance.post('/users/search', {
-        name: searchText,
-      });
-      console.log('handleSearch() response');
-      console.log(response.data);
-      response.data.map((user: any) => {
-        user.avatar = handleSetUserAvatar(user.avatar);
-      });
-      await setUserList(response.data);
-    } catch (error: any) {
-      console.log(error);
-      handleError(error);
-    }
+	setIsSearch(true);
+	setOffset(0);
+	await getSearchList();
   };
 
-  const handleError = (error: any) => {
-    if (error.response.status == 400) {
-      console.log('handleSearch() error.response.data.message');
-      if (error.response.data.message == '더이상 돌려줄 데이터 없음') {
-        setOffset(offset - userPerPage);
-      } else if (error.response.data.message == 'offset은 양수만 가능') {
-        setOffset(0);
-      }
+  const handleKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
@@ -88,9 +95,14 @@ const Ranking = () => {
     setOffset(offset + userPerPage);
   };
 
-  const handleKeyDown = (e: any) => {
-    if (e.key === 'Enter') {
-      handleSearch();
+  const handleError = (error: any) => {
+    if (error.response.status == 400) {
+      console.log('handleSearch() error.response.data.message');
+      if (error.response.data.message == '더이상 돌려줄 데이터 없음') {
+        setOffset(offset - userPerPage);
+      } else if (error.response.data.message == 'offset은 양수만 가능') {
+        setOffset(0);
+      }
     }
   };
 
