@@ -8,6 +8,7 @@ import info from '../../public/Icon/info.png';
 import unlock from '../../public/Chat/unlock.png';
 import lock from '../../public/Chat/lock.png';
 import secret from '../../public/Chat/secret.png';
+import NoticeModal from '../noticeModal';
 
 const CreateRoomModal: React.FC<{
   handleCloseModal: () => void;
@@ -25,6 +26,8 @@ const CreateRoomModal: React.FC<{
   const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
 
   const handleCreateRoom = async () => {
+    if (!title) return ;
+    if (mode === 'PROTECTED' && !password) return ;
     if (chatSocket) {
       await chatSocket
         .emitWithAck('room-create', {
@@ -85,8 +88,9 @@ const CreateRoomModal: React.FC<{
             </PenFrame>
             <Input
               type="text"
-              placeholder="채팅방 이름을 입력해주세요"
+              placeholder="채팅방 이름을 한글자 이상 입력해주세요"
               onChange={(e) => handleTitleChange(e.target.value)}
+              minLength={2}
               maxLength={20}
               required
             />
@@ -107,8 +111,9 @@ const CreateRoomModal: React.FC<{
               <InputFrame>
                 <Input
                   type="text"
-                  placeholder="비밀번호를 입력해주세요"
+                  placeholder="비밀번호를 한글자 이상  입력해주세요"
                   onChange={(e) => handlePasswprdChange(e.target.value)}
+                  minLength={1}
                   maxLength={4}
                   required
                 />
