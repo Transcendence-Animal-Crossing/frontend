@@ -4,7 +4,8 @@ import { signOut } from 'next-auth/react';
 import Router from 'next/router';
 
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: process.env.URL,
+  // baseURL: process.env.URL,
+  baseURL: 'http://localhost:8080',
   headers: {
     Authorization: '',
   },
