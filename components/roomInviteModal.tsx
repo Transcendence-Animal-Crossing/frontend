@@ -39,7 +39,7 @@ const RoomInviteModal: React.FC<{ roomInfo: InviteRoomData; handleCloseModal: ()
           if (response.status === 200) {
             console.log('room-join : Success', response);
             const responseRoomId = response.body.id;
-            router.push(`chat/${responseRoomId}`);
+            router.push(`/chat/${responseRoomId}`);
           } else {
             console.log('room-join : Failed', response);
             setNoticeMessage('채팅방에 입장하실 수 없어요!');
