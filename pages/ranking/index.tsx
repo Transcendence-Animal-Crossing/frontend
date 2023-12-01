@@ -27,6 +27,7 @@ const Ranking = () => {
   }, []);
 
   useEffect(() => {
+	console.log("search ",isSearch);
 	if (!isSearch) {
 		getRankingList();
 	} else {
@@ -39,7 +40,7 @@ const Ranking = () => {
       const response = await axiosInstance.get('/record/rank', {
         params: { offset: offset },
       });
-      console.log('getRankingList() response');
+      console.log('getRankingList() response aa');
       response.data.map((user: any) => {
         user.avatar = handleSetUserAvatar(user.avatar);
       });
@@ -48,7 +49,6 @@ const Ranking = () => {
       await setUserList(response.data);
     } catch (error: any) {
       console.log(error);
-      handleError(error);
     }
   };
 
@@ -58,7 +58,7 @@ const Ranking = () => {
 		  name: searchText,
 		  offset: offset,
 		});
-		console.log('handleSearch() response');
+		console.log('handleSearch() response aaaaa');
 		console.log(response.data);
 		response.data.map((user: any) => {
 		  user.avatar = handleSetUserAvatar(user.avatar);
@@ -67,7 +67,6 @@ const Ranking = () => {
 		await setUserList(response.data);
 	  } catch (error: any) {
 		console.log(error);
-		handleError(error);
 	  }
   }
 
@@ -93,17 +92,6 @@ const Ranking = () => {
 
   const handlerNextButton = async () => {
     setOffset(offset + userPerPage);
-  };
-
-  const handleError = (error: any) => {
-    if (error.response.status == 400) {
-      console.log('handleSearch() error.response.data.message');
-      if (error.response.data.message == '더이상 돌려줄 데이터 없음') {
-        setOffset(offset - userPerPage);
-      } else if (error.response.data.message == 'offset은 양수만 가능') {
-        setOffset(0);
-      }
-    }
   };
 
   return (

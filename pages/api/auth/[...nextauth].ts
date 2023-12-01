@@ -37,6 +37,7 @@ export const authOptions: NextAuthOptions = {
             intraName: credentials.intraname,
             password: credentials.password,
           });
+		  console.log("credential response ", response);
           if (response.status === 200) {
             const accessToken = response.headers.authorization.replace('Bearer ', '');
             const refreshToken =

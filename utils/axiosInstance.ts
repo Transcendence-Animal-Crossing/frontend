@@ -32,6 +32,9 @@ axiosInstance.interceptors.response.use(
       signOut();
       return new Promise(() => {});
     }
+	if (error?.response) {
+		return Promise.reject(error);
+	}
     console.log(error);
     return Promise.reject(error);
   }
