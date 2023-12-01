@@ -10,7 +10,7 @@ const invalidPrimaryCampus = (profile: any) => {
 };
 
 // const apiUrl = process.env.API_URL;
-const apiUrl = 'http://backend:8080';
+const apiUrl = 'http://10.13.4.2:8080';
 console.log(apiUrl);
 
 export const authOptions: NextAuthOptions = {

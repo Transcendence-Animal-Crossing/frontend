@@ -5,7 +5,7 @@ import Router from 'next/router';
 
 const axiosInstance: AxiosInstance = axios.create({
   // baseURL: process.env.URL,
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://10.13.4.2:8080',
   headers: {
     Authorization: '',
   },
