@@ -5,14 +5,12 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
 
 const invalidPrimaryCampus = (profile: any) => {
-  const campusId = profile.campus_users.find(
-    (cu: any) => cu.is_primary
-  )?.campus_id;
+  const campusId = profile.campus_users.find((cu: any) => cu.is_primary)?.campus_id;
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
 
-const apiUrl = 'http://localhost:8080';
-// const apiUrl = 'http://backend:8080';
+const apiUrl = process.env.API_URL;
+console.log(apiUrl);
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.SECRET as string,
@@ -39,14 +37,9 @@ export const authOptions: NextAuthOptions = {
             password: credentials.password,
           });
           if (response.status === 200) {
-            const accessToken = response.headers.authorization.replace(
-              'Bearer ',
-              ''
-            );
+            const accessToken = response.headers.authorization.replace('Bearer ', '');
             const refreshToken =
-              response.headers['set-cookie']?.[0]?.match(
-                /refreshToken=([^;]+)/
-              )?.[1];
+              response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
             return {
               id: response.data.id,
               nickName: response.data.nickName,
@@ -76,19 +69,14 @@ export const authOptions: NextAuthOptions = {
       authorize: async (credentials: any) => {
         if (!credentials) return null;
         try {
-          const response = await axios.post(apiUrl+'/auth/email/token', {
+          const response = await axios.post(apiUrl + '/auth/email/token', {
             intraName: credentials.intraName,
             token: credentials.token,
           });
           if (response.status == 200) {
-            const accessToken = response.headers.authorization.replace(
-              'Bearer ',
-              ''
-            );
+            const accessToken = response.headers.authorization.replace('Bearer ', '');
             const refreshToken =
-              response.headers['set-cookie']?.[0]?.match(
-                /refreshToken=([^;]+)/
-              )?.[1];
+              response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
             return {
               id: response.data.id,
               nickName: response.data.nickName,
@@ -115,18 +103,13 @@ export const authOptions: NextAuthOptions = {
       if (invalidPrimaryCampus(profile)) return false;
       if (profile && account) {
         try {
-          const response = await axios.post(apiUrl+'/auth/login', {
+          const response = await axios.post(apiUrl + '/auth/login', {
             accessToken: account.access_token,
           });
           if (response.status == 200 || response.status == 201) {
-            user.accessToken = response.headers.authorization.replace(
-              'Bearer ',
-              ''
-            );
+            user.accessToken = response.headers.authorization.replace('Bearer ', '');
             user.refreshToken =
-              response.headers['set-cookie']?.[0]?.match(
-                /refreshToken=([^;]+)/
-              )?.[1];
+              response.headers['set-cookie']?.[0]?.match(/refreshToken=([^;]+)/)?.[1];
             user.id = response.data.id;
             user.nickName = response.data.nickName;
             user.intraName = response.data.intraName;
@@ -138,9 +121,7 @@ export const authOptions: NextAuthOptions = {
           if (error.response.status == 400 || error.response.status == 403) {
             console.log('42 login two-factor', error);
             const intraName = error.response.data?.intraName;
-            return intraName
-              ? `/login/twofactor/${intraName}`
-              : '/login/choice';
+            return intraName ? `/login/twofactor/${intraName}` : '/login/choice';
           } else {
             console.error('42 login error:', error);
             return '/login/choice';
