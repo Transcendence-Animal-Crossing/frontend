@@ -26,7 +26,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!chatSocket && session && session.accessToken) {
-      const newChatSocket = io("ws://localhost:8080/chat", {
+      const newChatSocket = io("ws://10.13.4.2:8080/chat", {
         transports: ["websocket"],
         auth: {
           token: session.accessToken,
@@ -37,7 +37,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
 
     if (!queueSocket && session && session.accessToken) {
-      const newQueueSocket = io("ws://localhost:8080/queue", {
+      const newQueueSocket = io("ws://10.13.4.2:8080/queue", {
         transports: ["websocket"],
         auth: {
           token: session.accessToken,
@@ -48,7 +48,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
 
     if (!gameSocket && session && session.accessToken) {
-      const newGameSocket = io("ws://localhost:8080/game", {
+      const newGameSocket = io("ws://10.13.4.2:8080/game", {
         transports: ["websocket"],
         auth: {
           token: session.accessToken,
