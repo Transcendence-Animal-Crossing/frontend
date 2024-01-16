@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { bronze, silver, gold, platinum, diamond } from './tier';
-import UserInfo from '../userInfo';
-import UserModal from '../userModal';
+import UserInfo from '@/components/userInfo';
+import UserModal from '@/components/userModal';
 
 const UserFrame: React.FC<{
   id: number;

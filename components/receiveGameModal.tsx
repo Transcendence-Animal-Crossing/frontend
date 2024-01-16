@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Isabelle from '../public/Login/Isabelle.png';
+import Isabelle from '@/public/Login/Isabelle.png';
 import React, { useEffect, useState } from 'react';
 
 interface friendData {

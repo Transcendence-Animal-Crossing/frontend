@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 interface UserData {
   id: number;

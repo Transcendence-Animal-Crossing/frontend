@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Guri from '../public/Login/logo.png';
+import Guri from '@/public/Login/logo.png';
 
 const infoModal: React.FC<{
   handleCloseModal: () => void;

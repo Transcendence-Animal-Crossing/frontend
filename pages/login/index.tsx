@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Logo from '../../public/Login/logo.png';
-import ButtonImage from '../../public/Login/loginplz.png';
-import OverlayImage from '../../public/Login/overlay.png';
-import SelectLoginImage from '../../public/Login/selectLogin.png';
-import SelectNoImage from '../../public/Login/selectNo.png';
+import Logo from '@/public/Login/logo.png';
+import ButtonImage from '@/public/Login/loginplz.png';
+import OverlayImage from '@/public/Login/overlay.png';
+import SelectLoginImage from '@/public/Login/selectLogin.png';
+import SelectNoImage from '@/public/Login/selectNo.png';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Container from '../../components/columnLayout';
+import Container from '@/components/columnLayout';
 
 const LoginPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);

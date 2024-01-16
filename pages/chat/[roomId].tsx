@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useSocket } from '../../utils/SocketProvider';
+import { useSocket } from '@/utils/SocketProvider';
 import { useSession } from 'next-auth/react';
-import Container from '../../components/columnNevLayout';
-import Header from '../../components/chat/chatRoomHeader';
-import MessageContainer from '../../components/chat/renderMessage';
-import InputContainer from '../../components/chat/inputMessage';
-import NoticeModal from '../../components/noticeModal';
+import Container from '@/components/columnNevLayout';
+import Header from '@/components/chat/chatRoomHeader';
+import MessageContainer from '@/components/chat/renderMessage';
+import InputContainer from '@/components/chat/inputMessage';
+import NoticeModal from '@/components/noticeModal';
 
 interface RoomMessageDto {
   text: string;

@@ -3,17 +3,17 @@ import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useSocket } from '../../utils/SocketProvider';
-import { useEventEmitter } from '../../utils/EventEmitterProvider';
-import axiosInstance from '../../utils/axiosInstance';
+import { useSocket } from '@/utils/SocketProvider';
+import { useEventEmitter } from '@/utils/EventEmitterProvider';
+import axiosInstance from '@/utils/axiosInstance';
 import ProfileContainer from './myProfile';
 import SearchBarContainer from './searchBar';
-import UserInfo from '../userInfo';
-import UserModal from '../userModal';
+import UserInfo from '@/components/userInfo';
+import UserModal from '@/components/userModal';
 import AlarmModal from './alarmModal';
-import RoomInviteModal from '../roomInviteModal';
-import ReceiveGameModal from '../receiveGameModal';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import RoomInviteModal from '@/components/roomInviteModal';
+import ReceiveGameModal from '@/components/receiveGameModal';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 interface dmData {
   id: number;

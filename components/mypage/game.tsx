@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
-import UserInfo from '../userInfo';
+import UserInfo from '@/components/userInfo';
 import { getSession } from 'next-auth/react';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 interface GameProps {
   id: number;

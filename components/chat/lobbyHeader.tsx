@@ -2,11 +2,11 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import CreateRoomModal from './createRoomModal';
-import InfoModal from '../infoModal';
-import info from '../../public/Icon/info.png';
-import plus from '../../public/Icon/plus.png';
-import home from '../../public/Icon/home.png';
+import CreateRoomModal from '@/components/chat/createRoomModal';
+import InfoModal from '@/components/infoModal';
+import info from '@/public/Icon/info.png';
+import plus from '@/public/Icon/plus.png';
+import home from '@/public/Icon/home.png';
 
 const Header = () => {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);

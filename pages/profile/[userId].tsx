@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
-import UserContainer from '../../components/mypage/user';
+import UserContainer from '@/components/mypage/user';
 import { useRouter } from 'next/router';
-import axiosInstance from '../../utils/axiosInstance';
-import AchievementFrame from '../../components/mypage/achievement';
-import home from '../../public/Icon/home.png';
+import axiosInstance from '@/utils/axiosInstance';
+import AchievementFrame from '@/components/mypage/achievement';
+import home from '@/public/Icon/home.png';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import Container from '../../components/columnNevLayout';
-import Game from '../../components/mypage/game';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import Container from '@/components/columnNevLayout';
+import Game from '@/components/mypage/game';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 const UserPage = () => {
   const router = useRouter();
@@ -18,9 +18,7 @@ const UserPage = () => {
   // userInfo
   const [intraname, setIntraname] = useState('intraname');
   const [nickname, setNickname] = useState('nickname');
-  const [avatarPath, setAvatarPath] = useState(
-    handleSetUserAvatar('original/profile2.png')
-  );
+  const [avatarPath, setAvatarPath] = useState(handleSetUserAvatar('original/profile2.png'));
   const [tierIndex, setTierIndex] = useState(0);
   const [rankScore, setRankScore] = useState(0);
 
@@ -148,7 +146,7 @@ const UserPage = () => {
   };
 
   const handleRank = async (rankScore: number) => {
-    setRankScore(rankScore) ;
+    setRankScore(rankScore);
     if (rankScore < 1000) {
       setTierIndex(0);
     } else if (rankScore < 1100) {
@@ -222,16 +220,10 @@ const UserPage = () => {
             <MatchHistoryHeader>
               <Mode>
                 <ModeButton onClick={() => handleMode('general')}>
-                  <div
-                    className={`${mode === 'general' ? 'select' : 'unselect'}`}
-                  >
-                    일반
-                  </div>
+                  <div className={`${mode === 'general' ? 'select' : 'unselect'}`}>일반</div>
                 </ModeButton>
                 <ModeButton onClick={() => handleMode('rank')}>
-                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>
-                    랭크
-                  </div>
+                  <div className={`${mode === 'rank' ? 'select' : 'unselect'}`}>랭크</div>
                 </ModeButton>
               </Mode>
               <Button onClick={handleRouteLobby}>

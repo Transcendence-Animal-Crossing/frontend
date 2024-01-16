@@ -1,15 +1,15 @@
-import Container from '../../components/columnNevLayout';
+import Container from '@/components/columnNevLayout';
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import axiosInstance from '../../utils/axiosInstance';
-import Header from '../../components/lobbyHeader';
-import UserList from '../../components/ranking/userList';
-import search from '../../public/Icon/search.png';
-import prev from '../../public/Icon/prev.png';
-import next from '../../public/Icon/next.png';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import axiosInstance from '@/utils/axiosInstance';
+import Header from '@/components/lobbyHeader';
+import UserList from '@/components/ranking/userList';
+import search from '@/public/Icon/search.png';
+import prev from '@/public/Icon/prev.png';
+import next from '@/public/Icon/next.png';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 const Ranking = () => {
   const userPerPage = 8;

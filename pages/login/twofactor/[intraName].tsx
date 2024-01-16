@@ -2,11 +2,11 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import styled from 'styled-components';
-import Timmy from '../../../public/Login/Timmy.png';
+import Timmy from '@/public/Login/Timmy.png';
 import Image from 'next/image';
 import router, { useRouter } from 'next/router';
-import Container from '../../../components/columnLayout';
-import TwoFactAuth from '../../../components/login/twofactorInput';
+import Container from '@/components/columnLayout';
+import TwoFactAuth from '@/components/login/twofactorInput';
 
 const Twofactor = () => {
   const router = useRouter();

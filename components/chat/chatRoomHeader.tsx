@@ -2,16 +2,16 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useSocket } from '../../utils/SocketProvider';
+import { useSocket } from '@/utils/SocketProvider';
 import { useSession } from 'next-auth/react';
 import UserListModal from './userListModal';
 import UpdateRoomModal from './updateRoomModal';
 import InviteUserModal from './inviteUserModal';
-import users from '../../public/Icon/users.png';
-import exit from '../../public/Icon/exit.png';
-import invite from '../../public/Icon/invite.png';
-import lock from '../../public/Chat/lock_gold.png';
-import setting from '../../public/Icon/setting.png';
+import users from '@/public/Icon/users.png';
+import exit from '@/public/Icon/exit.png';
+import invite from '@/public/Icon/invite.png';
+import lock from '@/public/Chat/lock_gold.png';
+import setting from '@/public/Icon/setting.png';
 
 interface ParticipantData {
   id: number;

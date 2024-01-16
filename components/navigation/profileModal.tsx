@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import InfoContainer from '../join/info';
-import PreviewContainer from '../join/preview';
-import axiosInstance from '../../utils/axiosInstance';
+import InfoContainer from '@/components/join/info';
+import PreviewContainer from '@/components/join/preview';
+import axiosInstance from '@/utils/axiosInstance';
 import styled from 'styled-components';
 
 const ProfileModal: React.FC<{

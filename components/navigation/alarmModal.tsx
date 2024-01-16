@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import React, { useEffect, useState, useRef } from 'react';
-import axiosInstance from '../../utils/axiosInstance';
+import axiosInstance from '@/utils/axiosInstance';
 
 interface RequestData {
   sendBy: number;

@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { useSocket } from '../../utils/SocketProvider';
-import { useEventEmitter } from '../../utils/EventEmitterProvider';
+import { useSocket } from '@/utils/SocketProvider';
+import { useEventEmitter } from '@/utils/EventEmitterProvider';
 import { useSession } from 'next-auth/react';
-import axiosInstance from '../../utils/axiosInstance';
-import exit from '../../public/Icon/exit.png';
+import axiosInstance from '@/utils/axiosInstance';
+import exit from '@/public/Icon/exit.png';
 import DMContainer from './renderDM';
 import InputDmContainer from './inputDM';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 interface dmData {
   body: dmData;

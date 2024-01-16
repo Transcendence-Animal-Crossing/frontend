@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Logo from '../public/Login/logo.png';
-import ButtonImage from '../public/404/message.png';
-import OverlayImage from '../public/Login/overlay.png';
-import SelectLoginImage from '../public/404/gohome.png';
-import SelectNoImage from '../public/404/nono.png';
+import Logo from '@/public/Login/logo.png';
+import ButtonImage from '@/public/404/message.png';
+import OverlayImage from '@/public/Login/overlay.png';
+import SelectLoginImage from '@/public/404/gohome.png';
+import SelectNoImage from '@/public/404/nono.png';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Container from '../components/columnLayout';
+import Container from '@/components/columnLayout';
 
 const NotFoundPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);

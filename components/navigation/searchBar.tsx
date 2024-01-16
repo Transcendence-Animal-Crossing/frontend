@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import react, { useEffect, useState, useRef } from 'react';
-import bell from '../../public/Icon/bell.png';
-import bellon from '../../public/Icon/bellon.png';
-import search from '../../public/Icon/search.png';
+import bell from '@/public/Icon/bell.png';
+import bellon from '@/public/Icon/bellon.png';
+import search from '@/public/Icon/search.png';
 import React from 'react';
 
 const searchBar: React.FC<{

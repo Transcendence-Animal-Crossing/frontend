@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import send from '../../public/Chat/send.png';
+import send from '@/public/Chat/send.png';
 
 const InputDmContainer: React.FC<{
   messageText: string;

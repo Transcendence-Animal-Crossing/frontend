@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Isabelle from '../../public/Login/Isabelle.png';
+import Isabelle from '@/public/Login/Isabelle.png';
 import { useRouter } from 'next/router';
 
 const GameEndModal = () => {

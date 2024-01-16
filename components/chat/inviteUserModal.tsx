@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
-import { useSocket } from '../../utils/SocketProvider';
-import exit from '../../public/Icon/exit.png';
-import UserInfo from '../userInfo';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import { useSocket } from '@/utils/SocketProvider';
+import exit from '@/public/Icon/exit.png';
+import UserInfo from '@/components/userInfo';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 interface friendData {
   id: number;
