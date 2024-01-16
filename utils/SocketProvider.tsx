@@ -1,6 +1,6 @@
-import React, { createContext, ReactNode, useContext, useEffect } from "react";
-import { io, Socket } from "socket.io-client";
-import { useSession } from "next-auth/react";
+import React, { createContext, ReactNode, useContext, useEffect } from 'react';
+import { io, Socket } from 'socket.io-client';
+import { useSession } from 'next-auth/react';
 
 interface SocketContextType {
   chatSocket: Socket | undefined;
@@ -26,8 +26,8 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (!chatSocket && session && session.accessToken) {
-      const newChatSocket = io("ws://10.13.4.2:8080/chat", {
-        transports: ["websocket"],
+      const newChatSocket = io(`${process.env.NEXT_PUBLIC_API_URL}/chat`, {
+        transports: ['websocket'],
         auth: {
           token: session.accessToken,
         },
@@ -37,8 +37,8 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
 
     if (!queueSocket && session && session.accessToken) {
-      const newQueueSocket = io("ws://10.13.4.2:8080/queue", {
-        transports: ["websocket"],
+      const newQueueSocket = io(`${process.env.NEXT_PUBLIC_API_URL}/queue`, {
+        transports: ['websocket'],
         auth: {
           token: session.accessToken,
         },
@@ -48,8 +48,8 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
 
     if (!gameSocket && session && session.accessToken) {
-      const newGameSocket = io("ws://10.13.4.2:8080/game", {
-        transports: ["websocket"],
+      const newGameSocket = io(`${process.env.NEXT_PUBLIC_API_URL}/game`, {
+        transports: ['websocket'],
         auth: {
           token: session.accessToken,
         },
@@ -69,7 +69,7 @@ const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 const useSocket = () => {
   const context = useContext(SocketContext);
   if (context === undefined) {
-    throw new Error("useSocket must be used within a SocketProvider");
+    throw new Error('useSocket must be used within a SocketProvider');
   }
   return context;
 };
