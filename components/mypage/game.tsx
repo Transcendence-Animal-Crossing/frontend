@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
-import UserInfo from '@/components/userInfo';
+import UserInfo from '@/components/layout/userInfo';
 import { getSession } from 'next-auth/react';
 import { handleSetUserAvatar } from '@/utils/avatarUtils';
 import { GameProps } from '@/types/GameProps';

@@ -8,7 +8,7 @@ import info from '@/public/Icon/info.png';
 import unlock from '@/public/Chat/unlock.png';
 import lock from '@/public/Chat/lock.png';
 import secret from '@/public/Chat/secret.png';
-import NoticeModal from '@/components/noticeModal';
+import NoticeModal from '@/components/modal/noticeModal';
 
 const CreateRoomModal: React.FC<{
   handleCloseModal: () => void;
@@ -26,8 +26,8 @@ const CreateRoomModal: React.FC<{
   const overlayTop = `${createButtonRect.top + createButtonRect.height * 1.5}px`;
 
   const handleCreateRoom = async () => {
-    if (!title) return ;
-    if (mode === 'PROTECTED' && !password) return ;
+    if (!title) return;
+    if (mode === 'PROTECTED' && !password) return;
     if (chatSocket) {
       await chatSocket
         .emitWithAck('room-create', {
@@ -84,11 +84,11 @@ const CreateRoomModal: React.FC<{
         <Content overlayTop={overlayTop} overlayLeft={overlayLeft}>
           <InputFrame>
             <PenFrame>
-              <PenImage src={pen} alt="pen" />
+              <PenImage src={pen} alt='pen' />
             </PenFrame>
             <Input
-              type="text"
-              placeholder="채팅방 이름을 한글자 이상 입력해주세요"
+              type='text'
+              placeholder='채팅방 이름을 한글자 이상 입력해주세요'
               onChange={(e) => handleTitleChange(e.target.value)}
               minLength={2}
               maxLength={20}
@@ -97,21 +97,21 @@ const CreateRoomModal: React.FC<{
           </InputFrame>
           <ButtonRowFrame>
             <ButtonFrame onClick={handleUnlockButton} isPressed={isUnlockButtonPressed}>
-              <ButtonImage src={unlock} alt="unlock" />
+              <ButtonImage src={unlock} alt='unlock' />
             </ButtonFrame>
             <ButtonFrame onClick={handleLockButton} isPressed={isLockButtonPressed}>
-              <ButtonImage src={lock} alt="lock" />
+              <ButtonImage src={lock} alt='lock' />
             </ButtonFrame>
             <ButtonFrame onClick={handleSecretButton} isPressed={isSecretButtonPressed}>
-              <ButtonImage src={secret} alt="secret" />
+              <ButtonImage src={secret} alt='secret' />
             </ButtonFrame>
           </ButtonRowFrame>
           <>
             {isLockButtonPressed && (
               <InputFrame>
                 <Input
-                  type="text"
-                  placeholder="비밀번호를 한글자 이상  입력해주세요"
+                  type='text'
+                  placeholder='비밀번호를 한글자 이상  입력해주세요'
                   onChange={(e) => handlePasswprdChange(e.target.value)}
                   minLength={1}
                   maxLength={4}
@@ -121,7 +121,7 @@ const CreateRoomModal: React.FC<{
             )}
             {isSecretButtonPressed && (
               <TextFrame>
-                <TextImage src={info} alt="info" />
+                <TextImage src={info} alt='info' />
                 <Text>
                   시크릿 방은 채팅 로비에 보이지 않습니다. <br />
                   오로지 초대로만 유저를 초대 할 수 있습니다.

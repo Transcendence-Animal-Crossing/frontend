@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Timmy from '@/public/Login/Timmy.png';
 import Image from 'next/image';
 import router, { useRouter } from 'next/router';
-import Container from '@/components/columnLayout';
+import Container from '@/components/layout/columnLayout';
 import TwoFactAuth from '@/components/login/twofactorInput';
 
 const Twofactor = () => {
@@ -31,9 +31,7 @@ const Twofactor = () => {
       <TwoFactorFrame>
         <LogoImage src={Timmy} alt='logo' />
         <Title>이중인증 페이지에 오셨습니다.</Title>
-        <Description>
-          이메일로 보내 드린 코드 7자리를 입력해 주세요-!
-        </Description>
+        <Description>이메일로 보내 드린 코드 7자리를 입력해 주세요-!</Description>
         <LoginInput>
           <TwoFactAuth value={token} onChange={(val) => setToken(val)} />
           <DivisionBar />
@@ -122,8 +120,7 @@ const Button = styled.div`
   border-radius: 10px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   color: ${(props) => props.theme.colors.brown};
-  background-color: ${(props) =>
-    props.id == 'submit' ? props.theme.colors.yellow : '#EEE9CA'};
+  background-color: ${(props) => (props.id == 'submit' ? props.theme.colors.yellow : '#EEE9CA')};
 `;
 
 const DivisionBar = styled.div`

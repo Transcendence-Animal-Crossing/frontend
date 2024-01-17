@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useSocket } from '@/utils/SocketProvider';
-import Container from '@/components/columnLayout';
+import Container from '@/components/layout/columnLayout';
 import Header from '@/components/game/gameHeader';
 import GameBackGround from '@/components/game/background';
 import GameFooter from '@/components/game/gameFooter';

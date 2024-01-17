@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import Container from '@/components/rowLayout';
+import Container from '@/components/layout/rowLayout';
 import InfoContainer from '@/components/join/info';
 import PreviewContainer from '@/components/join/preview';
 import axiosInstance from '@/utils/axiosInstance';

@@ -8,11 +8,11 @@ import { useEventEmitter } from '@/utils/EventEmitterProvider';
 import axiosInstance from '@/utils/axiosInstance';
 import ProfileContainer from './myProfile';
 import SearchBarContainer from './searchBar';
-import UserInfo from '@/components/userInfo';
-import UserModal from '@/components/userModal';
+import UserInfo from '@/components/layout/userInfo';
+import UserModal from '@/components/modal/userModal';
 import AlarmModal from './alarmModal';
-import RoomInviteModal from '@/components/roomInviteModal';
-import ReceiveGameModal from '@/components/receiveGameModal';
+import RoomInviteModal from '@/components/modal/roomInviteModal';
+import ReceiveGameModal from '@/components/modal/receiveGameModal';
 import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 import { DmData } from '@/types/DmData';

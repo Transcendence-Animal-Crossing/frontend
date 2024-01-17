@@ -7,7 +7,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import AchievementFrame from '@/components/mypage/achievement';
 import home from '@/public/Icon/home.png';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import Container from '@/components/columnNevLayout';
+import Container from '@/components/layout/columnNevLayout';
 import Game from '@/components/mypage/game';
 import { handleSetUserAvatar } from '@/utils/avatarUtils';
 

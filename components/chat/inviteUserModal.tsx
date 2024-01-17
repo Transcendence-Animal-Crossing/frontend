@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import { useSocket } from '@/utils/SocketProvider';
 import exit from '@/public/Icon/exit.png';
-import UserInfo from '@/components/userInfo';
+import UserInfo from '@/components/layout/userInfo';
 import { handleSetUserAvatar } from '@/utils/avatarUtils';
 import { FriendData } from '@/types/FriendData';
 

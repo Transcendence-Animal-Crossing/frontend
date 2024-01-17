@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSocket } from '@/utils/SocketProvider';
 import axiosInstance from '@/utils/axiosInstance';
-import DmModal from './dm/dmModal';
+import DmModal from '../dm/dmModal';
 import NoticeModal from './noticeModal';
 import RequestGameModal from './requestGameModal';
 

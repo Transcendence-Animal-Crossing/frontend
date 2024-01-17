@@ -7,7 +7,7 @@ import SelectLoginImage from '@/public/404/gohome.png';
 import SelectNoImage from '@/public/404/nono.png';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Container from '@/components/columnLayout';
+import Container from '@/components/layout/columnLayout';
 
 const NotFoundPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);

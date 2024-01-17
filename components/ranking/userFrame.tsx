@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { bronze, silver, gold, platinum, diamond } from './tier';
-import UserInfo from '@/components/userInfo';
-import UserModal from '@/components/userModal';
+import UserInfo from '@/components/layout/userInfo';
+import UserModal from '@/components/modal/userModal';
 
 const UserFrame: React.FC<{
   id: number;
@@ -13,15 +13,7 @@ const UserFrame: React.FC<{
   avatar: string;
   rankScore: number;
   rankGameTotalCount: number;
-}> = ({
-  id,
-  ranking,
-  nickName,
-  intraName,
-  avatar,
-  rankScore,
-  rankGameTotalCount,
-}) => {
+}> = ({ id, ranking, nickName, intraName, avatar, rankScore, rankGameTotalCount }) => {
   const tierImages = [bronze, silver, gold, platinum, diamond];
   const [tierIndex, setTierIndex] = useState(0);
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
@@ -71,12 +63,7 @@ const UserFrame: React.FC<{
       <LeftFrame>
         <RankingFrame> {ranking} </RankingFrame>
         <TierFrame>
-          <TierImage
-            src={tierImages[tierIndex]}
-            alt='Tier Image'
-            width={30}
-            height={30}
-          />
+          <TierImage src={tierImages[tierIndex]} alt='Tier Image' width={30} height={30} />
           <RankScore>{rankScore}점</RankScore>
         </TierFrame>
         <UserTouchFrame onClick={handleClickUser} ref={userRef}>
@@ -91,11 +78,7 @@ const UserFrame: React.FC<{
       </LeftFrame>
       <MatchCountFrame> 경기 횟수: {rankGameTotalCount}회</MatchCountFrame>
       {isOpenModal ? (
-        <UserModal
-          handleCloseModal={handleCloseModal}
-          userId={id}
-          userRect={userRect}
-        />
+        <UserModal handleCloseModal={handleCloseModal} userId={id} userRect={userRect} />
       ) : null}
     </UserRankFrame>
   );
