@@ -1,12 +1,7 @@
 import styled from 'styled-components';
 import React, { useEffect, useState, useRef } from 'react';
 import axiosInstance from '@/utils/axiosInstance';
-
-interface RequestData {
-  sendBy: number;
-  nickName: string;
-  intraName: string;
-}
+import { RequestData } from '@/types/RequestData';
 
 const AlarmModal: React.FC<{
   handleCloseModal: () => void;

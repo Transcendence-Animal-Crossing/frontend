@@ -12,25 +12,8 @@ import exit from '@/public/Icon/exit.png';
 import invite from '@/public/Icon/invite.png';
 import lock from '@/public/Chat/lock_gold.png';
 import setting from '@/public/Icon/setting.png';
-
-interface ParticipantData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-  grade: number;
-  mute: boolean;
-  joinTime: Date;
-  adminTime: Date;
-  status: number;
-}
-
-interface UserData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-}
+import { ParticipantData } from '@/types/ParticipantData';
+import { UserData } from '@/types/UserData';
 
 const Header: React.FC<{
   roomTitle: string;

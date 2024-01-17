@@ -4,26 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import UserModal from '@/components/userModal';
 import { handleSetUserAvatar } from '@/utils/avatarUtils';
+import { RoomMessageData } from '@/types/RoomMessageData';
+import { ParticipantData } from '@/types/ParticipantData';
 
-interface RoomMessageDto {
-  text: string;
-  roomId: string;
-  senderId: number;
-}
-
-interface ParticipantData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-  grade: number;
-  mute: boolean;
-  joinTime: Date;
-  adminTime: Date;
-  status: number;
-}
-
-const MessageContainer: React.FC<{ messages: RoomMessageDto[]; userlist: ParticipantData[] }> = ({
+const MessageContainer: React.FC<{ messages: RoomMessageData[]; userlist: ParticipantData[] }> = ({
   messages,
   userlist,
 }) => {

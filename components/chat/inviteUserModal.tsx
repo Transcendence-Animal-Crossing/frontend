@@ -5,21 +5,14 @@ import { useSocket } from '@/utils/SocketProvider';
 import exit from '@/public/Icon/exit.png';
 import UserInfo from '@/components/userInfo';
 import { handleSetUserAvatar } from '@/utils/avatarUtils';
-
-interface friendData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-  status: string;
-}
+import { FriendData } from '@/types/FriendData';
 
 const InviteUserModal: React.FC<{
   handleCloseModal: () => void;
   roomId: string;
 }> = ({ handleCloseModal, roomId }) => {
   const { chatSocket } = useSocket();
-  const [friendsList, setFriendsList] = useState<friendData[]>([]);
+  const [friendsList, setFriendsList] = useState<FriendData[]>([]);
   const [chatSocketFlag, setSocketFlag] = useState<boolean>(true);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -32,7 +25,7 @@ const InviteUserModal: React.FC<{
     if (chatSocket && chatSocketFlag) {
       chatSocket.emitWithAck('friend-list').then((response) => {
         if (response.status === 200) {
-          const sortedFriendsList = response.body.sort((a: friendData, b: friendData) => {
+          const sortedFriendsList = response.body.sort((a: FriendData, b: FriendData) => {
             const statusOrder: Record<string, number> = {
               ONLINE: 0,
               IN_GAME: 1,

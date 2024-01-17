@@ -3,22 +3,7 @@ import { useState, useEffect } from 'react';
 import UserInfo from '@/components/userInfo';
 import { getSession } from 'next-auth/react';
 import { handleSetUserAvatar } from '@/utils/avatarUtils';
-
-interface GameProps {
-  id: number;
-  winnerScore: number;
-  loserScore: number;
-  playTime: number;
-  loser: UserProps;
-  winner: UserProps;
-}
-
-interface UserProps {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-}
+import { GameProps } from '@/types/GameProps';
 
 const Game: React.FC<{
   game: GameProps;

@@ -8,13 +8,7 @@ import Header from '@/components/game/gameHeader';
 import GameBackGround from '@/components/game/background';
 import GameFooter from '@/components/game/gameFooter';
 import GameEndModal from '@/components/game/gameEndModal';
-
-interface UserData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-}
+import { UserData } from 'next-auth/providers/42-school';
 
 interface pos {
   x: number;

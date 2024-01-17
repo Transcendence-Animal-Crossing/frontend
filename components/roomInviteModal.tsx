@@ -5,20 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSocket } from '@/utils/SocketProvider';
 import NoticeModal from './noticeModal';
-
-interface friendData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-  status: string;
-}
-
-interface InviteRoomData {
-  id: string;
-  title: string;
-  sendBy: friendData;
-}
+import { InviteRoomData } from '@/types/InviteRoomData';
 
 const RoomInviteModal: React.FC<{ roomInfo: InviteRoomData; handleCloseModal: () => void }> = ({
   roomInfo,

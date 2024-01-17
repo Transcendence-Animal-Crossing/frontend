@@ -8,21 +8,7 @@ import Header from '@/components/chat/lobbyHeader';
 import JoinRoomModal from '@/components/chat/joinRoomModal';
 import NoticeModal from '@/components/noticeModal';
 import Lock from '@/public/Chat/lock_gold.png';
-
-interface RoomOwnerData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-}
-
-interface RoomListData {
-  id: string;
-  title: string;
-  owner: RoomOwnerData;
-  headCount: number;
-  mode: string;
-}
+import { RoomListData } from '@/types/RoomListData';
 
 const ChatLobby = () => {
   const { chatSocket } = useSocket();

@@ -8,36 +8,10 @@ import Header from '@/components/chat/chatRoomHeader';
 import MessageContainer from '@/components/chat/renderMessage';
 import InputContainer from '@/components/chat/inputMessage';
 import NoticeModal from '@/components/noticeModal';
-
-interface RoomMessageDto {
-  text: string;
-  roomId: string;
-  senderId: number;
-}
-
-interface ParticipantData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-  grade: number;
-  mute: boolean;
-  joinTime: Date;
-  adminTime: Date;
-  status: number;
-}
-
-interface UserData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-}
-
-interface ActionRoomData {
-  roomId: string;
-  targetId: number;
-}
+import { RoomMessageData } from '@/types/RoomMessageData';
+import { ParticipantData } from '@/types/ParticipantData';
+import { UserData } from '@/types/UserData';
+import { ActionRoomData } from '@/types/ActionRoomData';
 
 const Chat = () => {
   const { chatSocket } = useSocket();
@@ -45,7 +19,7 @@ const Chat = () => {
   const [banlist, setBanlist] = useState<UserData[]>([]);
   const [roomTitle, setRoomTitle] = useState('');
   const [roomMode, setRoomMode] = useState('');
-  const [messages, setMessages] = useState<RoomMessageDto[]>([]);
+  const [messages, setMessages] = useState<RoomMessageData[]>([]);
   const [messageText, setMessageText] = useState('');
   const [isOpenNotice, setOpenNotice] = useState<boolean>(false);
   const [noticeMessage, setNoticeMessage] = useState('');
@@ -74,7 +48,7 @@ const Chat = () => {
           });
       }
 
-      const handleRoomMessage = (response: RoomMessageDto) => {
+      const handleRoomMessage = (response: RoomMessageData) => {
         const text = response.text;
         console.log('room-message response : ' + response.senderId);
         console.log('room-message response : ' + response.text);
@@ -83,7 +57,7 @@ const Chat = () => {
 
       const handleUserActionMessage = (text: string) => {
         console.log('userAction : ' + text);
-        const userActionMessage: RoomMessageDto = {
+        const userActionMessage: RoomMessageData = {
           text: text,
           roomId: roomId,
           senderId: 0,
