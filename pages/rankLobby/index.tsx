@@ -3,10 +3,10 @@ import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import { useSocket } from '../../utils/SocketProvider';
-import { useEventEmitter } from '../../utils/EventEmitterProvider';
-import Container from '../../components/columnNevLayout';
-import Header from '../../components/lobbyHeader';
+import { useSocket } from '@/utils/SocketProvider';
+import { useEventEmitter } from '@/utils/EventEmitterProvider';
+import Container from '@/components/layout/columnNevLayout';
+import Header from '@/components/layout/lobbyHeader';
 
 const RankLobbyPage: React.FC = () => {
   const { data: session } = useSession();

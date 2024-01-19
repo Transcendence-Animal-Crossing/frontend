@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Logo from '../../public/Login/Isabelle.png';
-import FTLoginButton from '../../public/Login/42loginButton.png';
-import CommonLoginButton from '../../public/Login/LoginButton.png';
+import Logo from '@/public/Login/Isabelle.png';
+import FTLoginButton from '@/public/Login/42loginButton.png';
+import CommonLoginButton from '@/public/Login/LoginButton.png';
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
-import Container from '../../components/columnLayout';
+import Container from '@/components/layout/columnLayout';
 
 const ChoicePage: React.FC = () => {
   const router = useRouter();
@@ -26,12 +26,12 @@ const ChoicePage: React.FC = () => {
   return (
     <>
       <Container>
-        <LogoImage src={Logo} alt="Login" />
+        <LogoImage src={Logo} alt='Login' />
         <LoginButton onClick={() => signIn('42-school')}>
-          <LoginButtonImg src={FTLoginButton} alt="42 Login" />
+          <LoginButtonImg src={FTLoginButton} alt='42 Login' />
         </LoginButton>
         <LoginButton onClick={() => signIn('Credentials')}>
-          <LoginButtonImg src={CommonLoginButton} alt="Common Login" />
+          <LoginButtonImg src={CommonLoginButton} alt='Common Login' />
         </LoginButton>
       </Container>
     </>

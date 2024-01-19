@@ -8,6 +8,9 @@ const nextConfig = {
   images: {
     domains: ['localhost', 'backend', '10.13.4.2'],
   },
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+  },
 };
 
 module.exports = nextConfig;

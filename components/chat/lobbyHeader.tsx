@@ -2,11 +2,11 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import CreateRoomModal from './createRoomModal';
-import InfoModal from '../infoModal';
-import info from '../../public/Icon/info.png';
-import plus from '../../public/Icon/plus.png';
-import home from '../../public/Icon/home.png';
+import CreateRoomModal from '@/components/chat/createRoomModal';
+import InfoModal from '@/components/modal/infoModal';
+import info from '@/public/Icon/info.png';
+import plus from '@/public/Icon/plus.png';
+import home from '@/public/Icon/home.png';
 
 const Header = () => {
   const [isOpenModal, setOpenModal] = useState<boolean>(false);
@@ -72,14 +72,14 @@ const Header = () => {
         <InfoFrame>
           <TitleFrame>Chatting Room</TitleFrame>
           <SubText> 단체채팅 </SubText>
-          <InfoImage src={info} alt="info" onClick={handleOpenInfo} ref={InfoButtonRef} />
+          <InfoImage src={info} alt='info' onClick={handleOpenInfo} ref={InfoButtonRef} />
         </InfoFrame>
         <ButtonFrame>
           <Button onClick={handleOpenCreate} ref={CreateButtonRef}>
-            <InfoImage src={plus} alt="plus" />
+            <InfoImage src={plus} alt='plus' />
           </Button>
           <Button onClick={handleRouteLobby}>
-            <InfoImage src={home} alt="home" />
+            <InfoImage src={home} alt='home' />
           </Button>
         </ButtonFrame>
       </HeaderFrame>

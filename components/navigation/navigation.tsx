@@ -3,45 +3,22 @@ import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useSocket } from '../../utils/SocketProvider';
-import { useEventEmitter } from '../../utils/EventEmitterProvider';
-import axiosInstance from '../../utils/axiosInstance';
+import { useSocket } from '@/utils/SocketProvider';
+import { useEventEmitter } from '@/utils/EventEmitterProvider';
+import axiosInstance from '@/utils/axiosInstance';
 import ProfileContainer from './myProfile';
 import SearchBarContainer from './searchBar';
-import UserInfo from '../userInfo';
-import UserModal from '../userModal';
+import UserInfo from '@/components/layout/userInfo';
+import UserModal from '@/components/modal/userModal';
 import AlarmModal from './alarmModal';
-import RoomInviteModal from '../roomInviteModal';
-import ReceiveGameModal from '../receiveGameModal';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import RoomInviteModal from '@/components/modal/roomInviteModal';
+import ReceiveGameModal from '@/components/modal/receiveGameModal';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
-interface dmData {
-  id: number;
-  senderId: number;
-  date: Date;
-  text: string;
-}
-
-interface friendData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-  status: string;
-  unReadMessages: dmData[];
-}
-
-interface RequestData {
-  sendBy: number;
-  nickName: string;
-  intraName: string;
-}
-
-interface InviteRoomData {
-  id: string;
-  title: string;
-  sendBy: friendData;
-}
+import { DmData } from '@/types/DmData';
+import { FriendData } from '@/types/FriendData';
+import { RequestData } from '@/types/RequestData';
+import { InviteRoomData } from '@/types/InviteRoomData';
 
 const Navigation = () => {
   const { data: session } = useSession();
@@ -51,8 +28,8 @@ const Navigation = () => {
   const [chatSocketFlag, setSocketFlag] = useState<boolean>(true);
 
   // friends
-  const [friendsList, setFriendsList] = useState<friendData[]>([]);
-  const [userInfo, setUserInfo] = useState<friendData>({
+  const [friendsList, setFriendsList] = useState<FriendData[]>([]);
+  const [userInfo, setUserInfo] = useState<FriendData>({
     id: 0,
     nickName: '',
     intraName: '',
@@ -102,7 +79,7 @@ const Navigation = () => {
 
   // invite game
   const [isGameInvite, setIsGameInvite] = useState<boolean>(true);
-  const [inviteGameInfo, setInviteGameInfo] = useState<friendData>();
+  const [inviteGameInfo, setInviteGameInfo] = useState<FriendData>();
   const [inviteResponse, setInviteResponse] = useState<string>('');
   const inviteResponseRef = useRef<string>('');
 
@@ -111,22 +88,19 @@ const Navigation = () => {
       chatSocket.emitWithAck('friend-list').then((response) => {
         console.log('response', response);
         if (response.status === 200) {
-          const sortedFriendsList = response.body.sort(
-            (a: friendData, b: friendData) => {
-              const statusOrder: Record<string, number> = {
-                ONLINE: 0,
-                IN_GAME: 1,
-                WATCHING: 1,
-                OFFLINE: 2,
-              };
-              const statusComparison =
-                statusOrder[a.status] - statusOrder[b.status];
-              if (statusComparison !== 0) {
-                return statusComparison;
-              }
-              return 0;
+          const sortedFriendsList = response.body.sort((a: FriendData, b: FriendData) => {
+            const statusOrder: Record<string, number> = {
+              ONLINE: 0,
+              IN_GAME: 1,
+              WATCHING: 1,
+              OFFLINE: 2,
+            };
+            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+            if (statusComparison !== 0) {
+              return statusComparison;
             }
-          );
+            return 0;
+          });
           setFriendsList(sortedFriendsList);
           setRequestListLen(requestList.length);
           setSocketFlag(false);
@@ -137,7 +111,7 @@ const Navigation = () => {
 
   useEffect(() => {
     if (chatSocket) {
-      const handleFriendUpdate = (response: friendData) => {
+      const handleFriendUpdate = (response: FriendData) => {
         console.log('friend update', response);
         setFriendsList((preFriendslist) => {
           const updatedUserlist = preFriendslist
@@ -152,15 +126,14 @@ const Navigation = () => {
               }
               return user;
             })
-            .sort((a: friendData, b: friendData) => {
+            .sort((a: FriendData, b: FriendData) => {
               const statusOrder: Record<string, number> = {
                 ONLINE: 0,
                 IN_GAME: 1,
                 WATCHING: 1,
                 OFFLINE: 2,
               };
-              const statusComparison =
-                statusOrder[a.status] - statusOrder[b.status];
+              const statusComparison = statusOrder[a.status] - statusOrder[b.status];
               if (statusComparison !== 0) {
                 return statusComparison;
               }
@@ -170,7 +143,7 @@ const Navigation = () => {
         });
       };
 
-      const handleDM = (response: dmData) => {
+      const handleDM = (response: DmData) => {
         const targetId = response.senderId;
         if (openDmId === targetId) {
           emitter.emit('newMessage', response);
@@ -190,25 +163,22 @@ const Navigation = () => {
         }
       };
 
-      const handleNewFriend = (response: friendData) => {
-        const newFriendData: friendData = { ...response, unReadMessages: [] };
+      const handleNewFriend = (response: FriendData) => {
+        const newFriendData: FriendData = { ...response, unReadMessages: [] };
         setFriendsList((prevFriendsList) => {
-          const updatedFriendsList = [...prevFriendsList, newFriendData].sort(
-            (a, b) => {
-              const statusOrder: Record<string, number> = {
-                ONLINE: 0,
-                IN_GAME: 1,
-                WATCHING: 1,
-                OFFLINE: 2,
-              };
-              const statusComparison =
-                statusOrder[a.status] - statusOrder[b.status];
-              if (statusComparison !== 0) {
-                return statusComparison;
-              }
-              return 0;
+          const updatedFriendsList = [...prevFriendsList, newFriendData].sort((a, b) => {
+            const statusOrder: Record<string, number> = {
+              ONLINE: 0,
+              IN_GAME: 1,
+              WATCHING: 1,
+              OFFLINE: 2,
+            };
+            const statusComparison = statusOrder[a.status] - statusOrder[b.status];
+            if (statusComparison !== 0) {
+              return statusComparison;
             }
-          );
+            return 0;
+          });
           return updatedFriendsList;
         });
       };
@@ -225,9 +195,7 @@ const Navigation = () => {
 
       const handleDeleteFriendRequest = (response: { sendBy: number }) => {
         setRequestList((prevRequestList) =>
-          prevRequestList.filter(
-            (request) => request.sendBy !== response.sendBy
-          )
+          prevRequestList.filter((request) => request.sendBy !== response.sendBy)
         );
       };
 
@@ -236,7 +204,7 @@ const Navigation = () => {
         setIsRoomInvite(true);
       };
 
-      const handleGameInvite = (response: friendData, callback: (arg0: string) => void) => {
+      const handleGameInvite = (response: FriendData, callback: (arg0: string) => void) => {
         inviteResponseRef.current = '';
         setInviteGameInfo(response);
         setIsGameInvite(true);
@@ -302,9 +270,7 @@ const Navigation = () => {
     const handleOpenDM = (targetId: number) => {
       setOpenDmId(targetId);
       setFriendsList((prevFriendsList) => {
-        const targetFriend = prevFriendsList.find(
-          (friend) => friend.id === targetId
-        );
+        const targetFriend = prevFriendsList.find((friend) => friend.id === targetId);
         if (targetFriend) {
           process.nextTick(() => {
             emitter.emit('unReadMessages', targetFriend.unReadMessages);
@@ -388,7 +354,7 @@ const Navigation = () => {
     setOpenRequest(false);
   };
 
-  const handleClickUser = (userInfo: friendData, index: number) => {
+  const handleClickUser = (userInfo: FriendData, index: number) => {
     setUserInfo(userInfo);
     updateUserRect(index);
     setOpenModal(true);
@@ -461,8 +427,7 @@ const Navigation = () => {
       <UserList>
         {chatSocketFlag && <p> loading... </p>}
         {friendsList.map((friend, index) => {
-          userRefs[index] =
-            userRefs[index] || React.createRef<HTMLDivElement>();
+          userRefs[index] = userRefs[index] || React.createRef<HTMLDivElement>();
           return (
             <UserInfoFrame
               key={index}
@@ -487,21 +452,13 @@ const Navigation = () => {
           );
         })}
         {isOpenmode && (
-          <Content
-            overlayTop={overlayTop}
-            overlayLeft={overlayLeft}
-            onClick={handleGeneralMode}
-          >
+          <Content overlayTop={overlayTop} overlayLeft={overlayLeft} onClick={handleGeneralMode}>
             {modeButton}
           </Content>
         )}
       </UserList>
       {isOpenModal ? (
-        <UserModal
-          handleCloseModal={handleCloseModal}
-          userId={userInfo.id}
-          userRect={userRect}
-        />
+        <UserModal handleCloseModal={handleCloseModal} userId={userInfo.id} userRect={userRect} />
       ) : null}
       {isOpenRequest ? (
         <AlarmModal
@@ -522,18 +479,18 @@ const Navigation = () => {
         />
       )}
       {gameButton && (
-          <GameStartButton onClick={handleGameStart} ref={modeRefs}>
-            <Text fontsize='3vh'>Game Start</Text>
-          </GameStartButton>
-        )}
-        {matchingGame && (
-          <GameStartButton onClick={handleLeaveQueue} ref={modeRefs}>
-            <Text fontsize='2.5vh'>Matching...</Text>
-            <Text fontsize='2vh'>
-              {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}
-            </Text>
-          </GameStartButton>
-        )}
+        <GameStartButton onClick={handleGameStart} ref={modeRefs}>
+          <Text fontsize='3vh'>Game Start</Text>
+        </GameStartButton>
+      )}
+      {matchingGame && (
+        <GameStartButton onClick={handleLeaveQueue} ref={modeRefs}>
+          <Text fontsize='2.5vh'>Matching...</Text>
+          <Text fontsize='2vh'>
+            {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}
+          </Text>
+        </GameStartButton>
+      )}
     </Container>
   );
 };

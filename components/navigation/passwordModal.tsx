@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import axiosInstance from '../../utils/axiosInstance';
+import axiosInstance from '@/utils/axiosInstance';
 import styled from 'styled-components';
-import pen from '../../public/Icon/pen.png';
+import pen from '@/public/Icon/pen.png';
 import Image from 'next/image';
 
 const PasswordModal: React.FC<{

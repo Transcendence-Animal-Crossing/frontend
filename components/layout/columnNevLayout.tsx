@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Head from 'next/head';
 import { ReactNode } from 'react';
-import Nev from './navigation/navigation';
+import Nev from '../navigation/navigation';
 
 interface LayoutProps {
   children: ReactNode;
@@ -39,7 +39,7 @@ const Container = styled.div`
   height: 100%;
   background-color: #e9e2c7;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;

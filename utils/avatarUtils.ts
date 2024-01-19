@@ -1,7 +1,6 @@
 export const handleSetUserAvatar = (avatar: string) => {
-  // const apiUrl = process.env.API_URL +'/' ;
-  const apiUrl = 'http://10.13.4.2:8080/'
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  if (!avatar) return apiUrl + 'original/profile2.png';
-  return apiUrl + avatar;
+  if (!avatar) return apiUrl + '/original/profile2.png';
+  return apiUrl + '/' + avatar;
 };

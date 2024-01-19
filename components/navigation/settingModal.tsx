@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
-import axiosInstance from '../../utils/axiosInstance';
+import axiosInstance from '@/utils/axiosInstance';
 import ProfileModal from './profileModal';
 import PasswordModal from './passwordModal';
 import { signOut } from 'next-auth/react';

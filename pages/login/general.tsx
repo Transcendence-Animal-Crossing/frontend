@@ -2,10 +2,10 @@
 import { useState, useRef } from 'react';
 import { signIn } from 'next-auth/react';
 import styled from 'styled-components';
-import Timmy from '../../public/Login/Timmy.png';
-import Tommy from '../../public/Login/Tommy.png';
+import Timmy from '@/public/Login/Timmy.png';
+import Tommy from '@/public/Login/Tommy.png';
 import Image from 'next/image';
-import Container from '../../components/columnLayout';
+import Container from '@/components/layout/columnLayout';
 
 const General = () => {
   const [onPassword, setOnPassword] = useState<boolean>(false);
@@ -40,19 +40,10 @@ const General = () => {
   return (
     <Container>
       <GeneralLogin>
-        {onPassword ? (
-          <LogoImage src={Tommy} alt='Login' />
-        ) : (
-          <LogoImage src={Timmy} alt='Login' />
-        )}
+        {onPassword ? <LogoImage src={Tommy} alt='Login' /> : <LogoImage src={Timmy} alt='Login' />}
         <Text>로그인을 부탁드려요-!</Text>
         <LoginInput>
-          <InputBox
-            type='text'
-            placeholder='아이디'
-            onChange={handleIdChange}
-            autoFocus={true}
-          />
+          <InputBox type='text' placeholder='아이디' onChange={handleIdChange} autoFocus={true} />
           <InputBox
             type='password'
             placeholder='비밀번호'

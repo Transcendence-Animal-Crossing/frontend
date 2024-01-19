@@ -1,13 +1,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
-
-interface UserData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-}
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
+import { UserData } from '@/types/UserData';
 
 const GameFooter: React.FC<{
   leftUser: UserData;
@@ -15,7 +9,6 @@ const GameFooter: React.FC<{
   leftScore: number;
   rightScore: number;
 }> = ({ leftUser, rightUser, leftScore, rightScore }) => {
-
   return (
     <GameContent>
       <UserInfoFrame sort='flex-start'>

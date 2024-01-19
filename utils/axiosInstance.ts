@@ -4,8 +4,7 @@ import { signOut } from 'next-auth/react';
 import Router from 'next/router';
 
 const axiosInstance: AxiosInstance = axios.create({
-  // baseURL: process.env.URL,
-  baseURL: 'http://10.13.4.2:8080',
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     Authorization: '',
   },
@@ -32,9 +31,9 @@ axiosInstance.interceptors.response.use(
       signOut();
       return new Promise(() => {});
     }
-	if (error?.response) {
-		return Promise.reject(error);
-	}
+    if (error?.response) {
+      return Promise.reject(error);
+    }
     console.log(error);
     return Promise.reject(error);
   }

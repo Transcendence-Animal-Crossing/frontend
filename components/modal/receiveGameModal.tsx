@@ -1,18 +1,11 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Isabelle from '../public/Login/Isabelle.png';
+import Isabelle from '@/public/Login/Isabelle.png';
 import React, { useEffect, useState } from 'react';
-
-interface friendData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-  status: string;
-}
+import { FriendData } from '@/types/FriendData';
 
 const ReceiveGameModal: React.FC<{
-  userInfo: friendData;
+  userInfo: FriendData;
   handleCloseModal: () => void;
   setInviteResponse: (arg0: string) => void;
 }> = ({ userInfo, handleCloseModal, setInviteResponse }) => {

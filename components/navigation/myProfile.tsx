@@ -3,8 +3,8 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useRef } from 'react';
-import setting from '../../public/Icon/setting.png';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import setting from '@/public/Icon/setting.png';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 import SettingModal from './settingModal';
 
 const myProfile = () => {

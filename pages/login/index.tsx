@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Logo from '../../public/Login/logo.png';
-import ButtonImage from '../../public/Login/loginplz.png';
-import OverlayImage from '../../public/Login/overlay.png';
-import SelectLoginImage from '../../public/Login/selectLogin.png';
-import SelectNoImage from '../../public/Login/selectNo.png';
+import Logo from '@/public/Login/logo.png';
+import ButtonImage from '@/public/Login/loginplz.png';
+import OverlayImage from '@/public/Login/overlay.png';
+import SelectLoginImage from '@/public/Login/selectLogin.png';
+import SelectNoImage from '@/public/Login/selectNo.png';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Container from '../../components/columnLayout';
+import Container from '@/components/layout/columnLayout';
 
 const LoginPage: React.FC = () => {
   const [clickState, setClickState] = useState(false);
@@ -29,9 +29,9 @@ const LoginPage: React.FC = () => {
   return (
     <>
       <Container>
-        <LogoImage src={Logo} alt="Login" />
+        <LogoImage src={Logo} alt='Login' />
         <LoginButton onClick={handleLoginView} ref={loginButtonRef}>
-          <LoginButtonImg src={ButtonImage} alt="Login Plz" />
+          <LoginButtonImg src={ButtonImage} alt='Login Plz' />
         </LoginButton>
       </Container>
       {clickState && loginButtonRect && (
@@ -79,13 +79,13 @@ const OverlayWindow = ({
 
   return (
     <Overlay style={{ top: overlayTop, left: overlayRight }}>
-      <OverlayBackImage src={OverlayImage} alt="Overlay" />
+      <OverlayBackImage src={OverlayImage} alt='Overlay' />
       <OverlayButtonFrame>
         <OverlayButton onClick={handleLoginChoice}>
-          <OverlayButtonImg src={SelectLoginImage} alt="SelectLogin" />
+          <OverlayButtonImg src={SelectLoginImage} alt='SelectLogin' />
         </OverlayButton>
         <OverlayButton onClick={handleLoginView}>
-          <OverlayButtonImg src={SelectNoImage} alt="SelectLogin" />
+          <OverlayButtonImg src={SelectNoImage} alt='SelectLogin' />
         </OverlayButton>
       </OverlayButtonFrame>
     </Overlay>

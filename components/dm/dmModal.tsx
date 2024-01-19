@@ -1,22 +1,15 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { useSocket } from '../../utils/SocketProvider';
-import { useEventEmitter } from '../../utils/EventEmitterProvider';
+import { useSocket } from '@/utils/SocketProvider';
+import { useEventEmitter } from '@/utils/EventEmitterProvider';
 import { useSession } from 'next-auth/react';
-import axiosInstance from '../../utils/axiosInstance';
-import exit from '../../public/Icon/exit.png';
+import axiosInstance from '@/utils/axiosInstance';
+import exit from '@/public/Icon/exit.png';
 import DMContainer from './renderDM';
 import InputDmContainer from './inputDM';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
-
-interface dmData {
-  body: dmData;
-  id: number;
-  senderId: number;
-  date: Date;
-  text: string;
-}
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
+import { DmData } from '@/types/DmData';
 
 const DmModal: React.FC<{
   handleCloseModal: () => void;
@@ -28,7 +21,7 @@ const DmModal: React.FC<{
   const emitter = useEventEmitter();
   const [nickName, setNickName] = useState<string>('');
   const [avatar, setAvatar] = useState<string>('');
-  const [messages, setMessages] = useState<dmData[]>([]);
+  const [messages, setMessages] = useState<DmData[]>([]);
   const [messageText, setMessageText] = useState('');
   const [cursorId, setCursorId] = useState<number>(0);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -39,15 +32,15 @@ const DmModal: React.FC<{
   }, []);
 
   useEffect(() => {
-    const handleUnReadMessages = (unReadMessages: dmData[]) => {
+    const handleUnReadMessages = (unReadMessages: DmData[]) => {
       console.log('unReadMessages', unReadMessages);
       if (unReadMessages.length >= 20) {
         const sortedMessages = unReadMessages.sort((a, b) => b.id - a.id);
         setMessages(sortedMessages);
-        const smallestId = Math.min(...unReadMessages.map((message: dmData) => message.id));
+        const smallestId = Math.min(...unReadMessages.map((message: DmData) => message.id));
         setCursorId(smallestId);
       } else if (unReadMessages.length >= 1) {
-        const smallestId = Math.min(...unReadMessages.map((message: dmData) => message.id));
+        const smallestId = Math.min(...unReadMessages.map((message: DmData) => message.id));
         handleDmLoadConcat(smallestId);
         setMessages((prevMessages) => {
           const updatedMessages = [...prevMessages, ...unReadMessages].sort((a, b) => b.id - a.id);
@@ -58,7 +51,7 @@ const DmModal: React.FC<{
       }
     };
 
-    const handleNewMessage = (response: dmData) => {
+    const handleNewMessage = (response: DmData) => {
       setMessages((prevMessages) => [response, ...prevMessages]);
     };
 
@@ -80,13 +73,13 @@ const DmModal: React.FC<{
             cursorId: cursorId,
           })
           .then((response) => {
-            const sortedMessages = response.body.sort((a: dmData, b: dmData) => b.id - a.id);
+            const sortedMessages = response.body.sort((a: DmData, b: DmData) => b.id - a.id);
             setMessages((prevMessages) => {
               const updatedMessages = prevMessages.concat(sortedMessages);
               return updatedMessages;
             });
             if (response.body.length !== 0) {
-              const smallestId = Math.min(...response.body.map((message: dmData) => message.id));
+              const smallestId = Math.min(...response.body.map((message: DmData) => message.id));
               setCursorId(smallestId);
               setHasMore(true);
             } else {
@@ -107,10 +100,10 @@ const DmModal: React.FC<{
           targetId: targetId,
         })
         .then((response) => {
-          const sortedMessages = response.body.sort((a: dmData, b: dmData) => b.id - a.id);
+          const sortedMessages = response.body.sort((a: DmData, b: DmData) => b.id - a.id);
           setMessages(sortedMessages);
           if (response.body.length !== 0) {
-            const smallestId = Math.min(...response.body.map((message: dmData) => message.id));
+            const smallestId = Math.min(...response.body.map((message: DmData) => message.id));
             setCursorId(smallestId);
             setHasMore(true);
           } else {
@@ -128,13 +121,13 @@ const DmModal: React.FC<{
           cursorId: smallestId,
         })
         .then((response) => {
-          const sortedMessages = response.body.sort((a: dmData, b: dmData) => b.id - a.id);
+          const sortedMessages = response.body.sort((a: DmData, b: DmData) => b.id - a.id);
           setMessages((prevMessages) => {
             const updatedMessages = prevMessages.concat(sortedMessages);
             return updatedMessages;
           });
           if (response.body.length !== 0) {
-            const smallestId = Math.min(...response.body.map((message: dmData) => message.id));
+            const smallestId = Math.min(...response.body.map((message: DmData) => message.id));
             setCursorId(smallestId);
             setHasMore(true);
           } else {

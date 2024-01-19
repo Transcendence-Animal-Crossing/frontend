@@ -1,11 +1,11 @@
 import type { NextPage } from 'next';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import Container from '../components/columnNevLayout';
-import General from '../public/Main/generalgame.jpg';
-import Rank from '../public/Main/rankgame.jpg';
-import Chat from '../public/Main/chat.jpg';
-import Ranking from '../public/Main/ranking.jpg';
+import Container from '@/components/layout/columnNevLayout';
+import General from '@/public/Main/generalgame.jpg';
+import Rank from '@/public/Main/rankgame.jpg';
+import Chat from '@/public/Main/chat.jpg';
+import Ranking from '@/public/Main/ranking.jpg';
 
 const Home: NextPage = () => {
   const router = useRouter();

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { bronze, silver, gold, platinum, diamond } from './tier';
-import info from '../../public/Icon/info.png';
+import info from '@/public/Icon/info.png';
 import TierModal from './tierModal';
 
 const UserContainer: React.FC<{

@@ -9,8 +9,8 @@ const invalidPrimaryCampus = (profile: any) => {
   return campusId?.toString() !== process.env.CAMPUS_ID;
 };
 
-// const apiUrl = process.env.API_URL;
-const apiUrl = 'http://10.13.4.2:8080';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 console.log(apiUrl);
 
 export const authOptions: NextAuthOptions = {
@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
             intraName: credentials.intraname,
             password: credentials.password,
           });
-		  console.log("credential response ", response);
+          console.log('credential response ', response);
           if (response.status === 200) {
             const accessToken = response.headers.authorization.replace('Bearer ', '');
             const refreshToken =

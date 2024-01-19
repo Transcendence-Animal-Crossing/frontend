@@ -2,19 +2,13 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useSocket } from '../../utils/SocketProvider';
-import Container from '../../components/columnLayout';
-import Header from '../../components/game/gameHeader';
-import GameBackGround from '../../components/game/background';
-import GameFooter from '../../components/game/gameFooter';
-import GameEndModal from '../../components/game/gameEndModal';
-
-interface UserData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-}
+import { useSocket } from '@/utils/SocketProvider';
+import Container from '@/components/layout/columnLayout';
+import Header from '@/components/game/gameHeader';
+import GameBackGround from '@/components/game/background';
+import GameFooter from '@/components/game/gameFooter';
+import GameEndModal from '@/components/game/gameEndModal';
+import { UserData } from 'next-auth/providers/42-school';
 
 interface pos {
   x: number;

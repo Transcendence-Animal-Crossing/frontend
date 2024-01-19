@@ -1,15 +1,11 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import Guri from '../public/Login/logo.png';
+import Isabelle from '@/public/Login/Isabelle.png';
 
-const infoModal: React.FC<{
+const NoticeModal: React.FC<{
   handleCloseModal: () => void;
-  infoText: string;
-  InfoButtonRect: { top: number; left: number };
-}> = ({ handleCloseModal, infoText, InfoButtonRect }) => {
-  const overlayTop = `${InfoButtonRect.top * 1.5}px`;
-  const overlayLeft = `${InfoButtonRect.left * 0.8}px`;
-
+  noticeMessage: string;
+}> = ({ handleCloseModal, noticeMessage }) => {
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       handleCloseModal();
@@ -19,19 +15,21 @@ const infoModal: React.FC<{
   return (
     <>
       <Container onClick={handleOverlayClick}>
-        <Content overlayTop={overlayTop} overlayLeft={overlayLeft}>
-          <GuriImage src={Guri} alt='Guri' />
-          <Text> {infoText} </Text>
-          <CompleteButtonFrame>
-            <CompleteButton onClick={handleOverlayClick}> 닫기 </CompleteButton>
-          </CompleteButtonFrame>
-        </Content>
+        <ContentFrame onClick={handleOverlayClick}>
+          <Content>
+            <GuriImage src={Isabelle} alt='Isabelle' />
+            <Text> {noticeMessage} </Text>
+            <CompleteButtonFrame>
+              <CompleteButton onClick={handleOverlayClick}> 닫기 </CompleteButton>
+            </CompleteButtonFrame>
+          </Content>
+        </ContentFrame>
       </Container>
     </>
   );
 };
 
-export default infoModal;
+export default NoticeModal;
 
 const Container = styled.div`
   position: absolute;
@@ -42,14 +40,22 @@ const Container = styled.div`
   background: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+`;
+
+const ContentFrame = styled.div`
+  width: 80%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
   justify-content: center;
 `;
 
-const Content = styled.div<{ overlayTop: string; overlayLeft: string }>`
+const Content = styled.div`
   position: fixed;
-  top: ${(props) => props.overlayTop};
-  left: ${(props) => props.overlayLeft};
-  width: 25vw;
+  width: 20vw;
   height: auto;
   background-color: ${(props) => props.theme.colors.cream};
   padding: 2vh;

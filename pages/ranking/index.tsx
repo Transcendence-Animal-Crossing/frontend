@@ -1,15 +1,15 @@
-import Container from '../../components/columnNevLayout';
+import Container from '@/components/layout/columnNevLayout';
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import axiosInstance from '../../utils/axiosInstance';
-import Header from '../../components/lobbyHeader';
-import UserList from '../../components/ranking/userList';
-import search from '../../public/Icon/search.png';
-import prev from '../../public/Icon/prev.png';
-import next from '../../public/Icon/next.png';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
+import axiosInstance from '@/utils/axiosInstance';
+import Header from '@/components/layout/lobbyHeader';
+import UserList from '@/components/ranking/userList';
+import search from '@/public/Icon/search.png';
+import prev from '@/public/Icon/prev.png';
+import next from '@/public/Icon/next.png';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
 
 const Ranking = () => {
   const userPerPage = 8;
@@ -27,12 +27,12 @@ const Ranking = () => {
   }, []);
 
   useEffect(() => {
-	console.log("search ",isSearch);
-	if (!isSearch) {
-		getRankingList();
-	} else {
-		getSearchList();
-	}
+    console.log('search ', isSearch);
+    if (!isSearch) {
+      getRankingList();
+    } else {
+      getSearchList();
+    }
   }, [offset]);
 
   const getRankingList = async () => {
@@ -52,32 +52,32 @@ const Ranking = () => {
     }
   };
 
-  const getSearchList = async () =>  {
-	try {
-		const response = await axiosInstance.post('/users/search', {
-		  name: searchText,
-		  offset: offset,
-		});
-		console.log('handleSearch() response aaaaa');
-		console.log(response.data);
-		response.data.map((user: any) => {
-		  user.avatar = handleSetUserAvatar(user.avatar);
-		});
-		await printResponse(response.data);
-		await setUserList(response.data);
-	  } catch (error: any) {
-		console.log(error);
-	  }
-  }
+  const getSearchList = async () => {
+    try {
+      const response = await axiosInstance.post('/users/search', {
+        name: searchText,
+        offset: offset,
+      });
+      console.log('handleSearch() response aaaaa');
+      console.log(response.data);
+      response.data.map((user: any) => {
+        user.avatar = handleSetUserAvatar(user.avatar);
+      });
+      await printResponse(response.data);
+      await setUserList(response.data);
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const printResponse = async (data: any) => {
     console.log('printResponse() data', data);
   };
 
   const handleSearch = async () => {
-	setIsSearch(true);
-	setOffset(0);
-	await getSearchList();
+    setIsSearch(true);
+    setOffset(0);
+    await getSearchList();
   };
 
   const handleKeyDown = (e: any) => {

@@ -1,36 +1,19 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import { useSocket } from '../../utils/SocketProvider';
+import { useSocket } from '@/utils/SocketProvider';
 import { useSession } from 'next-auth/react';
-import exit from '../../public/Icon/exit.png';
-import kick from '../../public/Chat/kick.png';
-import ban from '../../public/Chat/ban.png';
-import mute from '../../public/Chat/mute.png';
-import unmute from '../../public/Chat/unmute.png';
-import slider from '../../public/Chat/slider.png';
-import users from '../../public/Icon/users.png';
-import crown from '../../public/Icon/crown.png';
-import { handleSetUserAvatar } from '../../utils/avatarUtils';
-
-interface ParticipantData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-  grade: number;
-  mute: boolean;
-  joinTime: Date;
-  adminTime: Date;
-  status: number;
-}
-
-interface UserData {
-  id: number;
-  nickName: string;
-  intraName: string;
-  avatar: string;
-}
+import exit from '@/public/Icon/exit.png';
+import kick from '@/public/Chat/kick.png';
+import ban from '@/public/Chat/ban.png';
+import mute from '@/public/Chat/mute.png';
+import unmute from '@/public/Chat/unmute.png';
+import slider from '@/public/Chat/slider.png';
+import users from '@/public/Icon/users.png';
+import crown from '@/public/Icon/crown.png';
+import { handleSetUserAvatar } from '@/utils/avatarUtils';
+import { ParticipantData } from '@/types/ParticipantData';
+import { UserData } from '@/types/UserData';
 
 const userListModal: React.FC<{
   handleCloseModal: () => void;

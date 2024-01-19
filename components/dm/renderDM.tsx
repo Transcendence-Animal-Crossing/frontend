@@ -2,16 +2,10 @@ import styled from 'styled-components';
 import { useSession } from 'next-auth/react';
 import React, { useState, useEffect, useRef } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
-interface DirectMessageDto {
-  id: number;
-  senderId: number;
-  date: Date;
-  text: string;
-}
+import { DmData } from '@/types/DmData';
 
 const DMContainer: React.FC<{
-  messages: DirectMessageDto[];
+  messages: DmData[];
   hasMore: boolean;
   handleDmLoad: () => void;
 }> = ({ messages, hasMore, handleDmLoad }) => {
